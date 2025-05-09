@@ -1,0 +1,33 @@
+{
+  "grid": {
+    "columns": 50,
+    "rows": 50
+  },
+  "spotHeight": 5,
+  "backgroundZones": [
+    { "x": 0, "y": 0, "width": 50, "height": 50, "textureKey": "grass" },
+    { "x": 0, "y": 8, "width": 35, "height": 35, "textureKey": "asphalt" },
+    { "x": 4, "y": 2, "width": 33, "height": 6, "textureKey": "concrete" },
+    { "x": 0, "y": 14, "width": 28, "height": 23, "textureKey": "concrete" },
+    { "x": 35, "y": 7, "width": 10, "height": 31, "textureKey": "concrete" }
+  ],
+  "spots": [
+    { "id": "A1", "x": 10, "y": 5, "rotation": 0, "status": "available" },
+    { "id": "A2", "x": 20, "y": 5, "rotation": 0, "status": "occupied" },
+    { "id": "A3", "x": 30, "y": 5, "rotation": 0, "status": "reserved" },
+    { "id": "C1", "x": 5, "y": 20, "rotation": -60, "status": "available" },
+    { "id": "C2", "x": 11, "y": 20, "rotation": -60, "status": "available" },
+    { "id": "C3", "x": 17, "y": 20, "rotation": -60, "status": "occupied" },
+    { "id": "C4", "x": 23, "y": 20, "rotation": -60, "status": "reserved" },
+    { "id": "B1", "x": 5, "y": 31, "rotation": 60, "status": "available" },
+    { "id": "B2", "x": 11, "y": 31, "rotation": 60, "status": "occupied" },
+    { "id": "B3", "x": 17, "y": 31, "rotation": 60, "status": "occupied" },
+    { "id": "B4", "x": 23, "y": 31, "rotation": 60, "status": "available" },
+    { "id": "D1", "x": 40, "y": 10, "rotation": 0, "status": "reserved" },
+    { "id": "D2", "x": 40, "y": 15, "rotation": 0, "status": "reserved" },
+    { "id": "D3", "x": 40, "y": 20, "rotation": 0, "status": "available" },
+    { "id": "D4", "x": 40, "y": 25, "rotation": 0, "status": "occupied" },
+    { "id": "D5", "x": 40, "y": 30, "rotation": 0, "status": "occupied" },
+    { "id": "D6", "x": 40, "y": 35, "rotation": 0, "status": "available" }
+  ]
+}
