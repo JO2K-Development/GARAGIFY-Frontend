@@ -11,7 +11,7 @@ const ParkingPickerTools = dynamic(
 );
 
 const ParkingEditor = dynamic(
-  () => import("@/components/ParkingEditor/ParkingEditor"),
+  () => import("@/components/Parking/utils/Editor/ParkingEditor"),
   {
     ssr: false,
   }
@@ -20,8 +20,7 @@ export default function Home() {
   return (
     <div className={styles.page}>
       {/* <ParkingPickerTools /> */}
-
-      <ParkingEditor />
+      <ParkingPickerTools />
     </div>
   );
 }
