@@ -3,6 +3,7 @@ import "./globals.scss";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import GarazeTheme from "@/components/AntDesignTheme";
 import { ReactNode } from "react";
+import "@ant-design/v5-patch-for-react-19";
 
 export const metadata: Metadata = {
   title: "Create Next App",
