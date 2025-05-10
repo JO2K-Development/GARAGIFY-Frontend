@@ -4,14 +4,14 @@ import styles from "./page.module.scss";
 import dynamic from "next/dynamic";
 
 const ParkingPickerTools = dynamic(
-  () => import("@/components/ParkingPickerTools/ParkingPickerTools"),
+  () => import("@/components/Parking/Editor/ParkingEditorWrapper"),
   {
     ssr: false,
   }
 );
 
 const ParkingEditor = dynamic(
-  () => import("@/components/Parking/utils/Editor/ParkingEditor"),
+  () => import("@/components/Parking/Editor/ParkingEditor"),
   {
     ssr: false,
   }
