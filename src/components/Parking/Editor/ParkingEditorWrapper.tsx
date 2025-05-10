@@ -10,15 +10,14 @@ const ParkingEditorWrapper = () => {
 
   const {
     lines,
-    selectedLineHandling,
+    selectedLineId,
+    setSelectedLineId,
     updateLine,
     deleteLine,
     handleCircleDrag,
-    mouseHandlers: {
-      onMouseDown: handleMouseDown,
-      onMouseMove: handleMouseMove,
-      onMouseUp: handleMouseUp,
-    },
+    onMouseDown,
+    onMouseMove,
+    onMouseUp,
     isDrawing,
     startPos,
     currentPos,
@@ -47,14 +46,14 @@ const ParkingEditorWrapper = () => {
         ref={stageRef}
         width={1000}
         height={700}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
       >
         <Layer>
           <ParkingEditor
-            selectedLineId={selectedLineHandling.selectedLineId}
-            setSelectedLineId={selectedLineHandling.setSelectedLineId}
+            selectedLineId={selectedLineId}
+            setSelectedLineId={setSelectedLineId}
             handleCircleDrag={handleCircleDrag}
             isDrawing={isDrawing}
             startPos={startPos}
@@ -65,7 +64,8 @@ const ParkingEditorWrapper = () => {
       </Stage>
 
       <ParkingLineConfigModal
-        {...selectedLineHandling}
+        selectedLineId={selectedLineId}
+        setSelectedLineId={setSelectedLineId}
         lines={lines}
         updateLine={updateLine}
         deleteLine={deleteLine}

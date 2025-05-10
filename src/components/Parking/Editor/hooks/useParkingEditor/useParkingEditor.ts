@@ -12,23 +12,27 @@ export const GRID_CELL_SIZE = 10;
 
 interface ParkingEditorProps {
   handlePanMouseDown: HandlerType;
-  handlePanMouseMove: HandlerType;
   handlePanMouseUp: HandlerType;
   stageRef: React.RefObject<any>;
 }
 const useParkingEditor = ({
   handlePanMouseDown,
-  handlePanMouseMove,
   handlePanMouseUp,
   stageRef,
 }: ParkingEditorProps) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState<Point | null>(null);
   const [currentPos, setCurrentPos] = useState<Point | null>(null);
+  const [lines, setLines] = useState<ParkingLine[]>([]);
+  const [selectedLineId, setSelectedLineId] = useState<string | null>(null);
 
-  const handleMouseDown: HandlerType = (e) => {
-    if (handlePanMouseDown(e)) return;
+  const composeHandlers =
+    (...handlers: HandlerType[]) =>
+    (e: any) => {
+      for (const handler of handlers) if (handler(e)) return;
+    };
 
+  const handleMouseDown = composeHandlers(handlePanMouseDown, (e) => {
     const stage = stageRef.current;
     const pointerPos = stage.getPointerPosition();
     const transform = stage.getAbsoluteTransform().copy().invert();
@@ -43,8 +47,9 @@ const useParkingEditor = ({
       setCurrentPos(pos);
       setIsDrawing(true);
       setSelectedLineId(null);
+      return true;
     }
-  };
+  });
 
   const handleMouseMove: HandlerType = (e) => {
     if (isDrawing) {
@@ -56,9 +61,7 @@ const useParkingEditor = ({
     }
   };
 
-  const handleMouseUp: HandlerType = (e) => {
-    if (handlePanMouseUp(e)) return;
-
+  const handleMouseUp = composeHandlers(handlePanMouseUp, (e) => {
     if (isDrawing && startPos && currentPos) {
       addLine({
         id: `L${lines.length + 1}`,
@@ -74,11 +77,7 @@ const useParkingEditor = ({
     setIsDrawing(false);
     setStartPos(null);
     setCurrentPos(null);
-  };
-
-  const [lines, setLines] = useState<ParkingLine[]>([]);
-  const [selectedLineId, setSelectedLineId] = useState<string | null>(null);
-  console.log(lines);
+  });
 
   const generateSpotsForLine = (line: ParkingLine): ParkingSpot[] => {
     const dx = line.end.x - line.start.x;
@@ -88,35 +87,30 @@ const useParkingEditor = ({
     const effectiveAngleRad = lineAngleRad + (line.rotation * Math.PI) / 180;
     const spotSpacing = lineLength / line.spotsCount;
 
-    const spots: ParkingSpot[] = [];
-
-    for (let i = 0; i < line.spotsCount; i++) {
-      const posX =
-        line.start.x + Math.cos(lineAngleRad) * (i + 0.5) * spotSpacing;
-      const posY =
-        line.start.y + Math.sin(lineAngleRad) * (i + 0.5) * spotSpacing;
-
-      spots.push({
-        id: `S${line.id}-${i + 1}`,
-        x: posX / GRID_CELL_SIZE,
-        y: posY / GRID_CELL_SIZE,
-        rotation: (effectiveAngleRad * 180) / Math.PI,
-        status: "available",
-      });
-    }
-    return spots;
+    return Array.from({ length: line.spotsCount }, (_, i) => ({
+      id: `S${line.id}-${i + 1}`,
+      x:
+        (line.start.x + Math.cos(lineAngleRad) * (i + 0.5) * spotSpacing) /
+        GRID_CELL_SIZE,
+      y:
+        (line.start.y + Math.sin(lineAngleRad) * (i + 0.5) * spotSpacing) /
+        GRID_CELL_SIZE,
+      rotation: (effectiveAngleRad * 180) / Math.PI,
+      status: "available",
+    }));
   };
 
   const updateLine = (lineId: string, updates: Partial<ParkingLine>) => {
     setLines((prev) =>
-      prev.map((line) => {
-        if (line.id === lineId) {
-          const updated = { ...line, ...updates };
-          updated.spots = generateSpotsForLine(updated);
-          return updated;
-        }
-        return line;
-      })
+      prev.map((line) =>
+        line.id === lineId
+          ? {
+              ...line,
+              ...updates,
+              spots: generateSpotsForLine({ ...line, ...updates }),
+            }
+          : line
+      )
     );
   };
 
@@ -135,15 +129,14 @@ const useParkingEditor = ({
 
   return {
     lines,
-    selectedLineHandling: { selectedLineId, setSelectedLineId },
-    mouseHandlers: {
-      onMouseDown: handleMouseDown,
-      onMouseMove: handleMouseMove,
-      onMouseUp: handleMouseUp,
-    },
+    selectedLineId,
+    setSelectedLineId,
     updateLine,
-    handleCircleDrag,
     deleteLine,
+    handleCircleDrag,
+    onMouseDown: handleMouseDown,
+    onMouseMove: handleMouseMove,
+    onMouseUp: handleMouseUp,
     isDrawing,
     startPos,
     currentPos,

@@ -1,12 +1,9 @@
 "use client";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { HandlerType } from "../../utils/types";
 
 const useStageTransform = () => {
   const stageRef = useRef<any>(null);
-  const [lastPanPos, setLastPanPos] = useState<{ x: number; y: number } | null>(
-    null
-  );
 
   const handleZoom = (dir: "in" | "out") => {
     const stage = stageRef.current;
@@ -29,28 +26,6 @@ const useStageTransform = () => {
     stage.batchDraw();
   };
 
-  const handlePanMouseMove: HandlerType = (e) => {
-    if (lastPanPos) {
-      const stage = stageRef.current;
-      const dx = e.evt.clientX - lastPanPos.x;
-      const dy = e.evt.clientY - lastPanPos.y;
-      const pos = stage.position();
-
-      const scaleX = stage.scaleX();
-      const scaleY = stage.scaleY();
-
-      stage.position({
-        x: pos.x + dx / scaleX,
-        y: pos.y + dy / scaleY,
-      });
-
-      stage.batchDraw();
-      setLastPanPos({ x: e.evt.clientX, y: e.evt.clientY });
-      return true;
-    }
-    return false;
-  };
-
   const handlePanMouseDown: HandlerType = (e) => {
     if (e.evt.button === 1) {
       const stage = stageRef.current;
@@ -70,7 +45,6 @@ const useStageTransform = () => {
     stageRef,
     handleZoom,
     handlePanMouseDown,
-    handlePanMouseMove,
     handlePanMouseUp,
   };
 };
