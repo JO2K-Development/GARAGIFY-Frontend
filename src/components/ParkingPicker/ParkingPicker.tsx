@@ -28,8 +28,8 @@ const ParkingPicker = () => {
     <>
       {parking.map((area) =>
         area.spots.map((spot) => {
-          const actualHeight = size.height * GRID_CELL_SIZE * SHRINK_RATE;
-          const actualWidth = size.width * GRID_CELL_SIZE * SHRINK_RATE;
+          const actualHeight = size.height * SHRINK_RATE;
+          const actualWidth = size.width * SHRINK_RATE;
           const isSelected = spot.id === selectedSpotId;
           const selectedScale = isSelected ? 0.9 : 1;
           const outlineSize = 5;
@@ -37,8 +37,8 @@ const ParkingPicker = () => {
           return (
             <Group
               key={spot.id}
-              x={spot.x * GRID_CELL_SIZE}
-              y={spot.y * GRID_CELL_SIZE}
+              x={spot.x}
+              y={spot.y}
               rotation={spot.rotation}
               onClick={() => setSelectedSpotId(spot.id)}
             >

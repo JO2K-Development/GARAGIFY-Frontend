@@ -14,12 +14,12 @@ const ParkingSpotRect = ({ spot, lineConfig }: ParkingSpotRectProps) => {
       draggable={false}
       name="spot"
       key={id}
-      x={x * GRID_CELL_SIZE}
-      y={y * GRID_CELL_SIZE}
-      width={width * GRID_CELL_SIZE}
-      height={height * GRID_CELL_SIZE}
-      offsetX={(width * GRID_CELL_SIZE) / 2}
-      offsetY={(height * GRID_CELL_SIZE) / 2}
+      x={x}
+      y={y}
+      width={width}
+      height={height}
+      offsetX={width / 2}
+      offsetY={height / 2}
       rotation={rotation}
       fill="green"
     />

@@ -4,6 +4,7 @@ import ParkingEditor from "./ParkingEditor";
 import ParkingLineConfigModal from "./ParkingLineConfigModal";
 import useStageTransform from "./hooks/useStageTransform";
 import useParkingEditor from "./hooks/useParkingEditor/useParkingEditor";
+import { ParkingSchemaDefaults } from "../utils/constants";
 
 const ParkingEditorWrapper = () => {
   const { stageRef, handleZoom, ...handlePanProps } = useStageTransform();
@@ -30,8 +31,8 @@ const ParkingEditorWrapper = () => {
     <div
       style={{
         position: "relative",
-        width: 1000,
-        height: 700,
+        width: ParkingSchemaDefaults.canvas.width,
+        height: ParkingSchemaDefaults.canvas.height,
         border: "1px solid black",
       }}
     >
@@ -44,8 +45,8 @@ const ParkingEditorWrapper = () => {
 
       <Stage
         ref={stageRef}
-        width={1000}
-        height={700}
+        width={ParkingSchemaDefaults.canvas.width}
+        height={ParkingSchemaDefaults.canvas.height}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}

@@ -7,8 +7,7 @@ import {
   HandlerType,
 } from "../../../utils/types";
 import { HandleCircleDrag } from "./types";
-
-export const GRID_CELL_SIZE = 10;
+import { ParkingSchemaDefaults } from "@/components/Parking/utils/constants";
 
 interface ParkingEditorProps {
   handlePanMouseDown: HandlerType;
@@ -68,10 +67,7 @@ const useParkingEditor = ({
         start: startPos,
         end: currentPos,
         spots: [],
-        spotsCount: 1,
-        width: 10,
-        height: 5,
-        rotation: 90,
+        ...ParkingSchemaDefaults.parkingSpotCreator,
       });
     }
     setIsDrawing(false);
@@ -89,12 +85,8 @@ const useParkingEditor = ({
 
     return Array.from({ length: line.spotsCount }, (_, i) => ({
       id: `S${line.id}-${i + 1}`,
-      x:
-        (line.start.x + Math.cos(lineAngleRad) * (i + 0.5) * spotSpacing) /
-        GRID_CELL_SIZE,
-      y:
-        (line.start.y + Math.sin(lineAngleRad) * (i + 0.5) * spotSpacing) /
-        GRID_CELL_SIZE,
+      x: line.start.x + Math.cos(lineAngleRad) * (i + 0.5) * spotSpacing,
+      y: line.start.y + Math.sin(lineAngleRad) * (i + 0.5) * spotSpacing,
       rotation: (effectiveAngleRad * 180) / Math.PI,
       status: "available",
     }));

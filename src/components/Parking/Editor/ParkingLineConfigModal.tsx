@@ -1,5 +1,5 @@
 "use client";
-import { Modal, Form, InputNumber, Button } from "antd";
+import { Modal, Form, InputNumber, Button, Slider } from "antd";
 import { ParkingLine } from "../utils/types";
 
 interface ParkingLineConfigModalProps {
@@ -60,11 +60,12 @@ const ParkingLineConfigModal = ({
             />
           </Form.Item>
           <Form.Item label="Angle">
-            <InputNumber
+            <Slider
+              min={0}
+              max={180}
+              step={1}
               value={selectedLine.rotation}
-              onChange={(v) => {
-                if (v) updateLine(selectedLine.id, { rotation: v });
-              }}
+              onChange={(v) => updateLine(selectedLine.id, { rotation: v })}
             />
           </Form.Item>
         </Form>
