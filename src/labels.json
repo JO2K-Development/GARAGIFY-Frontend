@@ -1,0 +1,15 @@
+{
+    "navigation": {
+        "borrowing": "Borrowing",
+        "lending": "Lending",
+        "logout": "Logout"
+    },
+    "borrowing": {
+        "form": {
+            "dateRangeRequired": "Date range is required",
+            "findSpecialSpots": "Find special spots",
+            "findNonReparkedSpots": "Find non-reparked spots only",
+            "submit": "Submit"
+        }
+    }
+}

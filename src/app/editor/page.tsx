@@ -16,7 +16,7 @@ const ParkingEditor = dynamic(
     ssr: false,
   }
 );
-export default function Home() {
+export default function Page() {
   return (
     <div className={styles.page}>
       {/* <ParkingPickerTools /> */}
