@@ -1,5 +1,5 @@
 import { CanvasProvider } from "../context/CanvasContext";
-import ParkingCanvas from "./ParkingCanvas";
+import ParkingCanvas from "./ParkingCanvas/ParkingCanvas";
 
 const ParkingCanvasWrapper = () => (
   <CanvasProvider>

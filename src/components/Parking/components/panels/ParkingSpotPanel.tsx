@@ -1,29 +1,69 @@
 "use client";
+
 import React from "react";
-import { Button, InputNumber, Divider, Slider, Space, Typography, Form } from "antd";
-import { DeleteOutlined, RotateLeftOutlined, RotateRightOutlined } from "@ant-design/icons";
-import { useCanvasContext } from "../context/CanvasContext";
+import {
+  Button,
+  InputNumber,
+  Divider,
+  Slider,
+  Space,
+  Typography,
+  Form,
+} from "antd";
+import {
+  DeleteOutlined,
+  RotateLeftOutlined,
+  RotateRightOutlined,
+} from "@ant-design/icons";
+import * as fabric from "fabric";
+import { useCanvasContext } from "../../context/CanvasContext";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
-const ParkingSpotPanel = () => {
-  const { selectedObject, parkingSpotGroups, editParkingSpotGroup, removeParkingSpotGroup } = useCanvasContext();
+type ParkingSpotPanelProps = {
+  canvas: fabric.Canvas | undefined;
+};
 
-  if (!selectedObject) return null;
+const ParkingSpotPanel: React.FC<ParkingSpotPanelProps> = ({ canvas }) => {
+  const {
+    selectedObject,
+    parkingSpotGroups,
+    editParkingSpotGroup,
+    removeParkingSpotGroup,
+    setSelectedObject,
+  } = useCanvasContext();
 
-  const groupId = selectedObject.get("groupId") || 
-                  (selectedObject.type === "activeSelection" && 
-                   selectedObject._objects && 
-                   selectedObject._objects[0]?.get("groupId"));
-  
-  if (!groupId) return null;
+  if (!selectedObject) {
+    return (
+      <div style={{ minWidth: 250 }}>
+        <Title level={5}>🅿️ Parking Spot Tools</Title>
+        <Divider style={{ margin: "8px 0" }} />
+        <Text type="secondary">
+          Select a parking spot group on the canvas to edit it.
+        </Text>
+      </div>
+    );
+  }
+
+  const groupId =
+    selectedObject.get("groupId") ||
+    (selectedObject.type === "activeSelection" &&
+      selectedObject._objects?.[0]?.get("groupId"));
 
   const group = parkingSpotGroups.find((g) => g.id === groupId);
-  if (!group) return null;
+
+  if (!group) {
+    return (
+      <div style={{ minWidth: 250 }}>
+        <Title level={5}>🅿️ Parking Spot Tools</Title>
+        <Divider style={{ margin: "8px 0" }} />
+        <Text type="secondary">Invalid selection.</Text>
+      </div>
+    );
+  }
 
   const handleSpotCountChange = (value: number | null) => {
     if (!value) return;
-    
     editParkingSpotGroup(group.id, (prev) => ({
       ...prev,
       spotCount: value,
@@ -32,7 +72,6 @@ const ParkingSpotPanel = () => {
 
   const handleSpotAngleChange = (value: number | null) => {
     if (value === null) return;
-    
     editParkingSpotGroup(group.id, (prev) => ({
       ...prev,
       spotAngle: value,
@@ -44,7 +83,6 @@ const ParkingSpotPanel = () => {
     value: number | null
   ) => {
     if (!value) return;
-    
     editParkingSpotGroup(group.id, (prev) => ({
       ...prev,
       spotSize: {
@@ -62,29 +100,40 @@ const ParkingSpotPanel = () => {
   };
 
   const handleDelete = () => {
-    if (!groupId) return;
+    if (!canvas || !groupId) return;
+
+    canvas.getObjects().forEach((obj) => {
+      if (obj.get("groupId") === groupId) {
+        canvas.remove(obj);
+      }
+    });
+
     removeParkingSpotGroup(groupId);
+    canvas.discardActiveObject();
+    canvas.requestRenderAll();
+    setSelectedObject(null);
   };
 
   return (
-    <div style={{ padding: 12, background: "#fff", borderRadius: 4, minWidth: 250 }}>
-      <Title level={5}>🅿️ Parking Spot Settings</Title>
+    <div style={{ minWidth: 250 }}>
+      <Title level={5}>🅿️ Parking Spot Tools</Title>
+      <Divider style={{ margin: "8px 0" }} />
 
-      <Form layout="vertical" style={{ marginTop: 16 }}>
+      <Form layout="vertical">
         <Form.Item label="Number of Spots">
           <InputNumber
             min={1}
             max={20}
             value={group.spotCount}
             onChange={handleSpotCountChange}
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           />
         </Form.Item>
-        
+
         <Divider style={{ margin: "12px 0" }} />
-        
+
         <Form.Item label="Spot Size">
-          <Space style={{ width: '100%' }}>
+          <Space style={{ width: "100%" }}>
             <span>Width:</span>
             <InputNumber
               min={10}
@@ -92,7 +141,6 @@ const ParkingSpotPanel = () => {
               value={group.spotSize.width}
               onChange={(val) => handleSpotSizeChange("width", val)}
             />
-            
             <span>Height:</span>
             <InputNumber
               min={20}
@@ -102,11 +150,11 @@ const ParkingSpotPanel = () => {
             />
           </Space>
         </Form.Item>
-        
+
         <Divider style={{ margin: "12px 0" }} />
-        
+
         <Form.Item label="Rotation">
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Space direction="vertical" style={{ width: "100%" }}>
             <Slider
               min={-180}
               max={180}
@@ -121,26 +169,26 @@ const ParkingSpotPanel = () => {
                 onChange={handleSpotAngleChange}
                 style={{ width: 80 }}
               />
-              <Button 
-                icon={<RotateLeftOutlined />} 
+              <Button
+                icon={<RotateLeftOutlined />}
                 onClick={() => rotateSpots(-15)}
               />
-              <Button 
-                icon={<RotateRightOutlined />} 
+              <Button
+                icon={<RotateRightOutlined />}
                 onClick={() => rotateSpots(15)}
               />
             </Space>
           </Space>
         </Form.Item>
-        
+
         <Divider style={{ margin: "12px 0" }} />
-        
-        <Button 
-          type="primary" 
+
+        <Button
+          type="primary"
           danger
           icon={<DeleteOutlined />}
           onClick={handleDelete}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
         >
           Delete Parking Group
         </Button>

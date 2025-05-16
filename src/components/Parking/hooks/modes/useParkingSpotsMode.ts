@@ -12,7 +12,6 @@ export const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
     addParkingSpotGroup,
     parkingSpotGroups,
     editParkingSpotGroup,
-    removeParkingSpotGroup,
   } = useCanvasContext();
   const isActive = mode === "parkingSpots";
 
