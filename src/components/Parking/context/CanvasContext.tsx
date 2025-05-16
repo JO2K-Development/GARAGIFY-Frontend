@@ -4,6 +4,15 @@ import * as fabric from "fabric";
 
 export type Mode = "parkingZone" | "obstacles" | "parkingSpots" | "view";
 
+export interface ParkingSpotGroup {
+  id: string;
+  line: fabric.Line;
+  spots: fabric.Rect[];
+  spotCount: number;
+  spotSize: { width: number; height: number };
+  spotAngle: number;
+}
+
 interface CanvasObstacle {
   id: string;
   type: "tree" | "area";
@@ -15,6 +24,7 @@ export interface CanvasZone {
   name?: string;
   fabricObject: fabric.Object;
 }
+
 interface CanvasContextType {
   mode: Mode;
   setMode: (mode: Mode) => void;
@@ -37,6 +47,14 @@ interface CanvasContextType {
     updater: (obj: CanvasObstacle) => CanvasObstacle
   ) => void;
   removeObstacle: (id: string) => void;
+
+  parkingSpotGroups: ParkingSpotGroup[];
+  addParkingSpotGroup: (group: ParkingSpotGroup) => void;
+  editParkingSpotGroup: (
+    id: string,
+    updater: (group: ParkingSpotGroup) => ParkingSpotGroup
+  ) => void;
+  removeParkingSpotGroup: (id: string) => void;
 }
 
 const CanvasContext = createContext<CanvasContextType | undefined>(undefined);
@@ -45,47 +63,21 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [mode, setMode] = useState<Mode>("parkingZone");
-
-  useEffect(() => {
-    if (selectedObject) {
-      setSelectedObject(null);
-    }
-    // Clear selection on canvas too
-    const active = selectedObject?.canvas;
-    if (active && active.getActiveObject()) {
-      active.discardActiveObject();
-      active.requestRenderAll();
-    }
-  }, [mode]);
-
   const [selectedObject, setSelectedObject] = useState<fabric.Object | null>(
     null
   );
 
   const [parkingZones, setParkingZones] = useState<CanvasZone[]>([]);
-  const addParkingZone = (zone: CanvasZone) =>
-    setParkingZones((prev) => [...prev, zone]);
-  const editParkingZone = (
-    id: string,
-    updater: (zone: CanvasZone) => CanvasZone
-  ) =>
-    setParkingZones((prev) => prev.map((z) => (z.id === id ? updater(z) : z)));
-  const removeParkingZone = (id: string) =>
-    setParkingZones((prev) => prev.filter((z) => z.id !== id));
-
   const [obstacles, setObstacles] = useState<CanvasObstacle[]>([]);
+  const [parkingSpotGroups, setParkingSpotGroups] = useState<
+    ParkingSpotGroup[]
+  >([]);
 
-  const addObstacle = (obs: CanvasObstacle) =>
-    setObstacles((prev) => [...prev, obs]);
+  // 🧼 Reset selection when switching modes
+  useEffect(() => {
+    setSelectedObject(null);
+  }, [mode]);
 
-  const editObstacle = (
-    id: string,
-    updater: (obj: CanvasObstacle) => CanvasObstacle
-  ) => setObstacles((prev) => prev.map((o) => (o.id === id ? updater(o) : o)));
-  const removeObstacle = (id: string) =>
-    setObstacles((prev) => prev.filter((o) => o.id !== id));
-  console.log(obstacles);
-  console.log(parkingZones);
   return (
     <CanvasContext.Provider
       value={{
@@ -93,14 +85,34 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
         setMode,
         selectedObject,
         setSelectedObject,
+
         parkingZones,
-        addParkingZone,
-        removeParkingZone,
-        addObstacle,
-        editObstacle,
+        addParkingZone: (zone) => setParkingZones((prev) => [...prev, zone]),
+        editParkingZone: (id, updater) =>
+          setParkingZones((prev) =>
+            prev.map((z) => (z.id === id ? updater(z) : z))
+          ),
+        removeParkingZone: (id) =>
+          setParkingZones((prev) => prev.filter((z) => z.id !== id)),
+
         obstacles,
-        editParkingZone,
-        removeObstacle,
+        addObstacle: (obs) => setObstacles((prev) => [...prev, obs]),
+        editObstacle: (id, updater) =>
+          setObstacles((prev) =>
+            prev.map((o) => (o.id === id ? updater(o) : o))
+          ),
+        removeObstacle: (id) =>
+          setObstacles((prev) => prev.filter((o) => o.id !== id)),
+
+        parkingSpotGroups,
+        addParkingSpotGroup: (group) =>
+          setParkingSpotGroups((prev) => [...prev, group]),
+        editParkingSpotGroup: (id, updater) =>
+          setParkingSpotGroups((prev) =>
+            prev.map((g) => (g.id === id ? updater(g) : g))
+          ),
+        removeParkingSpotGroup: (id) =>
+          setParkingSpotGroups((prev) => prev.filter((g) => g.id !== id)),
       }}
     >
       {children}

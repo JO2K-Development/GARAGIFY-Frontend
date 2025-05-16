@@ -10,6 +10,8 @@ import { useParkingZoneMode } from "../hooks/modes/useParkingZoneMode";
 import { useCanvasContext } from "../context/CanvasContext";
 import { useObstacleMode } from "../hooks/modes/useObstacleMode";
 import ObstaclePanel from "./ObstaclePanel";
+import { useParkingSpotsMode } from "../hooks/modes/useParkingSpotsMode";
+import ParkingSpotPanel from "./ParkingSpotPanel";
 const { Option } = Select;
 
 type Mode = "parkingZone" | "obstacles" | "parkingSpots" | "view";
@@ -26,8 +28,12 @@ const ParkingCanvas = () => {
   const { canvasRef, canvas } = useFabricCanvas(800, 800);
   const zoomProps = useCanvasZoom(canvas);
   useCanvasPanning(canvas);
+
   useParkingZoneMode(canvas);
   const { setCurrentType } = useObstacleMode(canvas);
+
+  useParkingSpotsMode(canvas);
+
   return (
     <div className={styles.container}>
       <Select
@@ -44,6 +50,35 @@ const ParkingCanvas = () => {
       <div className={styles.controls}>
         <ZoomControls {...zoomProps} />
       </div>
+
+      {mode === "parkingSpots" && selectedObject && (
+        <div className={styles.panel}>
+          <ParkingSpotPanel />
+
+          <Button
+            danger
+            onClick={() => {
+              if (!canvas || !selectedObject) return;
+
+              const groupId = selectedObject.get("groupId");
+              if (!groupId) return;
+
+              // Remove all elements with this groupId (spots + line)
+              canvas.getObjects().forEach((obj) => {
+                if (obj.get("groupId") === groupId) {
+                  canvas.remove(obj);
+                }
+              });
+
+              canvas.discardActiveObject();
+              canvas.requestRenderAll();
+              setSelectedObject(null);
+            }}
+          >
+            Delete Group
+          </Button>
+        </div>
+      )}
 
       {mode === "obstacles" && (
         <div className={styles.panel}>
