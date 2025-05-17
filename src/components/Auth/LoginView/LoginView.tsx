@@ -5,9 +5,11 @@ import { Button, Typography } from "antd";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import styles from "./LoginView.module.scss";
-
+import labels from "@/labels.json";
 const { Text } = Typography;
-
+const {
+  login: { loginButton },
+} = labels;
 const LoginView = () => {
   return (
     <div className={styles.container}>
@@ -23,7 +25,7 @@ const LoginView = () => {
           />
         }
       >
-        <Text className={styles.buttonText}>Sign in with Google</Text>
+        <Text className={styles.buttonText}>{loginButton}</Text>
       </Button>
     </div>
   );

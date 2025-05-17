@@ -11,7 +11,8 @@ export const login = async (
   await client.POST("/api/v1/auth/access", {
     body,
   });
-export const refresh = async (
+
+export const refreshToken = async (
   body: components["schemas"]["TokenVerificationForm"]
 ) =>
   await client.POST("/api/v1/auth/refresh", {
