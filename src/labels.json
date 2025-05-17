@@ -1,4 +1,7 @@
 {
+    "login": {
+        "loginButton": "Sign in with Google"
+    },
     "navigation": {
         "borrowing": "Borrowing",
         "lending": "Lending",
