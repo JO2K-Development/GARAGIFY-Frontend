@@ -4,7 +4,7 @@ import { Mode, useCanvasContext } from "../../../context/CanvasContext";
 import useCanvasModeBase from "../useCanvasModeBase";
 import { FABRIC_META, FabricObjectTypes } from "../../../constants";
 import createParkingZone from "./createParkingZone";
-import createShadowLine from "./createShadowLine";
+import usePreviewLine from "../../canvas/usePreviewLine";
 
 const useParkingZoneMode = (canvas: fabric.Canvas | null) => {
   const { mode, setSelectedObject, addParkingZone, editParkingZone } =
@@ -13,9 +13,12 @@ const useParkingZoneMode = (canvas: fabric.Canvas | null) => {
   const isActive = mode === Mode.PARKING_ZONE;
 
   const pointsRef = useRef<fabric.Point[]>([]);
-  const previewRef = useRef<fabric.Polyline | null>(null);
   const drawingRef = useRef(false);
-
+  const { onMouseMovePreview,clearPreview} = usePreviewLine(
+    drawingRef,
+    pointsRef,
+    canvas
+  );
   useCanvasModeBase({
     canvas,
     modeName: Mode.PARKING_ZONE,
@@ -35,14 +38,7 @@ const useParkingZoneMode = (canvas: fabric.Canvas | null) => {
 
   useEffect(() => {
     if (!canvas || !isActive) return;
-
-    const clearPreview = () => {
-      if (previewRef.current) {
-        canvas.remove(previewRef.current);
-        previewRef.current = null;
-      }
-    };
-
+    clearPreview();
     const onMouseDown = (opt: fabric.TEvent) => {
       const evt = opt.e as MouseEvent;
       if (evt.ctrlKey || canvas.getActiveObject()) return;
@@ -79,34 +75,12 @@ const useParkingZoneMode = (canvas: fabric.Canvas | null) => {
       pointsRef.current.push(new fabric.Point(pointer.x, pointer.y));
     };
 
-    const onMouseMove = (opt: fabric.TEvent) => {
-      if (!drawingRef.current || pointsRef.current.length === 0 || !canvas)
-        return;
-
-      const pointer = canvas.getScenePoint(opt.e);
-      const tempPoints = [
-        ...pointsRef.current,
-        new fabric.Point(pointer.x, pointer.y),
-      ];
-      const polygonPoints = tempPoints.map((p) => ({ x: p.x, y: p.y }));
-
-      if (!previewRef.current) {
-        previewRef.current = createShadowLine(tempPoints);
-        canvas.add(previewRef.current);
-      } else {
-        previewRef.current.set({ points: polygonPoints });
-        previewRef.current.setCoords();
-      }
-
-      canvas.renderAll();
-    };
-
     canvas.on("mouse:down", onMouseDown);
-    canvas.on("mouse:move", onMouseMove);
+    canvas.on("mouse:move", onMouseMovePreview);
 
     return () => {
       canvas.off("mouse:down", onMouseDown);
-      canvas.off("mouse:move", onMouseMove);
+      canvas.off("mouse:move", onMouseMovePreview);
       clearPreview();
       drawingRef.current = false;
       pointsRef.current = [];

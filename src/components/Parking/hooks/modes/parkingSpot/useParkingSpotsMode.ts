@@ -8,6 +8,7 @@ import { Mode } from "@/components/Parking/context/CanvasContext";
 import { v4 as uuidv4 } from "uuid";
 import useCanvasModeBase from "../useCanvasModeBase";
 import { FABRIC_META, FabricObjectTypes } from "@/components/Parking/constants";
+import usePreviewLine from "../../canvas/usePreviewLine";
 
 export const removeGroupFromCanvas = (
   canvas: fabric.Canvas | null,
@@ -33,8 +34,12 @@ const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
 
   const drawingRef = useRef(false);
   const pointsRef = useRef<fabric.Point[]>([]);
-  const previewRef = useRef<fabric.Line | null>(null);
 
+  const { onMouseMovePreview, clearPreview } = usePreviewLine(
+    drawingRef,
+    pointsRef,
+    canvas
+  );
   const generateSpotsOnLine = (group: ParkingSpotGroup): fabric.Rect[] => {
     const { x1, y1, x2, y2 } = group.line;
     const dx = (x2! - x1!) / (group.spotCount + 1);
@@ -161,6 +166,7 @@ const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
   useEffect(() => {
     if (!canvas || !isActive) return;
 
+    clearPreview();
     const onMouseDown = (opt: fabric.TEvent) => {
       const evt = opt.e as MouseEvent;
       if (evt.ctrlKey || canvas.getActiveObject()) return;
@@ -182,49 +188,18 @@ const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
         drawingRef.current = false;
         pointsRef.current = [];
 
-        if (previewRef.current) {
-          canvas.remove(previewRef.current);
-          previewRef.current = null;
-        }
+        clearPreview();
 
         canvas.renderAll();
       }
     };
 
-    const onMouseMove = (opt: fabric.TEvent) => {
-      if (!drawingRef.current || pointsRef.current.length === 0 || !canvas)
-        return;
-
-      const pointer = canvas.getScenePoint(opt.e);
-      const p1 = pointsRef.current[0];
-      const p2 = pointer;
-
-      if (!previewRef.current) {
-        previewRef.current = new fabric.Line([p1.x, p1.y, p2.x, p2.y], {
-          stroke: "#0078d4",
-          strokeDashArray: [4, 4],
-          strokeWidth: 1,
-          selectable: false,
-          evented: false,
-        });
-        canvas.add(previewRef.current);
-      } else {
-        previewRef.current.set({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y });
-        previewRef.current.setCoords();
-      }
-
-      canvas.renderAll();
-    };
-
     canvas.on("mouse:down", onMouseDown);
-    canvas.on("mouse:move", onMouseMove);
+    canvas.on("mouse:move", onMouseMovePreview);
     return () => {
       canvas.off("mouse:down", onMouseDown);
-      canvas.off("mouse:move", onMouseMove);
-      if (previewRef.current) {
-        canvas.remove(previewRef.current);
-        previewRef.current = null;
-      }
+      canvas.off("mouse:move", onMouseMovePreview);
+      clearPreview();
       pointsRef.current = [];
       drawingRef.current = false;
     };
