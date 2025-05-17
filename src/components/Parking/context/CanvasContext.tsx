@@ -71,7 +71,7 @@ const CanvasContext = createContext<CanvasContextType | undefined>(undefined);
 export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [mode, setMode] = useState<Mode>(Mode.PARKING_ZONE);
+  const [mode, setMode] = useState<Mode>(Mode.PARKING_SPOTS);
   const [selectedObject, setSelectedObject] = useState<fabric.Object | null>(
     null
   );
@@ -82,6 +82,7 @@ export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
     ParkingSpotGroup[]
   >([]);
 
+  console.log(parkingSpotGroups);
   // 🧼 Reset selection when switching modes
   useEffect(() => {
     setSelectedObject(null);

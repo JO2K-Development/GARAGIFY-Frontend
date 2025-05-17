@@ -1,67 +1,109 @@
 import { useEffect, useRef } from "react";
 import * as fabric from "fabric";
-import { v4 as uuidv4 } from "uuid";
 import {
   ParkingSpotGroup,
   useCanvasContext,
-} from "../../../context/CanvasContext";
-import { FABRIC_META, FabricObjectTypes } from "../../../constants";
+} from "@/components/Parking/context/CanvasContext";
+import { Mode } from "@/components/Parking/context/CanvasContext";
+import { v4 as uuidv4 } from "uuid";
+import useCanvasModeBase from "../useCanvasModeBase";
+import { FABRIC_META, FabricObjectTypes } from "@/components/Parking/constants";
 
 const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
-  const { mode, setSelectedObject, addParkingSpotGroup, editParkingSpotGroup } =
-    useCanvasContext();
-  const isActive = mode === "parkingSpots";
+  const {
+    mode,
+    setSelectedObject,
+    addParkingSpotGroup,
+    editParkingSpotGroup,
+    parkingSpotGroups,
+  } = useCanvasContext();
 
-  const placingRef = useRef(false);
-  const clickRef = useRef<fabric.Point[]>([]);
-  const anchorRefs = useRef<Record<string, fabric.Circle[]>>({});
+  const isActive = mode === Mode.PARKING_SPOTS;
 
-  // PUBLIC API (call this from UI)
-  const startPlacing = () => {
-    placingRef.current = true;
-    clickRef.current = [];
-  };
+  const drawingRef = useRef(false);
+  const pointsRef = useRef<fabric.Point[]>([]);
+  const previewRef = useRef<fabric.Line | null>(null);
 
-  function addAnchorsToLine(group: ParkingSpotGroup, canvas: fabric.Canvas) {
-    const handleAnchorMove = (anchor: fabric.Circle, index: 0 | 1) => {
-      const [a1, a2] = anchorRefs.current[group.id];
-      const [x1, y1] =
-        index === 0 ? [anchor.left!, anchor.top!] : [a1.left!, a1.top!];
-      const [x2, y2] =
-        index === 0 ? [a2.left!, a2.top!] : [anchor.left!, anchor.top!];
+  const generateSpotsOnLine = (group: ParkingSpotGroup): fabric.Rect[] => {
+    const { x1, y1, x2, y2 } = group.line;
+    const dx = (x2! - x1!) / (group.spotCount + 1);
+    const dy = (y2! - y1!) / (group.spotCount + 1);
+    const angleDeg = group.spotAngle;
 
-      group.line.set({ x1, y1, x2, y2 });
+    const spots: fabric.Rect[] = [];
 
-      // Remove old spots
-      group.spots.forEach((s) => canvas.remove(s));
+    for (let i = 1; i <= group.spotCount; i++) {
+      const cx = x1! + dx * i;
+      const cy = y1! + dy * i;
 
-      // Generate new spots
-      editParkingSpotGroup(group.id, (current) => {
-        const updated = {
-          ...current,
-          line: group.line,
-        };
-        const newSpots = generateSpotsOnLine(updated);
-        newSpots.forEach((s) => canvas.add(s));
-        updated.spots = newSpots;
-        return updated;
+      const rect = new fabric.Rect({
+        width: group.spotSize.width,
+        height: group.spotSize.height,
+        left: cx,
+        top: cy,
+        angle: angleDeg,
+        fill: "#bbb",
+        stroke: "#444",
+        strokeWidth: 1,
+        originX: "center",
+        originY: "center",
+        selectable: false,
+        evented: false,
       });
 
-      canvas.requestRenderAll();
+      rect.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
+      rect.set(FABRIC_META.groupId, group.id);
+
+      spots.push(rect);
+    }
+
+    return spots;
+  };
+
+  const regenerateSpots = (group: ParkingSpotGroup) => {
+    const existingSpots = canvas?.getObjects().filter(
+      (obj) =>
+        obj.get(FABRIC_META.groupId) === group.id &&
+        obj.get(FABRIC_META.objectType) === FabricObjectTypes.ParkingSpotGroup &&
+        obj instanceof fabric.Rect
+    ) as fabric.Rect[];
+
+    existingSpots.forEach((spot) => canvas?.remove(spot));
+
+    const newSpots = generateSpotsOnLine(group);
+    newSpots.forEach((s) => canvas?.add(s));
+    group.spots = newSpots;
+    canvas?.requestRenderAll();
+  };
+
+  const createSpotGroup = (p1: fabric.Point, p2: fabric.Point) => {
+    const id = uuidv4();
+
+    const line = new fabric.Line([p1.x, p1.y, p2.x, p2.y], {
+      stroke: "#666",
+      strokeWidth: 2,
+      selectable: false,
+      evented: false,
+    });
+    line.set(FABRIC_META.customId, id);
+    line.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
+
+    const group: ParkingSpotGroup = {
+      id,
+      line,
+      spots: [],
+      spotCount: 1,
+      spotSize: { width: 40, height: 60 },
+      spotAngle: 0,
     };
 
-    const createAnchor = (
-      x: number,
-      y: number,
-      index: 0 | 1
-    ): fabric.Circle => {
+    const createAnchor = (x: number, y: number, index: 0 | 1) => {
       const anchor = new fabric.Circle({
         left: x,
         top: y,
-        radius: 8,
-        fill: "#2196F3",
+        radius: 6,
+        fill: "blue",
         stroke: "#000",
-        strokeWidth: 1,
         originX: "center",
         originY: "center",
         hasControls: false,
@@ -70,194 +112,144 @@ const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
         evented: true,
       });
 
-      anchor.set(FABRIC_META.groupId, group.id);
+      anchor.set(FABRIC_META.groupId, id);
       anchor.set("isAnchor", true);
-      anchor.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
 
-      anchor.on("moving", () => handleAnchorMove(anchor, index));
-      canvas.add(anchor);
+      anchor.on("moving", () => {
+        const x = anchor.left!;
+        const y = anchor.top!;
 
-      return anchor;
+        if (index === 0) line.set({ x1: x, y1: y });
+        else line.set({ x2: x, y2: y });
+
+        editParkingSpotGroup(id, (prev) => {
+          const updated = { ...prev, line };
+          regenerateSpots(updated);
+          return updated;
+        });
+      });
+
+      canvas?.add(anchor);
     };
 
-    // Create anchors at both ends of the line
-    const a1 = createAnchor(group.line.x1!, group.line.y1!, 0);
-    const a2 = createAnchor(group.line.x2!, group.line.y2!, 1);
+    createAnchor(p1.x, p1.y, 0);
+    createAnchor(p2.x, p2.y, 1);
 
-    // Store anchors references
-    anchorRefs.current[group.id] = [a1, a2];
-  }
+    const spots = generateSpotsOnLine(group);
+    spots.forEach((s) => canvas?.add(s));
+    group.spots = spots;
+
+    canvas?.add(line);
+    addParkingSpotGroup(group);
+  };
 
   useEffect(() => {
     if (!canvas || !isActive) return;
 
     const onMouseDown = (opt: fabric.TEvent) => {
-      if (!placingRef.current) return;
+      const evt = opt.e as MouseEvent;
+      if (evt.ctrlKey || canvas.getActiveObject()) return;
 
-      const pointer = canvas.getScenePoint(opt.e as MouseEvent);
-      clickRef.current.push(new fabric.Point(pointer.x, pointer.y));
+      const target = canvas.findTarget(evt);
+      if (target) return;
 
-      // If this is the second click, create the line and spots
-      if (clickRef.current.length === 2) {
-        const [p1, p2] = clickRef.current;
-        const id = uuidv4();
+      const pointer = canvas.getScenePoint(evt);
 
-        const line = new fabric.Line([p1.x, p1.y, p2.x, p2.y], {
-          stroke: "#666",
-          strokeWidth: 2,
-          strokeDashArray: [5, 5],
-          selectable: true,
-        });
+      if (!drawingRef.current) {
+        drawingRef.current = true;
+        pointsRef.current = [pointer];
+        return;
+      }
 
-        line.set(FABRIC_META.customId, id);
-        line.set(FABRIC_META.groupId, id);
-        line.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
+      pointsRef.current.push(pointer);
+      if (pointsRef.current.length === 2) {
+        createSpotGroup(pointsRef.current[0], pointsRef.current[1]);
+        drawingRef.current = false;
+        pointsRef.current = [];
 
-        canvas.add(line);
+        if (previewRef.current) {
+          canvas.remove(previewRef.current);
+          previewRef.current = null;
+        }
 
-        const group: ParkingSpotGroup = {
-          id,
-          line,
-          spotCount: 1,
-          spotSize: { width: 30, height: 60 },
-          spotAngle: 0,
-          spots: [],
-        };
-
-        // Generate and add spots
-        const spots = generateSpotsOnLine(group);
-        spots.forEach((s) => canvas.add(s));
-        group.spots = spots;
-
-        // Add to context
-        addParkingSpotGroup(group);
-
-        // Add anchors for dragging line endpoints
-        addAnchorsToLine(group, canvas);
-
-        // Set selection to this line
-        canvas.setActiveObject(line);
-        canvas.requestRenderAll();
-
-        // Reset placing state
-        placingRef.current = false;
-        clickRef.current = [];
+        canvas.renderAll();
       }
     };
 
-    const onSelect = () => setSelectedObject(canvas.getActiveObject() ?? null);
-    const onDeselect = () => setSelectedObject(null);
+    const onMouseMove = (opt: fabric.TEvent) => {
+      if (!drawingRef.current || pointsRef.current.length === 0 || !canvas)
+        return;
+
+      const pointer = canvas.getScenePoint(opt.e);
+      const p1 = pointsRef.current[0];
+      const p2 = pointer;
+
+      if (!previewRef.current) {
+        previewRef.current = new fabric.Line([p1.x, p1.y, p2.x, p2.y], {
+          stroke: "#0078d4",
+          strokeDashArray: [4, 4],
+          strokeWidth: 1,
+          selectable: false,
+          evented: false,
+        });
+        canvas.add(previewRef.current);
+      } else {
+        previewRef.current.set({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y });
+        previewRef.current.setCoords();
+      }
+
+      canvas.renderAll();
+    };
 
     canvas.on("mouse:down", onMouseDown);
-    canvas.on("selection:created", onSelect);
-    canvas.on("selection:updated", onSelect);
-    canvas.on("selection:cleared", onDeselect);
-
+    canvas.on("mouse:move", onMouseMove);
     return () => {
       canvas.off("mouse:down", onMouseDown);
-      canvas.off("selection:created", onSelect);
-      canvas.off("selection:updated", onSelect);
-      canvas.off("selection:cleared", onDeselect);
+      canvas.off("mouse:move", onMouseMove);
+      if (previewRef.current) {
+        canvas.remove(previewRef.current);
+        previewRef.current = null;
+      }
+      pointsRef.current = [];
+      drawingRef.current = false;
     };
-  }, [canvas, isActive, addParkingSpotGroup, setSelectedObject]);
-
-  // Control visibility & interactivity based on mode
-  useEffect(() => {
-    if (!canvas) return;
-
-    canvas.getObjects().forEach((obj) => {
-      const type = obj.get(FABRIC_META.objectType);
-      const isSpotGroup = type === FabricObjectTypes.ParkingSpotGroup;
-      const isAnchor = obj.get("isAnchor");
-      const isSpot = obj.get("isSpot");
-      const isLine = isSpotGroup && !isAnchor && !isSpot;
-
-      // Set visibility:
-      // - Spots are always visible
-      // - Lines and anchors are only visible in parking spots mode
-      obj.visible = isActive || (!isAnchor && !isLine);
-
-      // Set interactivity
-      obj.selectable = isActive && (isSpotGroup || isAnchor);
-      obj.evented = isActive && (isSpotGroup || isAnchor);
-    });
-
-    canvas.requestRenderAll();
   }, [canvas, isActive]);
 
-  // Public API: allow panel to trigger spot regeneration
-  const regenerateSpots = (group: ParkingSpotGroup) => {
-    if (!canvas) return;
+  useCanvasModeBase({
+    canvas,
+    modeName: Mode.PARKING_SPOTS,
+    onSelect: (obj) => {
+      if (obj) {
+        obj.set({
+          hasControls: false,
+          lockScalingX: true,
+          lockScalingY: true,
+          lockRotation: true,
+        });
+        drawingRef.current = false;
+      }
+      setSelectedObject(obj ?? null);
+    },
+    onModify: (obj) => {
+      const id = obj.get(FABRIC_META.customId);
+      if (!id) return;
+      editParkingSpotGroup(id, (prev) => {
+        const updated = { ...prev, line: obj as fabric.Line };
+        regenerateSpots(updated);
+        return updated;
+      });
+    },
+    selectableFilter: (obj) =>
+      obj.get(FABRIC_META.objectType) === FabricObjectTypes.ParkingSpotGroup ||
+      obj.get("isAnchor") === true,
+  });
 
-    group.spots.forEach((s) => canvas.remove(s));
-    const newSpots = generateSpotsOnLine(group);
-    newSpots.forEach((s) => canvas.add(s));
-
-    editParkingSpotGroup(group.id, (current) => ({
-      ...current,
-      spots: newSpots,
-    }));
-
-    canvas.requestRenderAll();
-  };
-
-  return { startPlacing, regenerateSpots };
+  useEffect(() => {
+    if (!canvas || !isActive) return;
+    parkingSpotGroups.forEach((group) => {
+      regenerateSpots(group);
+    });
+  }, [parkingSpotGroups, canvas, isActive]);
 };
 
-export function generateSpotsOnLine(group: {
-  id: string;
-  line: fabric.Line;
-  spotCount: number;
-  spotSize: { width: number; height: number };
-  spotAngle: number;
-}): fabric.Rect[] {
-  const { line, spotCount, spotSize, spotAngle } = group;
-  const { x1 = 0, y1 = 0, x2 = 0, y2 = 0 } = line;
-
-  // Calculate spacing between spots
-  const lineLength = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-
-  // If no spots or zero length line, return empty array
-  if (spotCount <= 0 || lineLength === 0) {
-    return [];
-  }
-
-  // Distribute spots evenly along the line
-  const spots: fabric.Rect[] = [];
-  const stepSize = lineLength / (spotCount + 1);
-  const lineAngle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
-
-  for (let i = 1; i <= spotCount; i++) {
-    // Calculate position along the line (t is 0-1 parameter)
-    const t = (i * stepSize) / lineLength;
-
-    // Lerp to find point coordinates
-    const cx = x1 + t * (x2 - x1);
-    const cy = y1 + t * (y2 - y1);
-
-    // Create rectangle
-    const rect = new fabric.Rect({
-      width: spotSize.width,
-      height: spotSize.height,
-      left: cx,
-      top: cy,
-      fill: "#ccc",
-      stroke: "#333",
-      strokeWidth: 1,
-      originX: "center",
-      originY: "center",
-      angle: spotAngle,
-      selectable: false, // Only select the line, not individual spots
-    });
-
-    // Set metadata
-    rect.set(FABRIC_META.groupId, group.id);
-    rect.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
-    rect.set("isSpot", true);
-
-    spots.push(rect);
-  }
-
-  return spots;
-}
 export default useParkingSpotsMode;

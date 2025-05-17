@@ -5,7 +5,8 @@ import { FABRIC_META, FabricObjectTypes } from "@/components/Parking/constants";
 const createLineWithAnchors = (
   canvas: fabric.Canvas,
   p1: fabric.Point,
-  p2: fabric.Point
+  p2: fabric.Point,
+  onMove?: () => void
 ) => {
   const id = uuidv4();
 
@@ -44,10 +45,12 @@ const createLineWithAnchors = (
       const y = anchor.top!;
 
       if (index === 0) {
-        line.set({ x1: x, y1: y });
+        line.set({ x1: anchor.left!, y1: anchor.top! });
       } else {
-        line.set({ x2: x, y2: y });
+        line.set({ x2: anchor.left!, y2: anchor.top! });
       }
+
+      if (onMove) onMove(); // ✅ Call callback here
 
       canvas.requestRenderAll();
     });

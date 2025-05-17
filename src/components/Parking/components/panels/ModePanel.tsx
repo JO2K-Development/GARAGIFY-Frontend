@@ -24,11 +24,10 @@ const ModePanel: React.FC<ModePanelProps> = ({ canvas }) => {
   useCanvasPanning(canvas);
   useParkingZoneMode(canvas);
   const { setCurrentType } = useObstacleMode(canvas);
-  const { startPlacing } = useParkingSpotsMode(canvas);
 
   switch (mode) {
     case Mode.PARKING_SPOTS:
-      return <ParkingSpotPanel canvas={canvas} place={startPlacing} />;
+      return <ParkingSpotPanel canvas={canvas} />;
     case Mode.OBSTACLES:
       return <ObstaclePanel canvas={canvas} onSelect={setCurrentType} />;
     case Mode.PARKING_ZONE:
