@@ -1,7 +1,8 @@
-import { Layout, Menu } from "antd";
+import { Button, Layout, Menu } from "antd";
 import Link from "next/link";
 import styles from "./Navbar.module.scss";
 import labels from "@/labels.json";
+import { signOut } from "next-auth/react";
 const {
   navigation: { borrowing, lending, logout },
 } = labels;
@@ -22,7 +23,8 @@ const Navbar = () => {
           },
           {
             key: logout,
-            label: <Link href="/login">{logout}</Link>,
+            onClick: () => signOut(),
+            label: "logout",
           },
         ]}
       />
