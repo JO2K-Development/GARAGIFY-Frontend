@@ -9,6 +9,17 @@ import { v4 as uuidv4 } from "uuid";
 import useCanvasModeBase from "../useCanvasModeBase";
 import { FABRIC_META, FabricObjectTypes } from "@/components/Parking/constants";
 
+export const removeGroupFromCanvas = (
+  canvas: fabric.Canvas | null,
+  groupId: string
+) => {
+  canvas?.getObjects().forEach((obj) => {
+    if (obj.get(FABRIC_META.groupId) === groupId) {
+      canvas.remove(obj);
+    }
+  });
+};
+
 const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
   const {
     mode,
@@ -61,12 +72,15 @@ const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
   };
 
   const regenerateSpots = (group: ParkingSpotGroup) => {
-    const existingSpots = canvas?.getObjects().filter(
-      (obj) =>
-        obj.get(FABRIC_META.groupId) === group.id &&
-        obj.get(FABRIC_META.objectType) === FabricObjectTypes.ParkingSpotGroup &&
-        obj instanceof fabric.Rect
-    ) as fabric.Rect[];
+    const existingSpots = canvas
+      ?.getObjects()
+      .filter(
+        (obj) =>
+          obj.get(FABRIC_META.groupId) === group.id &&
+          obj.get(FABRIC_META.objectType) ===
+            FabricObjectTypes.ParkingSpotGroup &&
+          obj instanceof fabric.Rect
+      ) as fabric.Rect[];
 
     existingSpots.forEach((spot) => canvas?.remove(spot));
 
@@ -87,6 +101,7 @@ const useParkingSpotsMode = (canvas: fabric.Canvas | null) => {
     });
     line.set(FABRIC_META.customId, id);
     line.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
+    line.set(FABRIC_META.groupId, id); //
 
     const group: ParkingSpotGroup = {
       id,

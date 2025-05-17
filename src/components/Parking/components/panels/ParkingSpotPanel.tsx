@@ -4,7 +4,9 @@ import { useCanvasContext } from "@/components/Parking/context/CanvasContext";
 import { InputNumber, Slider, Space, Typography, Button, Form } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import useParkingSpotsMode from "../../hooks/modes/parkingSpot/useParkingSpotsMode";
+import useParkingSpotsMode, {
+  removeGroupFromCanvas,
+} from "../../hooks/modes/parkingSpot/useParkingSpotsMode";
 
 const { Title } = Typography;
 
@@ -14,6 +16,7 @@ const ParkingSpotPanel = ({ canvas }: { canvas?: fabric.Canvas }) => {
     parkingSpotGroups,
     editParkingSpotGroup,
     removeParkingSpotGroup,
+    setSelectedObject,
   } = useCanvasContext();
   useParkingSpotsMode(canvas);
   const [groupId, setGroupId] = useState<string | null>(null);
@@ -97,7 +100,11 @@ const ParkingSpotPanel = ({ canvas }: { canvas?: fabric.Canvas }) => {
           <Button
             danger
             icon={<DeleteOutlined />}
-            onClick={() => removeParkingSpotGroup(group.id)}
+            onClick={() => {
+              removeGroupFromCanvas(canvas, group.id); // 🧼 immediate cleanup
+              removeParkingSpotGroup(group.id); // 🧾 update context
+              setSelectedObject(null); // ⛔ clear selection
+            }}
             block
           >
             Delete Group
