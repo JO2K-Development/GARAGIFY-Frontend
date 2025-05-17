@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
   Button,
@@ -17,14 +15,19 @@ import {
 } from "@ant-design/icons";
 import * as fabric from "fabric";
 import { useCanvasContext } from "../../context/CanvasContext";
+import { generateSpotsOnLine } from "../../hooks/modes/parkingSpot/useParkingSpotsMode";
 
 const { Title, Text } = Typography;
 
 type ParkingSpotPanelProps = {
   canvas: fabric.Canvas | undefined;
+  place: () => void;
 };
 
-const ParkingSpotPanel: React.FC<ParkingSpotPanelProps> = ({ canvas }) => {
+const ParkingSpotPanel: React.FC<ParkingSpotPanelProps> = ({
+  canvas,
+  place,
+}) => {
   const {
     selectedObject,
     parkingSpotGroups,
@@ -33,49 +36,94 @@ const ParkingSpotPanel: React.FC<ParkingSpotPanelProps> = ({ canvas }) => {
     setSelectedObject,
   } = useCanvasContext();
 
+  if (!canvas) return null;
+
   if (!selectedObject) {
     return (
       <div style={{ minWidth: 250 }}>
+        <Button type="primary" onClick={place} style={{ width: "100%" }}>
+          ➕ Add Parking Spot Group
+        </Button>
         <Title level={5}>🅿️ Parking Spot Tools</Title>
         <Divider style={{ margin: "8px 0" }} />
         <Text type="secondary">
-          Select a parking spot group on the canvas to edit it.
+          Click the button above to add a parking spot group.
+          <br />
+          <br />
+          First click sets the starting point, second click sets the ending
+          point.
+          <br />
+          <br />
+          You can then adjust the number of spots, their size, and rotation.
         </Text>
       </div>
     );
   }
 
+  // Get the groupId from the selected object
   const groupId =
     selectedObject.get("groupId") ||
     (selectedObject.type === "activeSelection" &&
       selectedObject._objects?.[0]?.get("groupId"));
 
+  // Find the group in our context
   const group = parkingSpotGroups.find((g) => g.id === groupId);
 
   if (!group) {
     return (
       <div style={{ minWidth: 250 }}>
+        <Button type="primary" onClick={place} style={{ width: "100%" }}>
+          ➕ Add Parking Spot Group
+        </Button>
         <Title level={5}>🅿️ Parking Spot Tools</Title>
         <Divider style={{ margin: "8px 0" }} />
-        <Text type="secondary">Invalid selection.</Text>
+        <Text type="secondary">Please select a parking spot group.</Text>
       </div>
     );
   }
 
   const handleSpotCountChange = (value: number | null) => {
-    if (!value) return;
-    editParkingSpotGroup(group.id, (prev) => ({
-      ...prev,
-      spotCount: value,
-    }));
+    if (!value || value < 1) return;
+
+    // Update group in context
+    editParkingSpotGroup(group.id, (prev) => {
+      const updated = {
+        ...prev,
+        spotCount: value,
+      };
+
+      // Remove old spots
+      prev.spots.forEach((s) => canvas.remove(s));
+
+      // Generate new spots
+      const newSpots = generateSpotsOnLine(updated);
+      newSpots.forEach((s) => canvas.add(s));
+      updated.spots = newSpots;
+
+      return updated;
+    });
+
+    canvas.requestRenderAll();
   };
 
   const handleSpotAngleChange = (value: number | null) => {
     if (value === null) return;
-    editParkingSpotGroup(group.id, (prev) => ({
-      ...prev,
-      spotAngle: value,
-    }));
+
+    editParkingSpotGroup(group.id, (prev) => {
+      const updated = {
+        ...prev,
+        spotAngle: value,
+      };
+
+      // Update angle on each spot
+      updated.spots.forEach((spot) => {
+        spot.set("angle", value);
+      });
+
+      return updated;
+    });
+
+    canvas.requestRenderAll();
   };
 
   const handleSpotSizeChange = (
@@ -83,31 +131,61 @@ const ParkingSpotPanel: React.FC<ParkingSpotPanelProps> = ({ canvas }) => {
     value: number | null
   ) => {
     if (!value) return;
-    editParkingSpotGroup(group.id, (prev) => ({
-      ...prev,
-      spotSize: {
-        ...prev.spotSize,
-        [dimension]: value,
-      },
-    }));
+
+    editParkingSpotGroup(group.id, (prev) => {
+      const updated = {
+        ...prev,
+        spotSize: {
+          ...prev.spotSize,
+          [dimension]: value,
+        },
+      };
+
+      // Remove old spots
+      prev.spots.forEach((s) => canvas.remove(s));
+
+      // Generate new spots
+      const newSpots = generateSpotsOnLine(updated);
+      newSpots.forEach((s) => canvas.add(s));
+      updated.spots = newSpots;
+
+      return updated;
+    });
+
+    canvas.requestRenderAll();
   };
 
   const rotateSpots = (degrees: number) => {
-    editParkingSpotGroup(group.id, (prev) => ({
-      ...prev,
-      spotAngle: prev.spotAngle + degrees,
-    }));
+    const newAngle = group.spotAngle + degrees;
+
+    editParkingSpotGroup(group.id, (prev) => {
+      const updated = {
+        ...prev,
+        spotAngle: newAngle,
+      };
+
+      // Update angle on each spot
+      updated.spots.forEach((spot) => {
+        spot.set("angle", newAngle);
+      });
+
+      return updated;
+    });
+
+    canvas.requestRenderAll();
   };
 
   const handleDelete = () => {
     if (!canvas || !groupId) return;
 
+    // Remove all related objects from canvas
     canvas.getObjects().forEach((obj) => {
       if (obj.get("groupId") === groupId) {
         canvas.remove(obj);
       }
     });
 
+    // Remove from context
     removeParkingSpotGroup(groupId);
     canvas.discardActiveObject();
     canvas.requestRenderAll();
@@ -116,7 +194,7 @@ const ParkingSpotPanel: React.FC<ParkingSpotPanelProps> = ({ canvas }) => {
 
   return (
     <div style={{ minWidth: 250 }}>
-      <Title level={5}>🅿️ Parking Spot Tools</Title>
+      <Title level={5}>🅿️ Parking Spot Editor</Title>
       <Divider style={{ margin: "8px 0" }} />
 
       <Form layout="vertical">
@@ -133,21 +211,27 @@ const ParkingSpotPanel: React.FC<ParkingSpotPanelProps> = ({ canvas }) => {
         <Divider style={{ margin: "12px 0" }} />
 
         <Form.Item label="Spot Size">
-          <Space style={{ width: "100%" }}>
-            <span>Width:</span>
-            <InputNumber
-              min={10}
-              max={100}
-              value={group.spotSize.width}
-              onChange={(val) => handleSpotSizeChange("width", val)}
-            />
-            <span>Height:</span>
-            <InputNumber
-              min={20}
-              max={200}
-              value={group.spotSize.height}
-              onChange={(val) => handleSpotSizeChange("height", val)}
-            />
+          <Space direction="vertical" style={{ width: "100%" }}>
+            <div>
+              <Text>Width:</Text>
+              <InputNumber
+                min={10}
+                max={100}
+                value={group.spotSize.width}
+                onChange={(val) => handleSpotSizeChange("width", val)}
+                style={{ width: 80, marginLeft: 10 }}
+              />
+            </div>
+            <div>
+              <Text>Height:</Text>
+              <InputNumber
+                min={20}
+                max={200}
+                value={group.spotSize.height}
+                onChange={(val) => handleSpotSizeChange("height", val)}
+                style={{ width: 80, marginLeft: 10 }}
+              />
+            </div>
           </Space>
         </Form.Item>
 

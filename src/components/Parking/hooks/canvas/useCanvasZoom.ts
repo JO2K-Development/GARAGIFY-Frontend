@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import * as fabric from "fabric";
 
-export const useCanvasZoom = (canvas: fabric.Canvas | null) => {
+const useCanvasZoom = (canvas: fabric.Canvas | null) => {
   const zoom = useCallback(
     (factor: number) => {
       if (!canvas) return;
@@ -20,3 +20,5 @@ export const useCanvasZoom = (canvas: fabric.Canvas | null) => {
     onZoomOut: () => zoom(0.9),
   };
 };
+
+export default useCanvasZoom;

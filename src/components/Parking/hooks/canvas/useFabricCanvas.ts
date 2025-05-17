@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 
-export const useFabricCanvas = (width = 800, height = 800, gridSize = 50) => {
+const useFabricCanvas = (width = 800, height = 800, gridSize = 50) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null);
 
@@ -57,3 +57,5 @@ export const useFabricCanvas = (width = 800, height = 800, gridSize = 50) => {
 
   return { canvasRef, canvas };
 };
+
+export default useFabricCanvas;

@@ -2,7 +2,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import * as fabric from "fabric";
 
-export type Mode = "parkingZone" | "obstacles" | "parkingSpots" | "view";
+export enum Mode {
+  PARKING_ZONE = "parkingZone",
+  OBSTACLES = "obstacles",
+  PARKING_SPOTS = "parkingSpots",
+  VIEW = "view",
+}
 
 export interface ParkingSpotGroup {
   id: string;
@@ -13,9 +18,13 @@ export interface ParkingSpotGroup {
   spotAngle: number;
 }
 
+export enum ObstacleType {
+  TREE = "tree",
+  AREA = "area",
+}
 interface CanvasObstacle {
   id: string;
-  type: "tree" | "area";
+  type: ObstacleType;
   fabricObject: fabric.Object;
 }
 
@@ -62,7 +71,7 @@ const CanvasContext = createContext<CanvasContextType | undefined>(undefined);
 export const CanvasProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [mode, setMode] = useState<Mode>("parkingZone");
+  const [mode, setMode] = useState<Mode>(Mode.PARKING_ZONE);
   const [selectedObject, setSelectedObject] = useState<fabric.Object | null>(
     null
   );

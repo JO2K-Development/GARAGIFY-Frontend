@@ -4,7 +4,7 @@ import type { TEvent } from "fabric";
 import type { Canvas } from "fabric"; 
 
 
-export const useCanvasPanning = (canvas: Canvas | null) => {
+const useCanvasPanning = (canvas: Canvas | null) => {
   useEffect(() => {
     if (!canvas) return;
 
@@ -56,3 +56,5 @@ export const useCanvasPanning = (canvas: Canvas | null) => {
     };
   }, [canvas]);
 };
+
+export default useCanvasPanning;

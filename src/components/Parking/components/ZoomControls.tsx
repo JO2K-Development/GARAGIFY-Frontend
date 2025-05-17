@@ -3,7 +3,7 @@
 import React from "react";
 import { Button, Space, Tooltip } from "antd";
 import { ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
-import { useCanvasZoom } from "../hooks/useCanvasZoom";
+import useCanvasZoom from "../hooks/canvas/useCanvasZoom";
 import { Canvas } from "fabric";
 
 type Props = {

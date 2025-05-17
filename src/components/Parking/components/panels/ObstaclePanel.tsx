@@ -1,14 +1,13 @@
 "use client";
 
-import React from "react";
 import { Button, Space, Divider, Typography } from "antd";
-import { useCanvasContext } from "../../context/CanvasContext";
+import { ObstacleType, useCanvasContext } from "../../context/CanvasContext";
 import * as fabric from "fabric";
 
 const { Title } = Typography;
 
 type ObstaclePanelProps = {
-  onSelect: (type: "tree" | "area") => void;
+  onSelect: (type: ObstacleType) => void;
   canvas: fabric.Canvas | undefined;
 };
 
@@ -35,10 +34,10 @@ const ObstaclePanel: React.FC<ObstaclePanelProps> = ({ onSelect, canvas }) => {
       <Divider style={{ margin: "8px 0" }} />
 
       <Space direction="vertical" style={{ width: "100%" }}>
-        <Button onClick={() => onSelect("tree")} block>
+        <Button onClick={() => onSelect(ObstacleType.TREE)} block>
           🌳 Add Tree
         </Button>
-        <Button onClick={() => onSelect("area")} block>
+        <Button onClick={() => onSelect(ObstacleType.AREA)} block>
           🟦 Add Area
         </Button>
       </Space>

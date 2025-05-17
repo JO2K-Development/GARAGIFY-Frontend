@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Button, Divider, Typography } from "antd";
 import * as fabric from "fabric";
 import { useCanvasContext } from "../../context/CanvasContext";

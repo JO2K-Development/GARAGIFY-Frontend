@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import styles from "./ParkingCanvas.module.scss";
-import { useFabricCanvas } from "../../hooks/useFabricCanvas";
+import useFabricCanvas from "../../hooks/canvas/useFabricCanvas";
 import ZoomControls from "../ZoomControls";
 import ModeSelector from "../ModeSelector/ModeSelector";
-import ModePanel from "../panels/renderPanels";
+import ModePanel from "../panels/ModePanel";
 
 const ParkingCanvas = () => {
   const { canvasRef, canvas } = useFabricCanvas(800, 800);

@@ -1,10 +1,8 @@
 "use client";
 import React from "react";
 import { Select } from "antd";
-import { useCanvasContext } from "../../context/CanvasContext";
+import { Mode, useCanvasContext } from "../../context/CanvasContext";
 import styles from "./ModeSelector.module.scss";
-
-const { Option } = Select;
 
 const ModeSelector: React.FC = () => {
   const { mode, setMode } = useCanvasContext();
@@ -12,13 +10,13 @@ const ModeSelector: React.FC = () => {
   return (
     <Select
       value={mode}
-      onChange={(value) => setMode(value as typeof mode)}
+      onChange={(value) => setMode(value)}
       className={styles.selector}
     >
-      <Option value="parkingZone">🗂 Parking Zones</Option>
-      <Option value="obstacles">🚧 Obstacles</Option>
-      <Option value="parkingSpots">🅿️ Parking Spots</Option>
-      <Option value="view">👁 View Mode</Option>
+      <Select.Option value={Mode.PARKING_ZONE}>🗂 Parking Zones</Select.Option>
+      <Select.Option value={Mode.OBSTACLES}>🚧 Obstacles</Select.Option>
+      <Select.Option value={Mode.PARKING_SPOTS}>🅿️ Parking Spots</Select.Option>
+      <Select.Option value={Mode.VIEW}>👁 View</Select.Option>
     </Select>
   );
 };
