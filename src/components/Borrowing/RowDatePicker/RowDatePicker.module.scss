@@ -1,0 +1,75 @@
+.DateContainer {
+  height: 130px;
+  color: #727070;
+  display: flex;
+  justify-content: left;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+  width: 80%;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.DayNumber {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.Month {
+  @extend .DayNumber;
+  font-weight: 500;
+  color: #A78BFA;
+}
+
+.SelectedMonth {
+  @extend .DayNumber;
+  font-weight: 700;
+  color: #7C3AED;
+}
+
+.HiddenMonth {
+  @extend .DayNumber;
+  visibility: hidden;
+}
+
+.Day {
+  display: flex;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 30px;
+  height: 20px;
+}
+
+.DisabledDay {
+  @extend .Day;
+  cursor: not-allowed;
+  color: #d1d1d1;
+}
+
+.NormalDay {
+  @extend .Day;
+  background-color: transparent;
+}
+
+.SelectedDay {
+  @extend .Day;
+  background-color: #8B5CF6;
+  color: white;
+}
+
+.StartDay {
+  @extend .SelectedDay;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.EndDay {
+  @extend .SelectedDay;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}

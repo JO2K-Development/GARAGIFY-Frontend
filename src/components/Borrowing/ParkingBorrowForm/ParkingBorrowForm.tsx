@@ -5,6 +5,7 @@ import labels from "@/labels.json";
 import dayjs from "dayjs";
 import styles from "./ParkingBorrowForm.module.scss";
 import useParkingBorrowForm, { TIME_FORMAT } from "./useParkingBorrowForm";
+import RowDatePicker from "@/components/Borrowing/RowDatePicker/RowDatePicker";
 const { RangePicker } = DatePicker;
 const {
   borrowing: {
@@ -28,8 +29,7 @@ const ParkingBorrowForm = () => {
           control={control}
           rules={{ required: dateRangeRequired }}
           render={({ field }) => (
-            <RangePicker
-              popupClassName={styles.dateRangePicker}
+            <RowDatePicker
               {...field}
               disabledDate={isDateDisabled}
               value={
