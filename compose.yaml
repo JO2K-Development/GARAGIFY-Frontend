@@ -1,0 +1,18 @@
+# docker network create garagify-shared-network;docker compose up;
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - garagify-shared-network
+
+networks:
+  garagify-shared-network:
+    external: true

@@ -7,10 +7,11 @@ import { useEffect, useState } from "react";
 import useParkingSpotsMode, {
   removeGroupFromCanvas,
 } from "../../hooks/modes/parkingSpot/useParkingSpotsMode";
+import { Canvas } from "fabric";
 
 const { Title } = Typography;
 
-const ParkingSpotPanel = ({ canvas }: { canvas?: fabric.Canvas }) => {
+const ParkingSpotPanel = ({ canvas }: { canvas: Canvas }) => {
   const {
     selectedObject,
     parkingSpotGroups,
@@ -24,13 +25,13 @@ const ParkingSpotPanel = ({ canvas }: { canvas?: fabric.Canvas }) => {
   const group = parkingSpotGroups.find((g) => g.id === groupId);
 
   useEffect(() => {
-    const id =
-      selectedObject?.get("groupId") ??
-      (selectedObject?.get("type") === "activeSelection"
-        ? selectedObject._objects?.[0]?.get("groupId")
+    const groupId =
+      (selectedObject as any)?.get?.("groupId") ??
+      ((selectedObject as any)?.get?.("type") === "activeSelection"
+        ? (selectedObject as any)?._objects?.[0]?.get?.("groupId")
         : null);
 
-    setGroupId(typeof id === "string" ? id : null);
+    setGroupId(typeof groupId === "string" ? groupId : null);
   }, [selectedObject]);
 
   if (!group) return <Title level={5}>🅿️ Parking Spot Tool</Title>;
