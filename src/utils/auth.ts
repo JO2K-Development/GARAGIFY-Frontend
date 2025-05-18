@@ -20,7 +20,6 @@ export const authOptions: NextAuthOptions = {
           if (!response.ok) {
             throw new Error("Login failed");
           }
-
           if (response.ok && data?.access) {
             token.sessionToken = data.access;
           }
@@ -32,6 +31,8 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      if (!token?.sessionToken) throw new Error("Missing sessionToken");
+
       session.sessionToken = token.sessionToken as string;
       return session;
     },
