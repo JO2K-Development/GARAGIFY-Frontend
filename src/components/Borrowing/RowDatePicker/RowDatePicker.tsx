@@ -1,6 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState, useEffect, useRef } from "react";
 import styles from "./RowDatePicker.module.scss";
+import { LeftOutlined, MinusOutlined, RightOutlined } from "@ant-design/icons";
+import { DatePicker } from "antd";
 
 interface RowDatePickerProps {
   disabledDate: (currentDate: dayjs.Dayjs) => boolean
@@ -12,10 +14,29 @@ const RowDatePicker = ({ disabledDate, value, onChange }: RowDatePickerProps) =>
   const [dateList, setDateList] = useState<Dayjs[]>([dayjs(), dayjs().add(1, "day")]);
   const [startDay, setStartDay] = useState<Dayjs | null>(value?.[0] ?? null);
   const [endDay, setEndDay] = useState<Dayjs | null>(value?.[1] ?? null);
-  const [intervalsLeft, setIntervalsLeft] = useState([]);
-  const [intervalsRight, setIntervalsRight] = useState([]);
-  const [intervalIdLeft, setIntervalIdLeft] = useState();
-  const [intervalIdRight, setIntervalIdRight] = useState();
+  const [dayOffset, setDayOffset] = useState(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const dayRef = useRef<HTMLDivElement | null>(null);
+  const [daysToShow, setDaysToShow] = useState(20);
+
+  const calculateDaysToShow = () => {
+    if (containerRef.current && dayRef.current) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const actualDayWidth = dayRef.current.offsetWidth;
+
+      if (actualDayWidth > 0) {
+        const newDaysToShow = Math.floor(containerWidth / actualDayWidth);
+        console.log("Container:", containerWidth, "Day Width:", actualDayWidth, "Days:", newDaysToShow);
+        setDaysToShow(newDaysToShow);
+      }
+    }
+  };
+
+  useEffect(() => {
+    calculateDaysToShow();
+    window.addEventListener("resize", calculateDaysToShow);
+    return () => window.removeEventListener("resize", calculateDaysToShow);
+  }, []);
 
   const dateOnClick = (date: Dayjs) => {
     if (disabledDate(date)) {
@@ -50,6 +71,9 @@ const RowDatePicker = ({ disabledDate, value, onChange }: RowDatePickerProps) =>
     }
 
     if (day.isSame(startDay, "day")) {
+      if (day.isSame(endDay, "day") || endDay === null) {
+        return styles.StartEndDay;
+      }
       return styles.StartDay;
     }
 
@@ -66,7 +90,7 @@ const RowDatePicker = ({ disabledDate, value, onChange }: RowDatePickerProps) =>
 
   const getMonthStyle = (day: Dayjs, index: number) => {
     if (day.date() === 1 || index === 0) {
-      if (day.isAfter(startDay, "day") && day.isBefore(endDay, "day")) {
+      if ((day.isAfter(startDay, "day") && day.isBefore(endDay, "day")) || day.isSame(startDay, "day") || day.isSame(endDay, "day")) {
         return styles.SelectedMonth;
       }
       return styles.Month;
@@ -74,10 +98,10 @@ const RowDatePicker = ({ disabledDate, value, onChange }: RowDatePickerProps) =>
     return styles.HiddenMonth;
   }
 
-  const generateDateList = () => {
-    let date: Dayjs = dayjs();
+  const generateDateList = (offset: number) => {
+    let date: Dayjs = dayjs().add(offset, "day");
     const newDateList: Dayjs[] = [];
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < daysToShow; i++) {
       newDateList.push(dayjs(date));
       date = date.add(1, "day");
     }
@@ -85,37 +109,53 @@ const RowDatePicker = ({ disabledDate, value, onChange }: RowDatePickerProps) =>
   };
 
   useLayoutEffect(() => {
-    const newDateList = generateDateList();
+    console.log("Updating date list with offset:", dayOffset);
+    const newDateList = generateDateList(dayOffset);
     setDateList(newDateList);
-  }, []);
+  }, [daysToShow, dayOffset]);
 
   return (
-    <div>
-      <div id="scroll" className={ styles.DateContainer }>
-        { dateList.map((d, index) => (
-          <div
-            key={ index }
-            className="flex flex-col justify-center items-center font-bold"
-          >
-            <span className="text-[13px] leading-10">{ d.format('dddd')[0] }</span>
-            <div className="w-[40px] m-0 p-0 h-0 border-2 border-purple-400"/>
-            <div
-              onClick={ () => dateOnClick(d) }
-              className={ getNumberStyle(d) }
-            >
+    <div className={ styles.OuterContainer }>
+      <div className={ styles.PreviewContainer }>
+        <div>
+          <DatePicker value={ startDay } disabled/>
+        </div>
+        <MinusOutlined/>
+        <div>
+          <DatePicker value={ endDay } disabled/>
+        </div>
+      </div>
+      <div className={ styles.InnerContainer }>
+        <div className={ styles.ArrowContainer } onClick={ () => setDayOffset(dayOffset - Math.floor(daysToShow / 3)) }>
+          <LeftOutlined/>
+        </div>
+        <div id="scroll" className={ styles.DateContainer } ref={ containerRef }>
+          { dateList.map((d, index) => (
+            <div key={ index } ref={ index === 0 ? dayRef : null }>
+              <span className={ styles.DayOfWeek }>{ d.format('dddd')[0] }</span>
+              <div className={ styles.LineDivider }/>
+              <div
+                onClick={ () => dateOnClick(d) }
+                className={ getNumberStyle(d) }
+              >
                 <span className={ styles.DayNumber }>
                   { ("0" + d.date()).slice(-2) }
                 </span>
-            </div>
-            <span
-              className={ getMonthStyle(d, index) }
-            >
+              </div>
+              <span
+                className={ getMonthStyle(d, index) }
+              >
                 { d.format('MMM').toUpperCase() }
               </span>
-          </div>
-        )) }
+            </div>
+          )) }
+        </div>
+        <div className={ styles.ArrowContainer } onClick={ () => setDayOffset(dayOffset + Math.floor(daysToShow / 3)) }>
+          <RightOutlined/>
+        </div>
       </div>
     </div>
+
   )
 };
 
