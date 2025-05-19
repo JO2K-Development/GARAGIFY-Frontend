@@ -108,6 +108,12 @@ const RowDatePicker = ({ disabledDate, value, onChange }: RowDatePickerProps) =>
     return newDateList;
   };
 
+  useEffect(() => {
+    if (startDay && endDay) {
+      onChange?.([startDay, endDay ]);
+    }
+  }, [startDay, endDay]);
+
   useLayoutEffect(() => {
     console.log("Updating date list with offset:", dayOffset);
     const newDateList = generateDateList(dayOffset);
