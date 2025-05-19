@@ -1,11 +1,10 @@
 "use client";
-import { Button, Checkbox, DatePicker, Flex, TimePicker } from "antd";
+import { Button, Checkbox, Flex, TimePicker } from "antd";
 import { Controller } from "react-hook-form";
 import labels from "@/labels.json";
 import dayjs from "dayjs";
-import styles from "./ParkingBorrowForm.module.scss";
 import useParkingBorrowForm, { TIME_FORMAT } from "./useParkingBorrowForm";
-const { RangePicker } = DatePicker;
+import RowDatePicker from "@/components/Borrowing/RowDatePicker/RowDatePicker";
 const {
   borrowing: {
     form: { dateRangeRequired, findSpecialSpots, findNonReparkedSpots, submit },
@@ -28,8 +27,7 @@ const ParkingBorrowForm = () => {
           control={control}
           rules={{ required: dateRangeRequired }}
           render={({ field }) => (
-            <RangePicker
-              popupClassName={styles.dateRangePicker}
+            <RowDatePicker
               {...field}
               disabledDate={isDateDisabled}
               value={

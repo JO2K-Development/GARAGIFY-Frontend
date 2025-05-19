@@ -1,0 +1,134 @@
+.OuterContainer {
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.InnerContainer {
+  user-select: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.PreviewContainer {
+  @extend .InnerContainer;
+  gap: 0.5rem;
+}
+
+.DateContainer {
+  color: #727070;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  overflow-x: hidden;
+  width: 100%;
+  align-self: center;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    width: 2.5rem;
+  }
+}
+
+.ArrowContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  cursor: pointer;
+}
+
+.DayOfWeek {
+  line-height: 3rem;
+  font-size: 0.75rem;
+}
+
+.DayNumber {
+  font-size: 0.75rem;
+  line-height: 2.5rem;
+}
+
+.Month {
+  @extend .DayNumber;
+  font-weight: 500;
+  color: #69b1ff;
+}
+
+.SelectedMonth {
+  @extend .DayNumber;
+  font-weight: 700;
+  color: #1677ff;
+}
+
+.HiddenMonth {
+  @extend .DayNumber;
+  visibility: hidden;
+}
+
+.Day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+}
+
+.DisabledDay {
+  @extend .Day;
+  cursor: not-allowed;
+  color: #d1d1d1;
+}
+
+.NormalDay {
+  @extend .Day;
+  background-color: transparent;
+}
+
+.SelectedDay {
+  @extend .Day;
+  background-color: #1677ff;
+  color: white;
+}
+
+.StartDay {
+  @extend .SelectedDay;
+  border-top-left-radius: 50%;
+  border-bottom-left-radius: 50%;
+}
+
+.EndDay {
+  @extend .SelectedDay;
+  border-top-right-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+
+.StartEndDay {
+  @extend .SelectedDay;
+  border-radius: 50%;
+}
+
+.LineDivider {
+  padding: 0;
+  margin: 0.25rem 0;
+  border-width: 2px 0 0 0; /* Top border only */
+  border-style: solid;
+  border-color: #69b1ff;
+  width: 3rem;
+}
