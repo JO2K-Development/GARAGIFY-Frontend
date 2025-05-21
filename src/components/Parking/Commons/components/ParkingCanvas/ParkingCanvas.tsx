@@ -15,9 +15,9 @@ const ParkingCanvas = ({
   viewMode = false, // Default to false if not provided
 }: ParkingCanvasProps) => {
   const { canvasRef, canvas } = useFabricCanvas(800, 800);
-  useCanvasPanning(viewMode, canvas);
+  useCanvasPanning({ viewMode, canvas });
 
-  useParkingViewRender(canvas, viewMode);
+  useParkingViewRender({canvas, viewMode});
   return (
     <div className={styles.container}>
       {!viewMode && (

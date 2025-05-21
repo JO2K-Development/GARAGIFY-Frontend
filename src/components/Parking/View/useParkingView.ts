@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 import { useParkingViewContext } from "./ParkingViewContext"; // adjust path as needed
 import * as fabric from "fabric";
 import { createGridPattern } from "../Commons/utils/createGridPattern";
+import WithCanvas from "../Commons/utils/WithCanvas";
+import WithViewMode from "../Commons/utils/WithViewMode";
 
 // Helper to set all fabric objects as non-interactive
 function setNonInteractive(obj: fabric.Object) {
@@ -10,10 +12,10 @@ function setNonInteractive(obj: fabric.Object) {
   obj.hoverCursor = "default";
 }
 
-export function useParkingViewRender(
-  canvas?: fabric.Canvas,
-  viewMode?: boolean
-) {
+export function useParkingViewRender({
+  canvas,
+  viewMode,
+}: WithCanvas<WithViewMode>) {
   const { parking } = useParkingViewContext();
   const didRender = useRef(false);
 

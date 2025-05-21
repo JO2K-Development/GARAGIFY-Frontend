@@ -4,3 +4,5 @@ type WithCanvas<T = {}> = {
 } & T;
 
 export default WithCanvas;
+
+

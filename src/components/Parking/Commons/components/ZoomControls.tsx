@@ -10,7 +10,7 @@ interface Props {
 }
 
 const ZoomControls = ({ canvas }: Props) => {
-  const { onZoomIn, onZoomOut } = useCanvasZoom(canvas);
+  const { onZoomIn, onZoomOut } = useCanvasZoom({ canvas });
 
   return (
     <Space.Compact>

@@ -1,9 +1,10 @@
 // hooks/useCanvasPanning.ts
 import { useEffect } from "react";
 import type { TEvent } from "fabric";
-import * as fabric from "fabric";
+import WithCanvas from "../utils/WithCanvas";
+import WithViewMode from "../utils/WithViewMode";
 
-const useCanvasPanning = (viewMode: boolean, canvas?: fabric.Canvas) => {
+const useCanvasPanning = ({ canvas, viewMode }: WithCanvas<WithViewMode>) => {
   useEffect(() => {
     if (!canvas) return;
 

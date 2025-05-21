@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import * as fabric from "fabric";
 import { createGridPattern } from "../utils/createGridPattern";
 
-const useFabricCanvas = (width = 800, height = 800, gridSize = 50) => {
+const useFabricCanvas = (width = 800, height = 800) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas>();
 
