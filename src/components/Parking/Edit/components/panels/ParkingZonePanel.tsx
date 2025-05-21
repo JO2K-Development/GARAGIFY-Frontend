@@ -1,16 +1,12 @@
 "use client";
 
 import { Button, Divider, Typography } from "antd";
-import * as fabric from "fabric";
 import { useEditContext } from "../../Context/useEditContext";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
 const { Title, Text } = Typography;
 
-type ParkingZonePanelProps = {
-  canvas?: fabric.Canvas;
-};
-
-const ParkingZonePanel: React.FC<ParkingZonePanelProps> = ({ canvas }) => {
+const ParkingZonePanel = ({ canvas }: WithCanvas) => {
   const { selectedObject, setSelectedObject, removeZone } = useEditContext();
 
   const handleDelete = () => {

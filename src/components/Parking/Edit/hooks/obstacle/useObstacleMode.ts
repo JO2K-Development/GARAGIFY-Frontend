@@ -9,8 +9,9 @@ import {
 } from "@/components/Parking/Commons/constants";
 import { useEditContext } from "../../Context/useEditContext";
 import useCanvasModeBase from "../canvas/useCanvasModeBase";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
-const useObstacleMode = (canvas?: fabric.Canvas) => {
+const useObstacleMode = ({ canvas }: WithCanvas) => {
   const { setSelectedObject, addObstacle, editObstacle, mode } =
     useEditContext();
 

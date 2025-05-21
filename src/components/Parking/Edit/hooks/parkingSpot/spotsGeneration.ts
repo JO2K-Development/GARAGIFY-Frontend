@@ -5,6 +5,7 @@ import {
 import * as fabric from "fabric";
 import { ParkingSpotGroup } from "@/components/Parking/Commons/types";
 import createParkingSpot from "./createParkingSpot";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
 export const generateSpotsOnLine = (group: ParkingSpotGroup): fabric.Rect[] => {
   const { x1, y1, x2, y2 } = group.line;
@@ -27,10 +28,13 @@ export const generateSpotsOnLine = (group: ParkingSpotGroup): fabric.Rect[] => {
   return spots;
 };
 
-export const regenerateSpots = (
-  group: ParkingSpotGroup,
-  canvas?: fabric.Canvas | null
-) => {
+interface RegenerateSpotsProps {
+  group: ParkingSpotGroup;
+}
+export const regenerateSpots = ({
+  group,
+  canvas,
+}: WithCanvas<RegenerateSpotsProps>) => {
   if (!canvas) return;
   const existingSpots = canvas
     ?.getObjects()

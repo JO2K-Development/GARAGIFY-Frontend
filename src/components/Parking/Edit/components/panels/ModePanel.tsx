@@ -4,23 +4,19 @@ import { Mode } from "@/components/Parking/Commons/types";
 import ObstaclePanel from "./ObstaclePanel";
 import ParkingSpotPanel from "./ParkingSpotPanel";
 import ParkingZonePanel from "./ParkingZonePanel";
-import * as fabric from "fabric";
 import { Typography } from "antd";
 import useParkingZoneMode from "../../hooks/parkingZone/useParkingZoneMode";
 import { useEditContext } from "../../Context/useEditContext";
 import useObstacleMode from "../../hooks/obstacle/useObstacleMode";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
 const { Text } = Typography;
 
-interface ModePanelProps {
-  canvas?: fabric.Canvas;
-}
-
-const ModePanel = ({ canvas }: ModePanelProps) => {
+const ModePanel = ({ canvas }: WithCanvas) => {
   const { mode } = useEditContext();
 
-  useParkingZoneMode(canvas);
-  const { setCurrentType } = useObstacleMode(canvas);
+  useParkingZoneMode({ canvas });
+  const { setCurrentType } = useObstacleMode({ canvas });
 
   switch (mode) {
     case Mode.PARKING_SPOTS:

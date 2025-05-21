@@ -1,12 +1,18 @@
-import { RefObject, useEffect, useRef } from "react";
+import { RefObject, useRef } from "react";
 import * as fabric from "fabric";
 import createShadowLine from "../parkingZone/createShadowLine";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
-const usePreviewLine = (
-  drawingRef: RefObject<boolean>,
-  pointsRef: RefObject<fabric.Point[]>,
-  canvas?: fabric.Canvas | null
-) => {
+interface UsePreviewLineProps {
+  drawingRef: RefObject<boolean>;
+  pointsRef: RefObject<fabric.Point[]>;
+}
+
+const usePreviewLine = ({
+  drawingRef,
+  pointsRef,
+  canvas,
+}: WithCanvas<UsePreviewLineProps>) => {
   const previewRef = useRef<fabric.Polyline | null>(null);
   const onMouseMovePreview = (opt: fabric.TEvent) => {
     if (!drawingRef.current || pointsRef.current.length === 0 || !canvas)

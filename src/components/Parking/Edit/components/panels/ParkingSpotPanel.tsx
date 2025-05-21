@@ -6,13 +6,10 @@ import { useEffect, useState } from "react";
 import useParkingSpotsMode from "../../hooks/parkingSpot/useParkingSpotsMode";
 import removeGroupFromCanvas from "../../hooks/parkingSpot/removeGroupFromCanvas";
 import { useEditContext } from "../../Context/useEditContext";
-import * as fabric from "fabric";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 const { Title } = Typography;
 
-interface ParkingSpotPanelProps {
-  canvas?: fabric.Canvas;
-}
-const ParkingSpotPanel = ({ canvas }: ParkingSpotPanelProps) => {
+const ParkingSpotPanel = ({ canvas }: WithCanvas) => {
   const {
     selectedObject,
     parking: { spotGroups: parkingSpotGroups },
@@ -103,7 +100,7 @@ const ParkingSpotPanel = ({ canvas }: ParkingSpotPanelProps) => {
             danger
             icon={<DeleteOutlined />}
             onClick={() => {
-              removeGroupFromCanvas(group.id, canvas); // 🧼 immediate cleanup
+              removeGroupFromCanvas({ groupId: group.id, canvas }); // 🧼 immediate cleanup
               removeSpotGroup(group.id); // 🧾 update context
               setSelectedObject(null); // ⛔ clear selection
             }}

@@ -4,13 +4,12 @@ import React from "react";
 import { Button, Space, Tooltip } from "antd";
 import { ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
 import useCanvasZoom from "../hooks/useCanvasZoom";
-import { Canvas } from "fabric";
+import * as fabric from "fabric";
+interface Props {
+  canvas?: fabric.Canvas;
+}
 
-type Props = {
-  canvas: Canvas;
-};
-
-const ZoomControls: React.FC<Props> = ({ canvas }) => {
+const ZoomControls = ({ canvas }: Props) => {
   const { onZoomIn, onZoomOut } = useCanvasZoom(canvas);
 
   return (

@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import * as fabric from "fabric";
 import { useEditContext } from "../../Context/useEditContext";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
 interface UseCanvasModeBaseOptions {
-  canvas?: fabric.Canvas;
   modeName: string;
   onSelect?: (obj: fabric.Object | null) => void;
   onModify?: (obj: fabric.Object) => void;
@@ -16,7 +16,7 @@ const useCanvasModeBase = ({
   onSelect,
   onModify,
   selectableFilter,
-}: UseCanvasModeBaseOptions) => {
+}: WithCanvas<UseCanvasModeBaseOptions>) => {
   const { mode } = useEditContext();
   const isActive = mode === modeName;
 

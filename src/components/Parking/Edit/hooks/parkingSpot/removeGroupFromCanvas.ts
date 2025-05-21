@@ -1,6 +1,12 @@
 import { FABRIC_META } from "@/components/Parking/Commons/constants";
-import * as fabric from "fabric";
-const removeGroupFromCanvas = (groupId: string, canvas?: fabric.Canvas) => {
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
+interface RemoveGroupFromCanvasProps {
+  groupId: string;
+}
+const removeGroupFromCanvas = ({
+  canvas,
+  groupId,
+}: WithCanvas<RemoveGroupFromCanvasProps>) => {
   canvas?.getObjects().forEach((obj) => {
     if (obj.get(FABRIC_META.groupId) === groupId) {
       canvas.remove(obj);

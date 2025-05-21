@@ -1,5 +1,7 @@
 import * as fabric from "fabric";
 
+
+
 export enum Mode {
   PARKING_ZONE = "parkingZone",
   OBSTACLES = "obstacles",

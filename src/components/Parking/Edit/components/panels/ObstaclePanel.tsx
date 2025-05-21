@@ -1,18 +1,20 @@
 "use client";
 
 import { Button, Space, Divider, Typography } from "antd";
-import * as fabric from "fabric";
 import { ObstacleType } from "../../../Commons/types";
 import { useEditContext } from "../../Context/useEditContext";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
 const { Title } = Typography;
 
 interface ObstaclePanelProps {
   onSelect: (type: ObstacleType) => void;
-  canvas?: fabric.Canvas;
 }
 
-const ObstaclePanel = ({ onSelect, canvas }: ObstaclePanelProps) => {
+const ObstaclePanel = ({
+  onSelect,
+  canvas,
+}: WithCanvas<ObstaclePanelProps>) => {
   const { selectedObject, setSelectedObject, removeObstacle } =
     useEditContext();
 

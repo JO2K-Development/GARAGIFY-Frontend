@@ -25,11 +25,11 @@ const useParkingSpotsMode = (canvas?: fabric.Canvas) => {
   const drawingRef = useRef(false);
   const pointsRef = useRef<fabric.Point[]>([]);
 
-  const { onMouseMovePreview, clearPreview } = usePreviewLine(
+  const { onMouseMovePreview, clearPreview } = usePreviewLine({
     drawingRef,
     pointsRef,
-    canvas
-  );
+    canvas,
+  });
 
   useEffect(() => {
     if (!canvas || !isActive) return;
@@ -101,7 +101,7 @@ const useParkingSpotsMode = (canvas?: fabric.Canvas) => {
       if (!id) return;
       editSpotGroup(id, (prev) => {
         const updated = { ...prev, line: obj as fabric.Line };
-        regenerateSpots(updated, canvas);
+        regenerateSpots({ group: updated, canvas });
         return updated;
       });
     },
@@ -112,7 +112,7 @@ const useParkingSpotsMode = (canvas?: fabric.Canvas) => {
   useEffect(() => {
     if (!canvas || !isActive) return;
     spotGroups.forEach((group) => {
-      regenerateSpots(group, canvas);
+      regenerateSpots({ group, canvas });
     });
   }, [spotGroups, canvas, isActive]);
 };

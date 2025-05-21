@@ -9,19 +9,20 @@ import {
 } from "@/components/Parking/Commons/constants";
 import { useEditContext } from "../../Context/useEditContext";
 import usePreviewLine from "../canvas/usePreviewLine";
+import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
-const useParkingZoneMode = (canvas?: fabric.Canvas) => {
+const useParkingZoneMode = ({ canvas }: WithCanvas) => {
   const { mode, setSelectedObject, addZone, editZone } = useEditContext();
 
   const isActive = mode === Mode.PARKING_ZONE;
 
   const pointsRef = useRef<fabric.Point[]>([]);
   const drawingRef = useRef(false);
-  const { onMouseMovePreview, clearPreview } = usePreviewLine(
+  const { onMouseMovePreview, clearPreview } = usePreviewLine({
     drawingRef,
     pointsRef,
-    canvas
-  );
+    canvas,
+  });
   useCanvasModeBase({
     canvas,
     modeName: Mode.PARKING_ZONE,
