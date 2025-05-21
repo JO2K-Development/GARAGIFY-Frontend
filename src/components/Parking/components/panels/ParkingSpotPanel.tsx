@@ -4,10 +4,9 @@ import { useCanvasContext } from "@/components/Parking/context/CanvasContext";
 import { InputNumber, Slider, Space, Typography, Button, Form } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import useParkingSpotsMode, {
-  removeGroupFromCanvas,
-} from "../../hooks/modes/parkingSpot/useParkingSpotsMode";
+import useParkingSpotsMode from "../../hooks/modes/parkingSpot/useParkingSpotsMode";
 import { Canvas } from "fabric";
+import removeGroupFromCanvas from "../../hooks/modes/parkingSpot/removeGroupFromCanvas";
 
 const { Title } = Typography;
 

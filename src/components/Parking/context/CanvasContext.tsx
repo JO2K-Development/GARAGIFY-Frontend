@@ -9,13 +9,16 @@ export enum Mode {
   VIEW = "view",
 }
 
-export interface ParkingSpotGroup {
+export interface ParkingGroupMeta {
   id: string;
-  line: fabric.Line;
-  spots: fabric.Rect[];
   spotCount: number;
   spotSize: { width: number; height: number };
   spotAngle: number;
+}
+
+export interface ParkingSpotGroup extends ParkingGroupMeta {
+  line: fabric.Line;
+  spots: fabric.Rect[];
 }
 
 export enum ObstacleType {

@@ -12,4 +12,5 @@ export enum FabricObjectTypes {
   Obstacle = "obstacle",
   ParkingZone = "parkingZone",
   ParkingSpotGroup = "parkingSpotGroup",
+  Anchor = "Anchor",
 }

@@ -24,7 +24,6 @@ export const redrawParkingSpotGroup = (
 
   // Calculate start and end points to evenly distribute spots along the line
   const lineAngle = Math.atan2(dy, dx);
-  const perpendicular = lineAngle + Math.PI / 2;
 
   // Center of the line
   const center = new fabric.Point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
