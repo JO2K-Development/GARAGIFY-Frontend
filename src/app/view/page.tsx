@@ -1,5 +1,6 @@
 "use client";
-import ParkingEditor from "@/components/Parking/Edit/ParkingEditor/ParkingEditor";
+import ParkingView from "@/components/Parking/View/ParkingView/ParkingView";
+import dynamic from "next/dynamic";
 
 export default function Page() {
   return (
@@ -11,7 +12,7 @@ export default function Page() {
         height: "100%",
       }}
     >
-      <ParkingEditor />
+      <ParkingView />
     </div>
   );
 }

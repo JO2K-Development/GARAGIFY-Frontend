@@ -49,6 +49,56 @@ export interface components {
             access: string;
             refresh: string;
         };
+        /** @enum {string} */
+        ObstacleType: "tree" | "area";
+        SpotSize: {
+            width: number;
+            height: number;
+        };
+        ParkingGroupMeta: {
+            id: string;
+            spotCount: number;
+            spotSize: components["schemas"]["SpotSize"];
+            spotAngle: number;
+        };
+        /** @description Serialized fabric.Line representation */
+        FabricLine: {
+            /** @example line */
+            type?: string;
+            points?: number[];
+        };
+        /** @description Serialized fabric.Rect representation */
+        FabricRect: {
+            /** @example rect */
+            type?: string;
+            left?: number;
+            top?: number;
+            width?: number;
+            height?: number;
+        };
+        /** @description Serialized fabric.Object representation */
+        FabricObject: {
+            type?: string;
+        };
+        ParkingSpotGroup: components["schemas"]["ParkingGroupMeta"] & {
+            line?: components["schemas"]["FabricLine"];
+            spots?: components["schemas"]["FabricRect"][];
+        };
+        CanvasObstacle: {
+            id: string;
+            type: components["schemas"]["ObstacleType"];
+            fabricObject: components["schemas"]["FabricObject"];
+        };
+        CanvasZone: {
+            id: string;
+            name?: string;
+            fabricObject: components["schemas"]["FabricObject"];
+        };
+        ParkingMap: {
+            zones: components["schemas"]["CanvasZone"][];
+            obstacles: components["schemas"]["CanvasObstacle"][];
+            spotGroups: components["schemas"]["ParkingSpotGroup"][];
+        };
     };
     responses: never;
     parameters: never;
