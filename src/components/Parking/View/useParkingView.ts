@@ -1,11 +1,18 @@
 import { useEffect, useRef } from "react";
-import { useParkingViewContext } from "./ParkingViewContext"; // adjust path as needed
+import { useParkingViewContext } from "./ParkingViewContext";
 import * as fabric from "fabric";
 import { createGridPattern } from "../Commons/utils/createGridPattern";
 import WithCanvas from "../Commons/utils/WithCanvas";
 import WithViewMode from "../Commons/utils/WithViewMode";
+import { FABRIC_META, FabricObjectTypes } from "../Commons/constants";
 
-// Helper to set all fabric objects as non-interactive
+function setSpotSelectable(spot: fabric.Rect) {
+  spot.selectable = false;
+  spot.evented = true;
+  spot.hasControls = false;
+  spot.hoverCursor = "pointer";
+}
+
 function setNonInteractive(obj: fabric.Object) {
   obj.selectable = false;
   obj.evented = false;
@@ -18,6 +25,7 @@ export function useParkingViewRender({
 }: WithCanvas<WithViewMode>) {
   const { parking } = useParkingViewContext();
   const didRender = useRef(false);
+  const selectedSpotRef = useRef<fabric.Rect | null>(null); // <---
 
   useEffect(() => {
     if (!canvas || !viewMode || didRender.current) return;
@@ -27,6 +35,7 @@ export function useParkingViewRender({
 
     // Restore grid background after clear!
     canvas.backgroundColor = createGridPattern();
+    if (!parking) return;
 
     // Render zones
     parking.zones.forEach((zone) => {
@@ -40,20 +49,44 @@ export function useParkingViewRender({
       canvas.add(obs.fabricObject);
     });
 
-    // Render spot groups (spots only)
+    // Spots (selectable)
     parking.spotGroups.forEach((group) => {
       group.spots.forEach((spot) => {
-        setNonInteractive(spot);
+        setSpotSelectable(spot);
+        spot.set("fill", "#bbb"); // reset to default on render
         canvas.add(spot);
       });
     });
 
     canvas.requestRenderAll();
-
-    // If you ever need to clean up: canvas.clear() on unmount
-    // (Not needed here unless you switch between multiple parkings in one canvas instance.)
-    // return () => canvas.clear();
-
+    canvas.selectionBorderColor = "#e33327";
+    canvas.requestRenderAll();
     // eslint-disable-next-line
-  }, [canvas, viewMode]);
+  }, [canvas, viewMode, parking]);
+
+  useEffect(() => {
+    if (!canvas) return;
+
+    const onRectClick = (e: any) => {
+      const obj = e.target;
+      if (
+        obj instanceof fabric.Rect &&
+        obj.get(FABRIC_META.objectType) === FabricObjectTypes.ParkingSpotGroup
+      ) {
+        // Remove highlight from previous
+        if (selectedSpotRef.current && selectedSpotRef.current !== obj) {
+          selectedSpotRef.current.set("fill", "#bbb");
+        }
+        // Highlight new
+        obj.set("fill", "#e33327");
+        selectedSpotRef.current = obj as fabric.Rect;
+        canvas.requestRenderAll();
+      }
+    };
+
+    canvas.on("mouse:down", onRectClick);
+    return () => {
+      canvas.off("mouse:down", onRectClick);
+    };
+  }, [canvas]);
 }

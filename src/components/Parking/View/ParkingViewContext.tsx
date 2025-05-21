@@ -13,7 +13,7 @@ const ParkingViewContext = createContext<ParkingViewContextType | undefined>(
 export const useParkingViewContext = () => {
   const ctx = useContext(ParkingViewContext);
 
-  return ctx ?? { parking: {} };
+  return ctx ?? { parking: undefined };
 };
 
 interface ParkingViewProviderProps {

@@ -10,6 +10,30 @@ import {
 } from "../../Commons/types";
 import { EditContextType } from "./type";
 
+import { FABRIC_META } from "@/components/Parking/Commons/constants";
+
+if (!(fabric.Object.prototype as any)._metaPatchApplied) {
+  const originalToObject = fabric.Object.prototype.toObject;
+  fabric.Object.prototype.toObject = function (...args: any[]) {
+    const obj = originalToObject.apply(this, args);
+    // Add all your custom meta fields if present
+    if (this.get(FABRIC_META.parkingSpotId)) {
+      obj[FABRIC_META.parkingSpotId] = this.get(FABRIC_META.parkingSpotId);
+    }
+    if (this.get(FABRIC_META.groupId)) {
+      obj[FABRIC_META.groupId] = this.get(FABRIC_META.groupId);
+    }
+    if (this.get(FABRIC_META.objectType)) {
+      obj[FABRIC_META.objectType] = this.get(FABRIC_META.objectType);
+    }
+    if (this.get(FABRIC_META.customId)) {
+      obj[FABRIC_META.customId] = this.get(FABRIC_META.customId);
+    }
+    return obj;
+  };
+  (fabric.Object.prototype as any)._metaPatchApplied = true;
+}
+
 export const EditContext = createContext<EditContextType | undefined>(
   undefined
 );
@@ -119,9 +143,26 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
           overflow: "auto",
         }}
       >
-        {JSON.stringify(parking, null, 2)}
+        {JSON.stringify(toSerializableParking(parking), null, 2)}
       </pre>
       {children}
     </EditContext.Provider>
   );
 };
+
+const toSerializableParking = (parking: any) => ({
+  ...parking,
+  zones: parking.zones.map((z) => ({
+    ...z,
+    fabricObject: z.fabricObject.toObject(),
+  })),
+  obstacles: parking.obstacles.map((o) => ({
+    ...o,
+    fabricObject: o.fabricObject.toObject(),
+  })),
+  spotGroups: parking.spotGroups.map((g) => ({
+    ...g,
+    line: g.line.toObject(),
+    spots: g.spots.map((s) => s.toObject()),
+  })),
+});

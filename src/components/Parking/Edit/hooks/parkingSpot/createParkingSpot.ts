@@ -4,6 +4,7 @@ import {
 } from "@/components/Parking/Commons/constants";
 import { ParkingGroupMeta } from "@/components/Parking/Commons/types";
 import * as fabric from "fabric";
+import { v4 as uuidv4 } from "uuid";
 interface CreateParkingSpotProps {
   groupMeta: ParkingGroupMeta;
   left: number;
@@ -27,7 +28,9 @@ const createParkingSpot = ({
     ...rest,
   });
 
+  const spotId = uuidv4();
   obj.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
+  obj.set(FABRIC_META.parkingSpotId, spotId);
   obj.set(FABRIC_META.groupId, id);
 
   return obj;

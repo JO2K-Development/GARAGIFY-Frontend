@@ -12,10 +12,9 @@ const useCanvasPanning = ({ canvas, viewMode }: WithCanvas<WithViewMode>) => {
     let lastX = 0;
     let lastY = 0;
 
-    const shouldUseControl = viewMode ? false : true;
     const onMouseDown = (opt: TEvent) => {
       const evt = opt.e as MouseEvent;
-      if (evt.button === 0 && evt.ctrlKey === shouldUseControl) {
+      if (evt.button === 0 && evt.ctrlKey ) {
         isPanning = true;
         lastX = evt.clientX;
         lastY = evt.clientY;
