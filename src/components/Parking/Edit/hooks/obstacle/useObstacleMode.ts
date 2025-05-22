@@ -2,16 +2,17 @@ import { useEffect, useRef } from "react";
 import * as fabric from "fabric";
 import { v4 as uuidv4 } from "uuid";
 import createObstacle from "./createObstacle";
-import { ObstacleType, Mode } from "@/components/Parking/Commons/types";
+import { ObstacleType, Mode } from "@/components/Parking/Commons/utils/types";
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
-} from "@/components/Parking/Commons/constants";
+} from "@/components/Parking/Commons/utils/constants";
 import { useEditContext } from "../../Context/useEditContext";
 import useCanvasModeBase from "../canvas/useCanvasModeBase";
-import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
+import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
 
-const useObstacleMode = ({ canvas }: WithCanvas) => {
+const useObstacleMode = () => {
+  const { canvas } = useCanvas();
   const { setSelectedObject, addObstacle, editObstacle, mode } =
     useEditContext();
 
@@ -53,17 +54,16 @@ const useObstacleMode = ({ canvas }: WithCanvas) => {
   }, [canvas, isActive]);
 
   useCanvasModeBase({
-    canvas,
     modeName: Mode.OBSTACLES,
     onSelect: setSelectedObject,
     onModify: (obj) => {
-      const id = obj.get(FABRIC_META.customId);
+      const id = obj.get(FabricMeta.OBJECT_ID);
       if (id) {
         editObstacle(id, (prev) => ({ ...prev, fabricObject: obj }));
       }
     },
     selectableFilter: (obj) =>
-      obj.get(FABRIC_META.objectType) === FabricObjectTypes.Obstacle,
+      obj.get(FabricMeta.OBJECT_TYPE) === FabricObjectTypes.OBSTACLE,
   });
 
   return { setCurrentType };

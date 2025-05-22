@@ -2,16 +2,17 @@ import { useEffect, useRef } from "react";
 import * as fabric from "fabric";
 import useCanvasModeBase from "../canvas/useCanvasModeBase";
 import createParkingZone from "./createParkingZone";
-import { Mode } from "@/components/Parking/Commons/types";
+import { Mode } from "@/components/Parking/Commons/utils/types";
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
-} from "@/components/Parking/Commons/constants";
+} from "@/components/Parking/Commons/utils/constants";
 import { useEditContext } from "../../Context/useEditContext";
 import usePreviewLine from "../canvas/usePreviewLine";
-import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
+import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
 
-const useParkingZoneMode = ({ canvas }: WithCanvas) => {
+const useParkingZoneMode = () => {
+  const { canvas } = useCanvas();
   const { mode, setSelectedObject, addZone, editZone } = useEditContext();
 
   const isActive = mode === Mode.PARKING_ZONE;
@@ -24,11 +25,10 @@ const useParkingZoneMode = ({ canvas }: WithCanvas) => {
     canvas,
   });
   useCanvasModeBase({
-    canvas,
     modeName: Mode.PARKING_ZONE,
     onSelect: setSelectedObject,
     onModify: (obj) => {
-      const id = obj.get(FABRIC_META.customId);
+      const id = obj.get(FabricMeta.OBJECT_ID);
       if (id) {
         editZone(id, (prev) => ({
           ...prev,
@@ -37,7 +37,7 @@ const useParkingZoneMode = ({ canvas }: WithCanvas) => {
       }
     },
     selectableFilter: (obj) =>
-      obj.get(FABRIC_META.objectType) === FabricObjectTypes.ParkingZone,
+      obj.get(FabricMeta.OBJECT_TYPE) === FabricObjectTypes.PARKING_ZONE,
   });
 
   useEffect(() => {
@@ -62,6 +62,7 @@ const useParkingZoneMode = ({ canvas }: WithCanvas) => {
         );
 
         canvas.add(polygon);
+        canvas.sendObjectToBack(polygon);
         addZone({ id, fabricObject: polygon });
 
         setTimeout(() => {

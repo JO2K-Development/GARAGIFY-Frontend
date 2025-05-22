@@ -1,10 +1,9 @@
-// hooks/useCanvasPanning.ts
 import { useEffect } from "react";
 import type { TEvent } from "fabric";
-import WithCanvas from "../utils/WithCanvas";
-import WithViewMode from "../utils/WithViewMode";
+import { useCanvas } from "../context/CanvasContext";
 
-const useCanvasPanning = ({ canvas, viewMode }: WithCanvas<WithViewMode>) => {
+const useCanvasPanning = () => {
+  const { canvas } = useCanvas();
   useEffect(() => {
     if (!canvas) return;
 
@@ -14,7 +13,7 @@ const useCanvasPanning = ({ canvas, viewMode }: WithCanvas<WithViewMode>) => {
 
     const onMouseDown = (opt: TEvent) => {
       const evt = opt.e as MouseEvent;
-      if (evt.button === 0 && evt.ctrlKey ) {
+      if (evt.button === 0 && evt.ctrlKey) {
         isPanning = true;
         lastX = evt.clientX;
         lastY = evt.clientY;

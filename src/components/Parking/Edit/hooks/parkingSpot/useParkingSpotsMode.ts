@@ -1,17 +1,19 @@
 import { useEffect, useRef } from "react";
 import * as fabric from "fabric";
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
-} from "@/components/Parking/Commons/constants";
+} from "@/components/Parking/Commons/utils/constants";
 import usePreviewLine from "../canvas/usePreviewLine";
 import { regenerateSpots } from "./spotsGeneration";
 import createSpotGroup from "./createSpotGroup";
-import { Mode } from "@/components/Parking/Commons/types";
+import { Mode } from "@/components/Parking/Commons/utils/types";
 import { useEditContext } from "../../Context/useEditContext";
 import useCanvasModeBase from "../canvas/useCanvasModeBase";
+import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
 
-const useParkingSpotsMode = (canvas?: fabric.Canvas) => {
+const useParkingSpotsMode = () => {
+  const { canvas } = useCanvas();
   const {
     mode,
     setSelectedObject,
@@ -80,7 +82,6 @@ const useParkingSpotsMode = (canvas?: fabric.Canvas) => {
   }, [canvas, isActive]);
 
   useCanvasModeBase({
-    canvas,
     modeName: Mode.PARKING_SPOTS,
     onSelect: (obj) => {
       console.log("Selected object:", obj);
@@ -97,7 +98,7 @@ const useParkingSpotsMode = (canvas?: fabric.Canvas) => {
       setSelectedObject(obj ?? null);
     },
     onModify: (obj) => {
-      const id = obj.get(FABRIC_META.customId);
+      const id = obj.get(FabricMeta.OBJECT_ID);
       if (!id) return;
       editSpotGroup(id, (prev) => {
         const updated = { ...prev, line: obj as fabric.Line };
@@ -106,7 +107,7 @@ const useParkingSpotsMode = (canvas?: fabric.Canvas) => {
       });
     },
     selectableFilter: (obj) =>
-      obj.get(FABRIC_META.objectType) === FabricObjectTypes.ParkingSpotGroup,
+      obj.get(FabricMeta.OBJECT_TYPE) === FabricObjectTypes.PARKING_GROUP,
   });
 
   useEffect(() => {

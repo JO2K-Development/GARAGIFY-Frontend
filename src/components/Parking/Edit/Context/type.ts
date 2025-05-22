@@ -5,7 +5,7 @@ import {
   CanvasObstacle,
   ParkingSpotGroup,
   Mode,
-} from "../../Commons/types";
+} from "../../Commons/utils/types";
 import * as fabric from "fabric";
 
 export interface EditContextType {

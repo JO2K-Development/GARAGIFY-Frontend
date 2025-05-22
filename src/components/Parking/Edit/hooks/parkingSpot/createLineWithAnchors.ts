@@ -1,25 +1,34 @@
 import * as fabric from "fabric";
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
-} from "@/components/Parking/Commons/constants";
+} from "@/components/Parking/Commons/utils/constants";
 
+// Nicer anchor
 const createAnchor = (x: number, y: number, id: string) => {
   const anchor = new fabric.Circle({
     left: x,
     top: y,
-    radius: 6,
-    fill: "blue",
-    stroke: "#000",
+    radius: 9, // Bigger for easier interaction
+    fill: "#1976d2", // Modern blue
+    stroke: "#fff", // White outline
+    strokeWidth: 2.5,
     originX: "center",
     originY: "center",
     hasControls: false,
     hasBorders: false,
     selectable: true,
     evented: true,
+    shadow: new fabric.Shadow({
+      color: "#a2c8f7",
+      blur: 7,
+      offsetX: 0,
+      offsetY: 2,
+    }),
+    hoverCursor: "pointer",
   });
-  anchor.set(FABRIC_META.objectType, FabricObjectTypes.Anchor);
-  anchor.set(FABRIC_META.groupId, id);
+  anchor.set(FabricMeta.OBJECT_TYPE, FabricObjectTypes.ANCHOR);
+  anchor.set(FabricMeta.GROUP_ID, id);
   return anchor;
 };
 
@@ -29,15 +38,22 @@ const createLineWithAnchors = (
   id: string
 ) => {
   const line = new fabric.Line([p1.x, p1.y, p2.x, p2.y], {
-    stroke: "#666",
-    strokeWidth: 2,
+    stroke: "#1976d2", // Matches anchor, modern blue
+    strokeWidth: 4,
+    strokeLineCap: "round", // Rounded ends
     selectable: false,
     hasControls: false,
     evented: false,
+    shadow: new fabric.Shadow({
+      color: "#a2c8f7",
+      blur: 8,
+      offsetX: 0,
+      offsetY: 2,
+    }),
   });
-  line.set(FABRIC_META.customId, id);
-  line.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
-  line.set(FABRIC_META.groupId, id);
+  line.set(FabricMeta.OBJECT_ID, id);
+  line.set(FabricMeta.OBJECT_TYPE, FabricObjectTypes.PARKING_GROUP);
+  line.set(FabricMeta.GROUP_ID, id);
 
   return {
     line,
