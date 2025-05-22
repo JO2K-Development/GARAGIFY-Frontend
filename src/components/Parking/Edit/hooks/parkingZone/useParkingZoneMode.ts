@@ -2,16 +2,17 @@ import { useEffect, useRef } from "react";
 import * as fabric from "fabric";
 import useCanvasModeBase from "../canvas/useCanvasModeBase";
 import createParkingZone from "./createParkingZone";
-import { Mode } from "@/components/Parking/Commons/types";
+import { Mode } from "@/components/Parking/Commons/utils/types";
 import {
   FabricMeta,
   FabricObjectTypes,
-} from "@/components/Parking/Commons/constants";
+} from "@/components/Parking/Commons/utils/constants";
 import { useEditContext } from "../../Context/useEditContext";
 import usePreviewLine from "../canvas/usePreviewLine";
-import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
+import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
 
-const useParkingZoneMode = ({ canvas }: WithCanvas) => {
+const useParkingZoneMode = () => {
+  const { canvas } = useCanvas();
   const { mode, setSelectedObject, addZone, editZone } = useEditContext();
 
   const isActive = mode === Mode.PARKING_ZONE;
@@ -61,6 +62,7 @@ const useParkingZoneMode = ({ canvas }: WithCanvas) => {
         );
 
         canvas.add(polygon);
+        canvas.sendObjectToBack(polygon);
         addZone({ id, fabricObject: polygon });
 
         setTimeout(() => {

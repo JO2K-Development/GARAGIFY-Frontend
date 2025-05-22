@@ -7,33 +7,20 @@ import {
   Mode,
   ParkingMap,
   ParkingSpotGroup,
-} from "../../Commons/types";
+} from "../../Commons/utils/types";
 import { EditContextType } from "./type";
+import toSerializableParking from "../../Commons/serialization/toSerializableParking";
+import { serializeMeta } from "../../Commons/serialization/metaHelpers";
 
-import { FabricMeta } from "@/components/Parking/Commons/constants";
-
-if (!(fabric.Object.prototype as any)._metaPatchApplied) {
+if (!(fabric.Object.prototype as Record<string, any>)._metaPatchApplied) {
   const originalToObject = fabric.Object.prototype.toObject;
   fabric.Object.prototype.toObject = function (...args: any[]) {
-    const obj = originalToObject.apply(this, args);
-    // Add all your custom meta fields if present
-    if (this.get(FabricMeta.SPOT_ID)) {
-      obj[FabricMeta.SPOT_ID] = this.get(FabricMeta.SPOT_ID);
-    }
-    if (this.get(FabricMeta.GROUP_ID)) {
-      obj[FabricMeta.GROUP_ID] = this.get(FabricMeta.GROUP_ID);
-    }
-    if (this.get(FabricMeta.OBJECT_TYPE)) {
-      obj[FabricMeta.OBJECT_TYPE] = this.get(FabricMeta.OBJECT_TYPE);
-    }
-    if (this.get(FabricMeta.OBJECT_ID)) {
-      obj[FabricMeta.OBJECT_ID] = this.get(FabricMeta.OBJECT_ID);
-    }
+    const obj = originalToObject.apply(this, args as any);
+    Object.assign(obj, serializeMeta(this));
     return obj;
   };
-  (fabric.Object.prototype as any)._metaPatchApplied = true;
+  (fabric.Object.prototype as Record<string, any>)._metaPatchApplied = true;
 }
-
 export const EditContext = createContext<EditContextType | undefined>(
   undefined
 );
@@ -149,20 +136,3 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
     </EditContext.Provider>
   );
 };
-
-const toSerializableParking = (parking: any) => ({
-  ...parking,
-  zones: parking.zones.map((z) => ({
-    ...z,
-    fabricObject: z.fabricObject.toObject(),
-  })),
-  obstacles: parking.obstacles.map((o) => ({
-    ...o,
-    fabricObject: o.fabricObject.toObject(),
-  })),
-  spotGroups: parking.spotGroups.map((g) => ({
-    ...g,
-    line: g.line.toObject(),
-    spots: g.spots.map((s) => s.toObject()),
-  })),
-});

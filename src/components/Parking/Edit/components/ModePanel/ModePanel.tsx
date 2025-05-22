@@ -1,6 +1,6 @@
 "use client";
 
-import { Mode } from "@/components/Parking/Commons/types";
+import { Mode } from "@/components/Parking/Commons/utils/types";
 import ObstaclePanel from "../panels/ObstaclePanel";
 import ParkingSpotPanel from "../panels/ParkingSpotPanel";
 import ParkingZonePanel from "../panels/ParkingZonePanel";

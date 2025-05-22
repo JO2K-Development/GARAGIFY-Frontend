@@ -3,13 +3,20 @@ import { useLayoutEffect, useState, useEffect, useRef } from "react";
 import styles from "@/components/Borrowing/RowDatePicker/RowDatePicker.module.scss";
 
 interface useRowDatePickerProps {
-  disabledDate: (currentDate: dayjs.Dayjs) => boolean
-  value?: [Dayjs, Dayjs] | null
-  onChange: (dates: [Dayjs, Dayjs] | null) => void
+  disabledDate: (currentDate: dayjs.Dayjs) => boolean;
+  value?: [Dayjs, Dayjs] | null;
+  onChange: (dates: [Dayjs, Dayjs] | null) => void;
 }
 
-const useRowDatePicker = ({ disabledDate, value, onChange }: useRowDatePickerProps) => {
-  const [dateList, setDateList] = useState<Dayjs[]>([dayjs(), dayjs().add(1, "day")]);
+const useRowDatePicker = ({
+  disabledDate,
+  value,
+  onChange,
+}: useRowDatePickerProps) => {
+  const [dateList, setDateList] = useState<Dayjs[]>([
+    dayjs(),
+    dayjs().add(1, "day"),
+  ]);
   const [startDay, setStartDay] = useState<Dayjs | null>(value?.[0] ?? null);
   const [endDay, setEndDay] = useState<Dayjs | null>(value?.[1] ?? null);
   const [dayOffset, setDayOffset] = useState(0);
@@ -40,7 +47,11 @@ const useRowDatePicker = ({ disabledDate, value, onChange }: useRowDatePickerPro
       return;
     }
 
-    if ((startDay !== null && endDay !== null) || startDay === null || date.isBefore(startDay, "day")) {
+    if (
+      (startDay !== null && endDay !== null) ||
+      startDay === null ||
+      date.isBefore(startDay, "day")
+    ) {
       setStartDay(date);
       setEndDay(null);
       return;
@@ -59,8 +70,7 @@ const useRowDatePicker = ({ disabledDate, value, onChange }: useRowDatePickerPro
       setEndDay(date);
       return;
     }
-
-  }
+  };
 
   const getNumberStyle = (day: Dayjs) => {
     if (disabledDate(day) || day.isBefore(dayjs(), "day")) {
@@ -79,21 +89,25 @@ const useRowDatePicker = ({ disabledDate, value, onChange }: useRowDatePickerPro
     }
 
     if (day.isAfter(startDay, "day") && day.isBefore(endDay, "day")) {
-      return styles.SelectedDay
+      return styles.SelectedDay;
     }
 
     return styles.NormalDay;
-  }
+  };
 
   const getMonthStyle = (day: Dayjs, index: number) => {
     if (day.date() === 1 || index === 0) {
-      if ((day.isAfter(startDay, "day") && day.isBefore(endDay, "day")) || day.isSame(startDay, "day") || day.isSame(endDay, "day")) {
+      if (
+        (day.isAfter(startDay, "day") && day.isBefore(endDay, "day")) ||
+        day.isSame(startDay, "day") ||
+        day.isSame(endDay, "day")
+      ) {
         return styles.SelectedMonth;
       }
       return styles.Month;
     }
     return styles.HiddenMonth;
-  }
+  };
 
   const generateDateList = (offset: number) => {
     let date: Dayjs = dayjs().add(offset, "day");
@@ -117,12 +131,12 @@ const useRowDatePicker = ({ disabledDate, value, onChange }: useRowDatePickerPro
   }, [daysToShow, dayOffset]);
 
   const rightArrowClick = () => {
-    setDayOffset(dayOffset + Math.floor(daysToShow / 3))
-  }
+    setDayOffset(dayOffset + Math.floor(daysToShow / 3));
+  };
 
   const leftArrowClick = () => {
-    setDayOffset(dayOffset - Math.floor(daysToShow / 3))
-  }
+    setDayOffset(dayOffset - Math.floor(daysToShow / 3));
+  };
 
   return {
     dateList,
@@ -139,7 +153,7 @@ const useRowDatePicker = ({ disabledDate, value, onChange }: useRowDatePickerPro
     getMonthStyle,
     rightArrowClick,
     leftArrowClick,
-  }
-}
+  };
+};
 
 export default useRowDatePicker;

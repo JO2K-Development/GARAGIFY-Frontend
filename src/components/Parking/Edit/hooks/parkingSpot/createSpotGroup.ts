@@ -1,8 +1,8 @@
 import createLineWithAnchors from "./createLineWithAnchors";
 import * as fabric from "fabric";
 import { v4 as uuidv4 } from "uuid";
-import { generateSpotsOnLine, regenerateSpots } from "./spotsGeneration";
-import { ParkingSpotGroup } from "@/components/Parking/Commons/types";
+import { generateSpotsOnLine } from "./spotsGeneration";
+import { ParkingSpotGroup } from "@/components/Parking/Commons/utils/types";
 
 interface CreateSpotGroupProps {
   canvas?: fabric.Canvas | null;
@@ -38,7 +38,6 @@ const createSpotGroup = ({
 
     editParkingSpotGroup(id, (prev) => {
       const updated = { ...prev, line };
-      regenerateSpots(updated, canvas);
       return updated;
     });
   });
@@ -51,7 +50,6 @@ const createSpotGroup = ({
 
     editParkingSpotGroup(id, (prev) => {
       const updated = { ...prev, line };
-      regenerateSpots(updated, canvas);
       return updated;
     });
   });

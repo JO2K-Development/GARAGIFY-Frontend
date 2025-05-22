@@ -1,9 +1,9 @@
 import {
   FabricMeta,
   FabricObjectTypes,
-} from "@/components/Parking/Commons/constants";
+} from "@/components/Parking/Commons/utils/constants";
 import * as fabric from "fabric";
-import { ParkingSpotGroup } from "@/components/Parking/Commons/types";
+import { ParkingSpotGroup } from "@/components/Parking/Commons/utils/types";
 import createParkingSpot from "./createParkingSpot";
 import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 

@@ -2,7 +2,7 @@
 import React from "react";
 import { Select } from "antd";
 import styles from "./ModeSelector.module.scss";
-import { Mode } from "../../../Commons/types";
+import { Mode } from "../../../Commons/utils/types";
 import { useEditContext } from "../../Context/useEditContext";
 
 const ModeSelector: React.FC = () => {

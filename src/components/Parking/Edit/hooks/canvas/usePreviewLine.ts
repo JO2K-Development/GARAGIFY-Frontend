@@ -1,6 +1,6 @@
 import { RefObject, useRef } from "react";
 import * as fabric from "fabric";
-import createShadowLine from "../parkingZone/createShadowLine";
+import createShadowLine from "./createShadowLine";
 import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 
 interface UsePreviewLineProps {

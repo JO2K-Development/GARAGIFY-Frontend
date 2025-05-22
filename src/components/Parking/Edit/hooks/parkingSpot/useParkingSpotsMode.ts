@@ -3,11 +3,11 @@ import * as fabric from "fabric";
 import {
   FabricMeta,
   FabricObjectTypes,
-} from "@/components/Parking/Commons/constants";
+} from "@/components/Parking/Commons/utils/constants";
 import usePreviewLine from "../canvas/usePreviewLine";
 import { regenerateSpots } from "./spotsGeneration";
 import createSpotGroup from "./createSpotGroup";
-import { Mode } from "@/components/Parking/Commons/types";
+import { Mode } from "@/components/Parking/Commons/utils/types";
 import { useEditContext } from "../../Context/useEditContext";
 import useCanvasModeBase from "../canvas/useCanvasModeBase";
 import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";

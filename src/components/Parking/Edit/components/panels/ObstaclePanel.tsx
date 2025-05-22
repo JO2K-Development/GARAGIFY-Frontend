@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Space, Divider, Typography } from "antd";
-import { ObstacleType } from "../../../Commons/types";
+import { ObstacleType } from "../../../Commons/utils/types";
 import { useEditContext } from "../../Context/useEditContext";
 import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
 import useObstacleMode from "../../hooks/obstacle/useObstacleMode";

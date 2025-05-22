@@ -1,17 +1,8 @@
-"use client";
 import ParkingView from "@/components/Parking/View/ParkingView/ParkingView";
-import dynamic from "next/dynamic";
-
+import styles from "./page.module.scss";
 export default function Page() {
   return (
-    <div
-      style={{
-        margin: 20,
-        position: "relative",
-        width: "100%",
-        height: "100%",
-      }}
-    >
+    <div className={styles.page}>
       <ParkingView />
     </div>
   );

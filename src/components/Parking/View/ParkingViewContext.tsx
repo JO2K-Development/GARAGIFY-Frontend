@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext } from "react";
-import { ParkingMap } from "../Commons/types";
+import { ParkingMap } from "../Commons/utils/types";
 
 interface ParkingViewContextType {
   parking: ParkingMap;

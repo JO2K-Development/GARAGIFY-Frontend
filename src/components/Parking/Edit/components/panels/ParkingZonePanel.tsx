@@ -3,13 +3,14 @@
 import { Button, Divider, Typography } from "antd";
 import { useEditContext } from "../../Context/useEditContext";
 import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
+import useParkingZoneMode from "../../hooks/parkingZone/useParkingZoneMode";
 
 const { Title, Text } = Typography;
 
 const ParkingZonePanel = () => {
   const { canvas } = useCanvas();
   const { selectedObject, setSelectedObject, removeZone } = useEditContext();
-
+  useParkingZoneMode()
   const handleDelete = () => {
     if (!canvas || !selectedObject) return;
 

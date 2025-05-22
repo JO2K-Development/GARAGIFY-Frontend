@@ -1,4 +1,4 @@
-import { FabricMeta } from "@/components/Parking/Commons/constants";
+import { FabricMeta } from "@/components/Parking/Commons/utils/constants";
 import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 interface RemoveGroupFromCanvasProps {
   groupId: string;

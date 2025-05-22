@@ -7,36 +7,39 @@ const useCreateCanvas = (width = 800, height = 800) => {
   const [canvas, setCanvas] = useState<fabric.Canvas>();
 
   useEffect(() => {
-    let fabricCanvas: fabric.Canvas | null = null;
-    let frameId: number;
+    let canvas: fabric.Canvas | null = null;
 
-    frameId = requestAnimationFrame(() => {
+    const frameId = requestAnimationFrame(() => {
       const el = canvasRef.current;
       if (!el) return;
 
-      fabricCanvas = new fabric.Canvas(el, {
+      canvas = new fabric.Canvas(el, {
         selection: true,
         preserveObjectStacking: true,
       });
 
-      fabricCanvas.setWidth(width);
-      fabricCanvas.setHeight(height);
-      fabricCanvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+      canvas.selection = false;
+      canvas.selectionBorderColor = "rgba(0,0,0,0)"; // Transparent
+      canvas.selectionColor = "rgba(0,0,0,0)"; // Transparent fill
+      canvas.selectionLineWidth = 0;
+      canvas.setWidth(width);
+      canvas.setHeight(height);
+      canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
 
       // Grid background
-      fabricCanvas.backgroundColor = createGridPattern();
+      canvas.backgroundColor = createGridPattern();
 
-      fabricCanvas.renderAll();
+      canvas.renderAll();
 
-      setCanvas(fabricCanvas);
+      setCanvas(canvas);
     });
 
     return () => {
       cancelAnimationFrame(frameId);
-      fabricCanvas?.dispose();
+      canvas?.dispose();
       setCanvas(undefined);
     };
-  }, []);
+  }, [height, width]);
 
   return { canvasRef, canvas };
 };

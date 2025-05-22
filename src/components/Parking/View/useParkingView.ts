@@ -2,9 +2,7 @@ import { useEffect, useRef } from "react";
 import { useParkingViewContext } from "./ParkingViewContext";
 import * as fabric from "fabric";
 import { createGridPattern } from "../Commons/utils/createGridPattern";
-import WithCanvas from "../Commons/utils/WithCanvas";
-import WithViewMode from "../Commons/utils/WithViewMode";
-import { FabricMeta, FabricObjectTypes } from "../Commons/constants";
+import { FabricMeta, FabricObjectTypes } from "../Commons/utils/constants";
 import { useCanvas } from "../Commons/context/CanvasContext";
 
 function setSpotSelectable(spot: fabric.Rect) {
@@ -60,7 +58,6 @@ export function useParkingViewRender() {
     canvas.requestRenderAll();
     canvas.selectionBorderColor = "#e33327";
     canvas.requestRenderAll();
-    // eslint-disable-next-line
   }, [canvas, parking]);
 
   useEffect(() => {
