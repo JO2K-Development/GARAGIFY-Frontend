@@ -2,11 +2,12 @@
 
 import { Button, Divider, Typography } from "antd";
 import { useEditContext } from "../../Context/useEditContext";
-import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
+import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
 
 const { Title, Text } = Typography;
 
-const ParkingZonePanel = ({ canvas }: WithCanvas) => {
+const ParkingZonePanel = () => {
+  const { canvas } = useCanvas();
   const { selectedObject, setSelectedObject, removeZone } = useEditContext();
 
   const handleDelete = () => {

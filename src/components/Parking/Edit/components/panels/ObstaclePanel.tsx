@@ -3,18 +3,15 @@
 import { Button, Space, Divider, Typography } from "antd";
 import { ObstacleType } from "../../../Commons/types";
 import { useEditContext } from "../../Context/useEditContext";
-import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
+import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
+import useObstacleMode from "../../hooks/obstacle/useObstacleMode";
 
 const { Title } = Typography;
 
-interface ObstaclePanelProps {
-  onSelect: (type: ObstacleType) => void;
-}
+const ObstaclePanel = () => {
+  const { canvas } = useCanvas();
+  const { setCurrentType } = useObstacleMode();
 
-const ObstaclePanel = ({
-  onSelect,
-  canvas,
-}: WithCanvas<ObstaclePanelProps>) => {
   const { selectedObject, setSelectedObject, removeObstacle } =
     useEditContext();
 
@@ -37,10 +34,10 @@ const ObstaclePanel = ({
       <Divider style={{ margin: "8px 0" }} />
 
       <Space direction="vertical" style={{ width: "100%" }}>
-        <Button onClick={() => onSelect(ObstacleType.TREE)} block>
+        <Button onClick={() => setCurrentType(ObstacleType.TREE)} block>
           🌳 Add Tree
         </Button>
-        <Button onClick={() => onSelect(ObstacleType.AREA)} block>
+        <Button onClick={() => setCurrentType(ObstacleType.AREA)} block>
           🟦 Add Area
         </Button>
       </Space>

@@ -1,7 +1,7 @@
 import * as fabric from "fabric";
 import { v4 as uuidv4 } from "uuid";
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
 } from "@/components/Parking/Commons/constants";
 
@@ -16,8 +16,8 @@ const createParkingZone = (points: fabric.Point[]) => {
     objectCaching: false,
   });
 
-  polygon.set(FABRIC_META.customId, id);
-  polygon.set(FABRIC_META.objectType, FabricObjectTypes.ParkingZone);
+  polygon.set(FabricMeta.OBJECT_ID, id);
+  polygon.set(FabricMeta.OBJECT_TYPE, FabricObjectTypes.PARKING_ZONE);
 
   return { id, fabricObject: polygon };
 };

@@ -1,6 +1,6 @@
 import * as fabric from "fabric";
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
 } from "@/components/Parking/Commons/constants";
 
@@ -18,8 +18,8 @@ const createAnchor = (x: number, y: number, id: string) => {
     selectable: true,
     evented: true,
   });
-  anchor.set(FABRIC_META.objectType, FabricObjectTypes.Anchor);
-  anchor.set(FABRIC_META.groupId, id);
+  anchor.set(FabricMeta.OBJECT_TYPE, FabricObjectTypes.ANCHOR);
+  anchor.set(FabricMeta.GROUP_ID, id);
   return anchor;
 };
 
@@ -35,9 +35,9 @@ const createLineWithAnchors = (
     hasControls: false,
     evented: false,
   });
-  line.set(FABRIC_META.customId, id);
-  line.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
-  line.set(FABRIC_META.groupId, id);
+  line.set(FabricMeta.OBJECT_ID, id);
+  line.set(FabricMeta.OBJECT_TYPE, FabricObjectTypes.PARKING_GROUP);
+  line.set(FabricMeta.GROUP_ID, id);
 
   return {
     line,

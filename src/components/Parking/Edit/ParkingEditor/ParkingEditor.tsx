@@ -1,9 +1,12 @@
+"use client";
 import { EditProvider } from "../Context/EditContext";
-import ParkingCanvas from "../../Commons/components/ParkingCanvas/ParkingCanvas";
+import ParkingWrapper from "../../Commons/components/ParkingWrapper/ParkingWrapper";
+import EditorCanvas from "../components/EditorCanvas/EditorCanvas";
 const ParkingCanvasWrapper = () => (
   <EditProvider>
-    <ParkingCanvas />
+    <ParkingWrapper>
+      <EditorCanvas />
+    </ParkingWrapper>
   </EditProvider>
 );
-
 export default ParkingCanvasWrapper;

@@ -1,5 +1,5 @@
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
 } from "@/components/Parking/Commons/constants";
 import { ParkingGroupMeta } from "@/components/Parking/Commons/types";
@@ -29,9 +29,9 @@ const createParkingSpot = ({
   });
 
   const spotId = uuidv4();
-  obj.set(FABRIC_META.objectType, FabricObjectTypes.ParkingSpotGroup);
-  obj.set(FABRIC_META.parkingSpotId, spotId);
-  obj.set(FABRIC_META.groupId, id);
+  obj.set(FabricMeta.OBJECT_TYPE, FabricObjectTypes.PARKING_GROUP);
+  obj.set(FabricMeta.SPOT_ID, spotId);
+  obj.set(FabricMeta.GROUP_ID, id);
 
   return obj;
 };

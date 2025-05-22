@@ -6,10 +6,11 @@ import { useEffect, useState } from "react";
 import useParkingSpotsMode from "../../hooks/parkingSpot/useParkingSpotsMode";
 import removeGroupFromCanvas from "../../hooks/parkingSpot/removeGroupFromCanvas";
 import { useEditContext } from "../../Context/useEditContext";
-import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
+import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
 const { Title } = Typography;
 
-const ParkingSpotPanel = ({ canvas }: WithCanvas) => {
+const ParkingSpotPanel = () => {
+  const { canvas } = useCanvas();
   const {
     selectedObject,
     parking: { spotGroups: parkingSpotGroups },
@@ -17,7 +18,7 @@ const ParkingSpotPanel = ({ canvas }: WithCanvas) => {
     removeSpotGroup,
     setSelectedObject,
   } = useEditContext();
-  useParkingSpotsMode(canvas);
+  useParkingSpotsMode();
   const [groupId, setGroupId] = useState<string | null>(null);
 
   const group = parkingSpotGroups.find((g) => g.id === groupId);

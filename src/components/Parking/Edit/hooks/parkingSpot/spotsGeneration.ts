@@ -1,5 +1,5 @@
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
 } from "@/components/Parking/Commons/constants";
 import * as fabric from "fabric";
@@ -40,9 +40,8 @@ export const regenerateSpots = ({
     ?.getObjects()
     .filter(
       (obj) =>
-        obj.get(FABRIC_META.groupId) === group.id &&
-        obj.get(FABRIC_META.objectType) ===
-          FabricObjectTypes.ParkingSpotGroup &&
+        obj.get(FabricMeta.GROUP_ID) === group.id &&
+        obj.get(FabricMeta.OBJECT_TYPE) === FabricObjectTypes.PARKING_GROUP &&
         obj instanceof fabric.Rect
     ) as fabric.Rect[];
 

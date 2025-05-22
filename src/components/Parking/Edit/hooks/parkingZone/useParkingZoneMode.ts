@@ -4,7 +4,7 @@ import useCanvasModeBase from "../canvas/useCanvasModeBase";
 import createParkingZone from "./createParkingZone";
 import { Mode } from "@/components/Parking/Commons/types";
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
 } from "@/components/Parking/Commons/constants";
 import { useEditContext } from "../../Context/useEditContext";
@@ -24,11 +24,10 @@ const useParkingZoneMode = ({ canvas }: WithCanvas) => {
     canvas,
   });
   useCanvasModeBase({
-    canvas,
     modeName: Mode.PARKING_ZONE,
     onSelect: setSelectedObject,
     onModify: (obj) => {
-      const id = obj.get(FABRIC_META.customId);
+      const id = obj.get(FabricMeta.OBJECT_ID);
       if (id) {
         editZone(id, (prev) => ({
           ...prev,
@@ -37,7 +36,7 @@ const useParkingZoneMode = ({ canvas }: WithCanvas) => {
       }
     },
     selectableFilter: (obj) =>
-      obj.get(FABRIC_META.objectType) === FabricObjectTypes.ParkingZone,
+      obj.get(FabricMeta.OBJECT_TYPE) === FabricObjectTypes.PARKING_ZONE,
   });
 
   useEffect(() => {

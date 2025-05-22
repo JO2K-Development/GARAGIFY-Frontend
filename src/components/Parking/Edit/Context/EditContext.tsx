@@ -10,24 +10,24 @@ import {
 } from "../../Commons/types";
 import { EditContextType } from "./type";
 
-import { FABRIC_META } from "@/components/Parking/Commons/constants";
+import { FabricMeta } from "@/components/Parking/Commons/constants";
 
 if (!(fabric.Object.prototype as any)._metaPatchApplied) {
   const originalToObject = fabric.Object.prototype.toObject;
   fabric.Object.prototype.toObject = function (...args: any[]) {
     const obj = originalToObject.apply(this, args);
     // Add all your custom meta fields if present
-    if (this.get(FABRIC_META.parkingSpotId)) {
-      obj[FABRIC_META.parkingSpotId] = this.get(FABRIC_META.parkingSpotId);
+    if (this.get(FabricMeta.SPOT_ID)) {
+      obj[FabricMeta.SPOT_ID] = this.get(FabricMeta.SPOT_ID);
     }
-    if (this.get(FABRIC_META.groupId)) {
-      obj[FABRIC_META.groupId] = this.get(FABRIC_META.groupId);
+    if (this.get(FabricMeta.GROUP_ID)) {
+      obj[FabricMeta.GROUP_ID] = this.get(FabricMeta.GROUP_ID);
     }
-    if (this.get(FABRIC_META.objectType)) {
-      obj[FABRIC_META.objectType] = this.get(FABRIC_META.objectType);
+    if (this.get(FabricMeta.OBJECT_TYPE)) {
+      obj[FabricMeta.OBJECT_TYPE] = this.get(FabricMeta.OBJECT_TYPE);
     }
-    if (this.get(FABRIC_META.customId)) {
-      obj[FABRIC_META.customId] = this.get(FABRIC_META.customId);
+    if (this.get(FabricMeta.OBJECT_ID)) {
+      obj[FabricMeta.OBJECT_ID] = this.get(FabricMeta.OBJECT_ID);
     }
     return obj;
   };

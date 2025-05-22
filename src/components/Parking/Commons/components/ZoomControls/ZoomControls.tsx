@@ -1,19 +1,15 @@
 "use client";
-
-import React from "react";
 import { Button, Space, Tooltip } from "antd";
 import { ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
-import useCanvasZoom from "../hooks/useCanvasZoom";
-import * as fabric from "fabric";
-interface Props {
-  canvas?: fabric.Canvas;
-}
+import useCanvasZoom from "./useZoomControls";
+import styles from "./ZoomControls.module.scss";
+import WithCanvas from "../../utils/WithCanvas";
 
-const ZoomControls = ({ canvas }: Props) => {
+const ZoomControls = ({ canvas }: WithCanvas) => {
   const { onZoomIn, onZoomOut } = useCanvasZoom({ canvas });
 
   return (
-    <Space.Compact>
+    <Space.Compact className={styles.controls}>
       <Tooltip title="Zoom In">
         <Button size="large" icon={<ZoomInOutlined />} onClick={onZoomIn} />
       </Tooltip>

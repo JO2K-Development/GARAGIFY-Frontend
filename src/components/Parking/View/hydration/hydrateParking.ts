@@ -5,17 +5,17 @@ import {
   CanvasObstacle,
   ParkingSpotGroup,
 } from "../../Commons/types";
-import { FABRIC_META } from "../../Commons/constants";
+import { FabricMeta } from "../../Commons/constants";
 function restoreMeta(obj: fabric.Object, plain: any) {
   // Add all your custom meta properties here
-  if (plain[FABRIC_META.parkingSpotId])
-    obj.set(FABRIC_META.parkingSpotId, plain[FABRIC_META.parkingSpotId]);
-  if (plain[FABRIC_META.groupId])
-    obj.set(FABRIC_META.groupId, plain[FABRIC_META.groupId]);
-  if (plain[FABRIC_META.objectType])
-    obj.set(FABRIC_META.objectType, plain[FABRIC_META.objectType]);
-  if (plain[FABRIC_META.customId])
-    obj.set(FABRIC_META.customId, plain[FABRIC_META.customId]);
+  if (plain[FabricMeta.SPOT_ID])
+    obj.set(FabricMeta.SPOT_ID, plain[FabricMeta.SPOT_ID]);
+  if (plain[FabricMeta.GROUP_ID])
+    obj.set(FabricMeta.GROUP_ID, plain[FabricMeta.GROUP_ID]);
+  if (plain[FabricMeta.OBJECT_TYPE])
+    obj.set(FabricMeta.OBJECT_TYPE, plain[FabricMeta.OBJECT_TYPE]);
+  if (plain[FabricMeta.OBJECT_ID])
+    obj.set(FabricMeta.OBJECT_ID, plain[FabricMeta.OBJECT_ID]);
   // Add any other meta keys as needed
 }
 

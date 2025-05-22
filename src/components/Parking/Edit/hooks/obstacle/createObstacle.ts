@@ -1,5 +1,5 @@
 import {
-  FABRIC_META,
+  FabricMeta,
   FabricObjectTypes,
 } from "@/components/Parking/Commons/constants";
 import { ObstacleType } from "@/components/Parking/Commons/types";
@@ -37,8 +37,8 @@ const createObstacle = (currentType: ObstacleType, point: fabric.Point) => {
       throw new Error(`Unsupported obstacle type: ${currentType}`);
   }
 
-  obj.set(FABRIC_META.customId, id);
-  obj.set(FABRIC_META.objectType, FabricObjectTypes.Obstacle);
+  obj.set(FabricMeta.OBJECT_ID, id);
+  obj.set(FabricMeta.OBJECT_TYPE, FabricObjectTypes.OBSTACLE);
   return obj;
 };
 

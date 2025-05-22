@@ -4,7 +4,8 @@ import * as fabric from "fabric";
 import { createGridPattern } from "../Commons/utils/createGridPattern";
 import WithCanvas from "../Commons/utils/WithCanvas";
 import WithViewMode from "../Commons/utils/WithViewMode";
-import { FABRIC_META, FabricObjectTypes } from "../Commons/constants";
+import { FabricMeta, FabricObjectTypes } from "../Commons/constants";
+import { useCanvas } from "../Commons/context/CanvasContext";
 
 function setSpotSelectable(spot: fabric.Rect) {
   spot.selectable = false;
@@ -19,16 +20,14 @@ function setNonInteractive(obj: fabric.Object) {
   obj.hoverCursor = "default";
 }
 
-export function useParkingViewRender({
-  canvas,
-  viewMode,
-}: WithCanvas<WithViewMode>) {
+export function useParkingViewRender() {
+  const { canvas } = useCanvas();
   const { parking } = useParkingViewContext();
   const didRender = useRef(false);
   const selectedSpotRef = useRef<fabric.Rect | null>(null); // <---
 
   useEffect(() => {
-    if (!canvas || !viewMode || didRender.current) return;
+    if (!canvas || didRender.current) return;
     didRender.current = true;
 
     canvas.clear();
@@ -62,7 +61,7 @@ export function useParkingViewRender({
     canvas.selectionBorderColor = "#e33327";
     canvas.requestRenderAll();
     // eslint-disable-next-line
-  }, [canvas, viewMode, parking]);
+  }, [canvas, parking]);
 
   useEffect(() => {
     if (!canvas) return;
@@ -71,7 +70,7 @@ export function useParkingViewRender({
       const obj = e.target;
       if (
         obj instanceof fabric.Rect &&
-        obj.get(FABRIC_META.objectType) === FabricObjectTypes.ParkingSpotGroup
+        obj.get(FabricMeta.OBJECT_TYPE) === FabricObjectTypes.PARKING_GROUP
       ) {
         // Remove highlight from previous
         if (selectedSpotRef.current && selectedSpotRef.current !== obj) {

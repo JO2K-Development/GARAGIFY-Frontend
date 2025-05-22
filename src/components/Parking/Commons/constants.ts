@@ -1,17 +1,13 @@
-export const FABRIC_META = {
-  customId: "customId",
-  groupId: "groupId",
-  objectType: "objectType",
-  parkingSpotId: "isSpot",
+export const FabricMeta = {
+  OBJECT_ID: "objectId",
+  GROUP_ID: "groupId",
+  OBJECT_TYPE: "objectType",
+  SPOT_ID: "spotId",
 } as const;
 
-export type FabricMetaKey = keyof typeof FABRIC_META;
-
-export type FabricObjectType = "obstacle" | "parkingZone" | "parkingSpotGroup";
-
 export enum FabricObjectTypes {
-  Obstacle = "obstacle",
-  ParkingZone = "parkingZone",
-  ParkingSpotGroup = "parkingSpotGroup",
-  Anchor = "Anchor",
+  OBSTACLE = "obstacle",
+  PARKING_ZONE = "parkingZone",
+  PARKING_GROUP = "parkingGroup",
+  ANCHOR = "anchor",
 }

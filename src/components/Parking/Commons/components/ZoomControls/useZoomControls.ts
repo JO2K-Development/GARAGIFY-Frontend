@@ -1,8 +1,9 @@
 import { useCallback } from "react";
 import * as fabric from "fabric";
-import WithCanvas from "../utils/WithCanvas";
+import { useCanvas } from "../../context/CanvasContext";
 
-const useCanvasZoom = ({ canvas }: WithCanvas) => {
+const useCanvasZoom = () => {
+  const { canvas } = useCanvas();
   const zoom = useCallback(
     (factor: number) => {
       if (!canvas) return;
