@@ -3,9 +3,9 @@ import "./globals.scss";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import GarazeTheme from "@/components/AntDesignTheme";
 import { ReactNode } from "react";
-import "@ant-design/v5-patch-for-react-19";
 import SessionWrapper from "@/components/Auth/SessionWrapper";
 import AuthWrapper from "@/components/Auth/AuthWrapper";
+import QueryProvider from "@/components/QueryProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,7 +23,9 @@ export default function RootLayout({
         <SessionWrapper>
           <AuthWrapper>
             <AntdRegistry>
-              <GarazeTheme>{children}</GarazeTheme>
+              <QueryProvider>
+                <GarazeTheme>{children}</GarazeTheme>
+              </QueryProvider>
             </AntdRegistry>
           </AuthWrapper>
         </SessionWrapper>
