@@ -38,18 +38,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/spots/available-dates/{parking_id}": {
+    "/api/v1/parkings/{parking_id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Dates with parking slots available
-         * @description DO USTALENIA with available spots with the selected filters for the selected parking
-         */
-        get: operations["getAvailableParkingDates"];
+        /** Get parking by id */
+        get: operations["getParking"];
         put?: never;
         post?: never;
         delete?: never;
@@ -58,144 +55,17 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/spots/available/{parking_id}": {
+    "/api/v1/parkings/{parking_id}/spots": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Available parking spots as alternatives
-         * @description List of parking spot ids as ALTERNATIVE SOLUTIONS with available spots with the selected filters
-         */
-        get: operations["getAvailableParkingSpots"];
+        /** Get all spots for given parking */
+        get: operations["getParkingSpots"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/spots/available-allow-repark/{parking_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Available parking spots with re-parking as a singular solution
-         * @description returns list of available parking spots WITHIN ONLY ONE SOLUTION for the chosen range allowing re-parking the car during the reservation, with the selected filters for the selected parking
-         */
-        get: operations["getAvailableParkingSpotsReparked"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/user": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Patch user fields
-         * @description This is a description
-         */
-        patch: operations["updateUser"];
-        trace?: never;
-    };
-    "/api/v1/user/by-spot-id/{spot_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * User by spot id
-         * @description This is a description
-         */
-        get: operations["getUserBySpotId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/organization/{organization_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Organization by id
-         * @description This is a description
-         */
-        get: operations["getOrganizationById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/organization/{owner_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Organizations by owner id
-         * @description This is a description
-         */
-        get: operations["getOrganizationsByOwnerId"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/organization/parkings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * This returns parkings, paginated, for the company assigned to current user
-         * @description This is a description
-         */
-        get: operations["getAllParkingsForCompany"];
-        put?: never;
-        /**
-         * Creating the parking for the organization
-         * @description This is a description
-         */
-        post: operations["assignParkingToOrganization"];
         delete?: never;
         options?: never;
         head?: never;
@@ -209,11 +79,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Borrows by filters
-         * @description This is a description
-         */
-        get: operations["getAllBorrows"];
+        get?: never;
         put?: never;
         /**
          * Borrow a parking spot
@@ -226,25 +92,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/borrow/{borrow_id}": {
+    "/api/v1/borrow/mine": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Borrow by id
-         * @description This is a description
-         */
-        get: operations["getBorrowById"];
+        /** Get all borrows for the current user (paged) */
+        get: operations["getMyBorrows"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/borrow/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
         put?: never;
         post?: never;
         /**
-         * Remove borrow by id
-         * @description This is a description
+         * Delete a borrow by its ID
+         * @description Deletes the borrow resource with the given UUID.
          */
-        delete: operations["deleteBorrowById"];
+        delete: operations["deleteBorrow"];
         options?: never;
         head?: never;
         patch?: never;
@@ -302,23 +181,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/invitations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create invitation */
-        post: operations["createInvitation"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -330,72 +192,8 @@ export interface components {
             access: string;
             refresh: string;
         };
-        /** @description This is the parking spot model */
-        ParkingSpot: {
-            /** @description The name of parking spot */
-            name?: string;
-            /** @description Id of parking spot */
-            id?: string;
-            /** @description X coordinate of parking spot */
-            x?: number;
-            /** @description Y coordinate of parking spot */
-            y?: number;
-            /** @description Rotation of parking spot */
-            rot?: number;
-            /** @description Id of owner */
-            id_owner?: string;
-        };
-        /** @description This is the available spot model */
-        AvailableSpot: {
-            /** @description Id of parking spot */
-            id?: string;
-            /**
-             * Format: date-time
-             * @description Start date of borrow
-             */
-            start_date?: string;
-            /**
-             * Format: date-time
-             * @description End date of borrow
-             */
-            end_date?: string;
-        };
-        /** @description This is the user model */
-        UserGET: {
-            /** @description The name of user */
-            name?: string;
-            /** @description Id of user */
-            id?: string;
-            /** @description Email of user */
-            email?: string;
-            /** @description Profile picture url of user */
-            profile_picture_url?: string;
-        };
-        /** @description This is the user model */
-        UserPATCH: {
-            /** @description The name of user */
-            name?: string;
-            /** @description Email of user */
-            email?: string;
-            /** @description Profile picture url of user */
-            profile_picture_url?: string;
-        };
-        /** @description This is the organization model */
-        OrganizationGET: {
-            /** @description The name of organization */
-            name?: string;
-            /** @description Id of organization */
-            id?: string;
-            /** @description Id of owner */
-            owner_id?: string;
-        };
-        /** @description This is the organization model */
-        OrganizationPOST: {
-            /** @description The name of organization */
-            name?: string;
-        };
         /** @description This is the borrow model */
-        BorrowGET: {
+        BorrowDTO: {
             /** @description Id of borrow */
             id?: string;
             /**
@@ -415,25 +213,16 @@ export interface components {
             /** @description Id of user */
             owner_id?: string;
         };
-        /** @description This is the borrow model */
-        BorrowPOST: {
-            /**
-             * Format: date-time
-             * @description Start date of borrow
-             */
-            start_date?: string;
-            /**
-             * Format: date-time
-             * @description End date of borrow
-             */
-            end_date?: string;
-            /** @description Id of user */
-            owner_id?: string;
-            /** @description Id of parking spot */
-            spot_id?: string;
+        BorrowForm: {
+            /** Format: uuid */
+            spotId: string;
+            /** Format: date-time */
+            startDate: string;
+            /** Format: date-time */
+            endDate: string;
         };
         /** @description This is the lend offer model */
-        LendOfferGET: {
+        LendOfferDTO: {
             /** @description Id of lend offer */
             id?: string;
             /**
@@ -452,66 +241,83 @@ export interface components {
             owner_id?: string;
         };
         /** @description This is the lend offer put model */
-        LendOfferPUT: {
+        LendOfferPutForm: {
             /**
              * Format: date-time
              * @description Start date of lend offer
              */
-            start_date?: string;
+            start_date: string;
             /**
              * Format: date-time
              * @description End date of lend offer
              */
-            end_date?: string;
+            end_date: string;
             /** @description Id of parking spot */
-            spot_id?: string;
+            spot_id: string;
             /** @description Id of user */
             owner_id?: string;
         };
         /** @description This is the lend offer model */
-        LendOfferPOST: {
+        LendOfferPostForm: {
             /**
              * Format: date-time
              * @description Start date of lend offer
              */
-            start_date?: string;
+            start_date: string;
             /**
              * Format: date-time
              * @description End date of lend offer
              */
-            end_date?: string;
+            end_date: string;
             /** @description Id of parking spot */
-            spot_id?: string;
+            spot_id: string;
         };
-        /** @description This is the parking model */
-        ParkingGET: {
-            /** @description Id of parking */
-            id?: string;
-            /** @description The name of parking */
-            name?: string;
-            /** @description Id of company */
-            company_id?: string;
-            /** @description json of obstacles and the boundary */
-            parking_definition?: string;
-            /** @description List of parking spots */
-            spots?: components["schemas"]["ParkingSpot"][];
+        /** @description This is the parking model (read-only) */
+        ParkingDTO: {
+            /**
+             * Format: int32
+             * @description Unique parking identifier
+             */
+            id: number;
+            /**
+             * Format: int32
+             * @description Id of the organisation (foreign key)
+             */
+            organisation_id: number;
+            /** @description The name of the parking */
+            name: string;
+            /** @description UI JSON data (arbitrary structure) */
+            ui_object: Record<string, never>;
         };
-        /** @description This is the parking model */
-        ParkingPOST: {
-            /** @description The name of parking */
-            name?: string;
-            /** @description json of obstacles and the boundary */
-            parking_definition?: string;
+        ParkingSpotDTO: {
+            /**
+             * Format: int32
+             * @description Unique spot identifier
+             */
+            id: number;
+            /**
+             * Format: int32
+             * @description Id of the parent parking
+             */
+            parking_id: number;
+            /**
+             * Format: uuid
+             * @description UUID of the parking spot
+             */
+            spot_uuid: string;
+            /**
+             * Format: uuid
+             * @description Owner's user id (nullable if no owner)
+             */
+            owner_id?: string;
+            /** @description Status of the parking spot (optional) */
+            status?: string;
         };
-        InvitationGET: {
-            id?: string;
-            email?: string;
-            organization_id?: string;
-            /** Format: date-time */
-            invited_at?: string;
+        LendOfferListDTO: components["schemas"]["PagedResponse"] & {
+            content?: components["schemas"]["LendOfferDTO"][];
         };
-        InvitationPOST: {
-            email: string;
+        BorrowListDTO: components["schemas"]["PagedResponse"] & {
+            content?: components["schemas"]["BorrowDTO"][];
         };
         /** @description Generic paginated response wrapper */
         PagedResponse: {
@@ -541,12 +347,6 @@ export interface components {
              * @example 10
              */
             size: number;
-        };
-        PagedLendOfferGETResponse: components["schemas"]["PagedResponse"] & {
-            content?: components["schemas"]["LendOfferGET"][];
-        };
-        PagedParkingGETResponse: components["schemas"]["PagedResponse"] & {
-            content?: components["schemas"]["ParkingGET"][];
         };
     };
     responses: never;
@@ -605,281 +405,53 @@ export interface operations {
             };
         };
     };
-    getAvailableParkingDates: {
-        parameters: {
-            query?: {
-                /** @description Start date for the date range filter (inclusive) */
-                start_date?: string;
-                /** @description End date for the date range filter (inclusive) */
-                end_date?: string;
-                /** @description Whether to include only spots reserved for disabled individuals */
-                is_disabled?: boolean;
-                /** @description Whether to include only spots that don't require re-parking during the reservation */
-                is_non_reparked?: boolean;
-            };
-            header?: never;
-            path: {
-                /** @description The id of the parking to filter by */
-                parking_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description This means it's ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": string[];
-                };
-            };
-        };
-    };
-    getAvailableParkingSpots: {
-        parameters: {
-            query?: {
-                /** @description Start date for the date range filter (inclusive) */
-                start_date?: string;
-                /** @description End date for the date range filter (inclusive) */
-                end_date?: string;
-                /** @description Whether to include only spots reserved for disabled individuals */
-                is_disabled?: boolean;
-            };
-            header?: never;
-            path: {
-                /** @description The id of the parking to filter by */
-                parking_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description This means it's ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AvailableSpot"][];
-                };
-            };
-        };
-    };
-    getAvailableParkingSpotsReparked: {
-        parameters: {
-            query?: {
-                /** @description Start date for the date range filter (inclusive) */
-                start_date?: string;
-                /** @description End date for the date range filter (inclusive) */
-                end_date?: string;
-                /** @description Whether to include only spots reserved for disabled individuals */
-                is_disabled?: boolean;
-            };
-            header?: never;
-            path: {
-                /** @description The id of the parking to filter by */
-                parking_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description This means it's ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AvailableSpot"][];
-                };
-            };
-        };
-    };
-    updateUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UserPATCH"];
-            };
-        };
-        responses: {
-            /** @description This means its ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserGET"];
-                };
-            };
-        };
-    };
-    getUserBySpotId: {
+    getParking: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description The id of the parking spot */
-                spot_id: string;
+                parking_id: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description This means its ok */
+            /** @description Success */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["UserGET"];
+                    "application/json": components["schemas"]["ParkingDTO"];
                 };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
-    getOrganizationById: {
+    getParkingSpots: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description The id of the organization */
-                organization_id: string;
+                parking_id: number;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description This means its ok */
+            /** @description Success */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrganizationGET"];
-                };
-            };
-        };
-    };
-    getOrganizationsByOwnerId: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description The id of the owner */
-                owner_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description This means its ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrganizationGET"][];
-                };
-            };
-        };
-    };
-    getAllParkingsForCompany: {
-        parameters: {
-            query?: {
-                /** @description Page number (zero-based) */
-                page?: number;
-                /** @description Number of items per page */
-                size?: number;
-                /** @description The id of the company to filter by */
-                company_id?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description This means it's ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        content?: components["schemas"]["ParkingGET"][];
-                        /** @description Total number of elements */
-                        totalElements?: number;
-                        /** @description Total number of pages */
-                        totalPages?: number;
-                        /** @description Current page number */
-                        page?: number;
-                        /** @description Number of elements per page */
-                        size?: number;
-                    };
-                };
-            };
-        };
-    };
-    assignParkingToOrganization: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ParkingPOST"];
-            };
-        };
-        responses: {
-            /** @description This means its ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ParkingGET"];
-                };
-            };
-        };
-    };
-    getAllBorrows: {
-        parameters: {
-            query?: {
-                /** @description Page number (zero-based) */
-                page?: number;
-                /** @description Number of items per page */
-                size?: number;
-                /** @description Start date for the date range filter (inclusive) */
-                start_date?: string;
-                /** @description End date for the date range filter (inclusive) */
-                end_date?: string;
-                /** @description The id of the borrower to filter by */
-                borrower_id?: string;
-                /** @description The id of the owner to filter by */
-                owner_id?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description This means its ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BorrowGET"][];
+                    "application/json": components["schemas"]["ParkingSpotDTO"][];
                 };
             };
         };
@@ -893,58 +465,69 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["BorrowPOST"];
+                "application/json": components["schemas"]["BorrowForm"][];
             };
         };
         responses: {
-            /** @description This means its ok */
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BorrowDTO"][];
+                };
+            };
+            /** @description Bad request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    getMyBorrows: {
+        parameters: {
+            query?: {
+                /** @description Page number (0-based) */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+                /** @description Sort order (e.g., borrowTime,asc) */
+                sort?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BorrowGET"];
+                    "application/json": components["schemas"]["BorrowListDTO"];
                 };
             };
         };
     };
-    getBorrowById: {
+    deleteBorrow: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description The id of the borrow */
-                borrow_id: string;
+                /** @description UUID of the borrow to delete */
+                id: string;
             };
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description This means its ok */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BorrowGET"];
-                };
-            };
-        };
-    };
-    deleteBorrowById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description The id of the borrow */
-                borrow_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description This means its ok */
-            200: {
+            /** @description Borrow deleted successfully, no content returned */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -978,7 +561,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PagedLendOfferGETResponse"];
+                    "application/json": components["schemas"]["LendOfferListDTO"];
                 };
             };
         };
@@ -992,7 +575,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LendOfferPOST"];
+                "application/json": components["schemas"]["LendOfferPostForm"];
             };
         };
         responses: {
@@ -1002,7 +585,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LendOfferGET"];
+                    "application/json": components["schemas"]["LendOfferDTO"];
                 };
             };
         };
@@ -1025,7 +608,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LendOfferGET"];
+                    "application/json": components["schemas"]["LendOfferDTO"];
                 };
             };
         };
@@ -1042,7 +625,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LendOfferPUT"];
+                "application/json": components["schemas"]["LendOfferPutForm"];
             };
         };
         responses: {
@@ -1052,7 +635,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LendOfferGET"];
+                    "application/json": components["schemas"]["LendOfferDTO"];
                 };
             };
             /** @description Invalid input */
@@ -1089,30 +672,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-        };
-    };
-    createInvitation: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["InvitationPOST"];
-            };
-        };
-        responses: {
-            /** @description Invitation sent. */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["InvitationGET"];
-                };
             };
         };
     };
