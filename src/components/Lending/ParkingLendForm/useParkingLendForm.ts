@@ -1,6 +1,10 @@
 export const TIME_FORMAT = "HH:mm";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
+import { useMutation } from '@tanstack/react-query';
+import { createLendOffer } from "@/api/api";
+import { components } from "../../../../api/schema";
+
 
 const useParkingLendForm = () => {
   const disabledDates = [
@@ -33,6 +37,23 @@ const useParkingLendForm = () => {
     return merged;
   };
 
+
+  const mutation = useMutation({
+    mutationFn: createLendOffer,
+    onSuccess: (data) => {
+      console.log('Lend offer created:', data);
+    },
+    onError: (error) => {
+      console.error('Error creating lend offer:', error);
+    },
+  });
+
+    // Example usage
+  const handleSubmitLendOfferPost = (offerData: components["schemas"]["LendOfferPOST"]) => {
+    mutation.mutate(offerData);
+  };
+  
+
   const onSubmit = (data: FormValues) => {
     if (!data.dateRange) return;
 
@@ -40,7 +61,14 @@ const useParkingLendForm = () => {
     const start = mergeDateAndTime(startDate, data.startTime);
     const end = mergeDateAndTime(endDate, data.endTime);
 
+    const lendOfferData: components["schemas"]["LendOfferPOST"] = {
+      spot_id: "58c38b13-387c-462b-bf84-20f9bdf2986a", // Example owner ID, replace with actual
+      start_date: start.toISOString(),
+      end_date: end.toISOString(),
+      // Add other required fields as necessary
+    };
     //TODO: endpoincik i çağırılacak
+    handleSubmitLendOfferPost(lendOfferData);
     console.log({
       start,
       end,

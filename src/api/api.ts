@@ -10,7 +10,7 @@ export const createLendOffer = (body: components["schemas"]["LendOfferPOST"]) =>
   fetch(`/api/v1/lend-offer`, {
     method: HttpMethod.POST,
     body: JSON.stringify(body),
-  });
+  }).then((response) => response.json());
 
 export const getLendOffers = (body: components["schemas"]["LendOfferGET"]) => {
   // const query = new URLSearchParams(body).toString();

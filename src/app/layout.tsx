@@ -5,7 +5,8 @@ import GarazeTheme from "@/components/AntDesignTheme";
 import { ReactNode } from "react";
 import "@ant-design/v5-patch-for-react-19";
 import SessionWrapper from "@/components/Auth/SessionWrapper";
-import AuthWrapper from "@/components/Auth/AuthWrapper";
+import Providers from "./providers";
+// import AuthWrapper from "@/components/Auth/AuthWrapper";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -21,11 +22,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <SessionWrapper>
-          <AuthWrapper>
+          <Providers>
+            {/* <Navbar /> */}
+          {/* <AuthWrapper> */}
             <AntdRegistry>
               <GarazeTheme>{children}</GarazeTheme>
             </AntdRegistry>
-          </AuthWrapper>
+          {/* </AuthWrapper> */}
+          </Providers>
         </SessionWrapper>
       </body>
     </html>

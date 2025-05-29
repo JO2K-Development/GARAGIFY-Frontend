@@ -5,6 +5,8 @@ import labels from "@/labels.json";
 import dayjs from "dayjs";
 import useParkingLendForm, { TIME_FORMAT } from "./useParkingLendForm";
 import RowDatePicker from "@/components/Borrowing/RowDatePicker/RowDatePicker";
+import ParkingView from "@/components/Parking/View/ParkingView/ParkingView";
+
 const {
   lending: {
     form: { dateRangeRequired, submit },
@@ -73,6 +75,7 @@ const ParkingLendForm = () => {
             )}
           />
         </Flex>
+        <ParkingView/>
         <Button type="primary" htmlType="submit">
           {submit}
         </Button>
