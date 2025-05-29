@@ -6,7 +6,6 @@ import LoginView from "./LoginView/LoginView";
 import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
 
 export default function AuthWrapper({ children }: PropsWithChildren) {
-   return children;
   const { data: session, status } = useSession();
   if (status === "loading") return <LoadingOverlay />;
   if (!session) {

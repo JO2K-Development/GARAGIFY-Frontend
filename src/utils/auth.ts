@@ -1,4 +1,4 @@
-import { login } from "@/api/backendClient";
+import { login } from "../../api/backendClient";
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
