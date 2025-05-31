@@ -4,6 +4,7 @@ import * as fabric from "fabric";
 import { createGridPattern } from "../Commons/utils/createGridPattern";
 import { FabricMeta, FabricObjectTypes } from "../Commons/utils/constants";
 import { useCanvas } from "../Commons/context/CanvasContext";
+import { useSelectedSpot } from "../../../app/context/SelectedSpotProvider"; 
 
 function setSpotSelectable(spot: fabric.Rect) {
   spot.selectable = false;
@@ -22,7 +23,7 @@ export function useParkingViewRender() {
   const { canvas } = useCanvas();
   const { parking } = useParkingViewContext();
   const didRender = useRef(false);
-  const selectedSpotRef = useRef<fabric.Rect | null>(null); // <---
+  const selectedSpotRef = useSelectedSpot();  // <---
 
   useEffect(() => {
     if (!canvas || didRender.current) return;

@@ -5,7 +5,9 @@ import GarazeTheme from "@/components/AntDesignTheme";
 import { ReactNode } from "react";
 import "@ant-design/v5-patch-for-react-19";
 import SessionWrapper from "@/components/Auth/SessionWrapper";
-import Providers from "./providers";
+import QueryClientWrapper from "./context/QueryClientProvider";
+import { SelectedSpotProvider } from "./context/SelectedSpotProvider";
+
 // import AuthWrapper from "@/components/Auth/AuthWrapper";
 
 export const metadata: Metadata = {
@@ -22,14 +24,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <SessionWrapper>
-          <Providers>
+          <QueryClientWrapper>
             {/* <Navbar /> */}
           {/* <AuthWrapper> */}
+            <SelectedSpotProvider>
             <AntdRegistry>
               <GarazeTheme>{children}</GarazeTheme>
             </AntdRegistry>
+            </SelectedSpotProvider>
           {/* </AuthWrapper> */}
-          </Providers>
+          </QueryClientWrapper>
         </SessionWrapper>
       </body>
     </html>
