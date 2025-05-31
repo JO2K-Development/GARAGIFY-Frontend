@@ -4,9 +4,11 @@ import dayjs from "dayjs";
 import { useMutation } from '@tanstack/react-query';
 import { createLendOffer } from "@/api/api";
 import { components } from "../../../../api/schema";
-
+import { useSelectedSpot } from "@/app/context/SelectedSpotProvider";
 
 const useParkingLendForm = () => {
+  const selectedSpotRef = useSelectedSpot();
+
   const disabledDates = [
     dayjs("2025-05-12"),
     dayjs("2025-05-20"),
@@ -70,8 +72,9 @@ const useParkingLendForm = () => {
     //TODO: endpoincik i çağırılacak
     handleSubmitLendOfferPost(lendOfferData);
     console.log({
-      start,
-      end,
+      spot_id: selectedSpotRef.current?.get("spotId"),
+      start:start,
+      end: end,
     });
   };
 
