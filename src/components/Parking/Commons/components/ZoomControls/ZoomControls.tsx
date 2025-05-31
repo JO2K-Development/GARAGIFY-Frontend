@@ -5,8 +5,8 @@ import useCanvasZoom from "./useZoomControls";
 import styles from "./ZoomControls.module.scss";
 import WithCanvas from "../../utils/WithCanvas";
 
-const ZoomControls = ({ canvas }: WithCanvas) => {
-  const { onZoomIn, onZoomOut } = useCanvasZoom({ canvas });
+const ZoomControls = () => {
+  const { onZoomIn, onZoomOut } = useCanvasZoom();
 
   return (
     <Space.Compact className={styles.controls}>

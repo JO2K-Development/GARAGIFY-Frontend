@@ -10,7 +10,7 @@ const ParkingWrapper = ({ children }: PropsWithChildren) => {
   return (
     <div className={styles.container}>
       <CanvasContext.Provider value={{ canvasRef, canvas }}>
-        <ZoomControls canvas={canvas} />
+        <ZoomControls />
         {children}
       </CanvasContext.Provider>
     </div>

@@ -119,6 +119,7 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
       }}
     >
       {children}
+      {children}
       <pre
         style={{
           background: "#222",
@@ -147,7 +148,7 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
         }}
       >
         {parking.spotGroups.flatMap((group) =>
-          group.spots.map((spot) => `${spot.spotId!}\n`)
+          group.spots.map((spot) => `${(spot as any).spotId!}\n`)
         )}
       </pre>
     </EditContext.Provider>
