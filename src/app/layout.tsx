@@ -3,7 +3,6 @@ import "./globals.scss";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import GarazeTheme from "@/components/AntDesignTheme";
 import { ReactNode } from "react";
-import "@ant-design/v5-patch-for-react-19";
 import SessionWrapper from "@/components/Auth/SessionWrapper";
 import QueryClientWrapper from "./context/QueryClientProvider";
 import { SelectedSpotProvider } from "./context/SelectedSpotProvider";
@@ -29,7 +28,9 @@ export default function RootLayout({
           {/* <AuthWrapper> */}
             <SelectedSpotProvider>
             <AntdRegistry>
-              <GarazeTheme>{children}</GarazeTheme>
+              <QueryProvider>
+                <GarazeTheme>{children}</GarazeTheme>
+              </QueryProvider>
             </AntdRegistry>
             </SelectedSpotProvider>
           {/* </AuthWrapper> */}

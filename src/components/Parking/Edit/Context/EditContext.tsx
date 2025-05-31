@@ -118,6 +118,7 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
         removeSpotGroup,
       }}
     >
+      {children}
       <pre
         style={{
           background: "#222",
@@ -132,7 +133,23 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
       >
         {JSON.stringify(toSerializableParking(parking), null, 2)}
       </pre>
-      {children}
+
+      <pre
+        style={{
+          background: "#222",
+          color: "#0f0",
+          padding: 12,
+          margin: 12,
+          borderRadius: 8,
+          fontSize: 12,
+          maxHeight: 300,
+          overflow: "auto",
+        }}
+      >
+        {parking.spotGroups.flatMap((group) =>
+          group.spots.map((spot) => `${spot.spotId!}\n`)
+        )}
+      </pre>
     </EditContext.Provider>
   );
 };
