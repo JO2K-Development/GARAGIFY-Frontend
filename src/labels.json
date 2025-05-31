@@ -7,6 +7,12 @@
         "lending": "Lending",
         "logout": "Logout"
     },
+    "lending": {
+        "form": {
+            "dateRangeRequired": "Date range is required",
+            "submit": "Submit"
+        }
+    },
     "borrowing": {
         "form": {
             "dateRangeRequired": "Date range is required",

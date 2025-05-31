@@ -5,6 +5,8 @@ import GarazeTheme from "@/components/AntDesignTheme";
 import { ReactNode } from "react";
 import SessionWrapper from "@/components/Auth/SessionWrapper";
 import AuthWrapper from "@/components/Auth/AuthWrapper";
+import { SelectedSpotProvider } from "./context/SelectedSpotProvider";
+
 import QueryProvider from "@/components/QueryProvider";
 
 export const metadata: Metadata = {
@@ -21,12 +23,15 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <SessionWrapper>
+
           <AuthWrapper>
+            <SelectedSpotProvider>
             <AntdRegistry>
               <QueryProvider>
                 <GarazeTheme>{children}</GarazeTheme>
               </QueryProvider>
             </AntdRegistry>
+            </SelectedSpotProvider>
           </AuthWrapper>
         </SessionWrapper>
       </body>
