@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.scss";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import GarazeTheme from "@/components/AntDesignTheme";
+import GarazeTheme from "@/context/AntDesignTheme";
 import { ReactNode } from "react";
 import SessionWrapper from "@/components/Auth/SessionWrapper";
 import AuthWrapper from "@/components/Auth/AuthWrapper";
-import { SelectedSpotProvider } from "./context/SelectedSpotProvider";
-
-import QueryProvider from "@/components/QueryProvider";
+import QueryProvider from "@/context/QueryProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,15 +21,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <SessionWrapper>
-
           <AuthWrapper>
-            <SelectedSpotProvider>
             <AntdRegistry>
               <QueryProvider>
                 <GarazeTheme>{children}</GarazeTheme>
               </QueryProvider>
             </AntdRegistry>
-            </SelectedSpotProvider>
           </AuthWrapper>
         </SessionWrapper>
       </body>

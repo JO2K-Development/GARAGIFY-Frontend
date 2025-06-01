@@ -1,19 +1,63 @@
 export const TIME_FORMAT = "HH:mm";
 import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import { createLendOffer } from "@/api/api";
 import { components } from "../../../../api/schema";
-import { useSelectedSpot } from "@/app/context/SelectedSpotProvider";
+import { useSpot } from "@/context/SpotProvider";
+import { useEffect } from "react";
+import { getLendSpots, getLendTimeRanges } from "@/api/availability";
 
 const useParkingLendForm = () => {
-  const selectedSpotRef = useSelectedSpot();
+  const { selectedSpotId, setDisabledSpotIds } = useSpot();
 
   const disabledDates = [
     dayjs("2025-05-12"),
     dayjs("2025-05-20"),
     dayjs("2025-06-01"),
   ];
+
+  useEffect(() => {
+    // to jest endpoint
+    getLendTimeRanges(1, {
+      untilWhen: new Date(Date.now() + 1000 * 60 * 60 * 24 * 50), // 50 days from now
+    });
+    // TODO przemapować żeby wygladało jak, endpoint zwraca kiedy można pożyczyć, a musimy wiedzieć kiedy nie można (konkretne dni, nie przedziały)
+    //   const disabledDates = [
+    //   dayjs("2025-05-12"),
+    //   dayjs("2025-05-20"),
+    //   dayjs("2025-06-01"),
+    // ];
+
+    getLendSpots(1, {
+      from: new Date(Date.now() + 1000 * 60 * 60 * 24 * 50), // 50 days from now
+      until: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60), // 60 days from now
+    });
+
+    // TODO można prznieść do twojego contextu żeby view mógł tego użyć
+    //np:
+    setDisabledSpotIds([
+    // "82d3d324-6e40-4e46-b3b3-3acd0dd0c359",
+    // "71be7732-7630-4166-b29a-29ca97a02be0",
+    "7147ef24-0257-4a07-8a47-67220b1a53ef",
+    "0e0af45a-badb-475f-9910-2a26fa33155b",
+    "01dbeea6-2c6f-4fd9-abd7-b3d268b1db54",
+    "9f23340e-ce6a-4831-b2b4-a669ca66ee99",
+    "770e3cd4-1c9b-44fb-825d-bcff9f4113f7",
+    "7454eef6-d1c7-4bb2-8a84-a5a5ad083e65",
+    "70ebeb06-7310-4922-b65a-3c55c75079cf",
+    "9eaf95f6-15bc-4905-a000-e87577b4e79d",
+    "0472d305-1178-4d23-9260-ff1f0c765ee5",
+    "4bec3f40-a34b-45be-ba87-a9210062a398",
+    "97466e4c-cca6-474e-b0d6-f60be9390ade",
+    "7f9c5227-adf5-44a9-aabb-bbdcfcfdd48b",
+    "968ce770-6567-4e1e-b844-fcfec99d0e00",
+    "118a913d-5779-4128-bafb-ca018e07977b",
+    "28d43baf-9be9-4b7c-9b86-b1fab5adae26",
+    "8919f27c-6228-4ac4-9fbf-83c467a9f482",
+    "1bcab04a-8e27-432f-ad7c-c1c156c7fd5f"
+]);
+  }, []);
 
   const isDateDisabled = (current: dayjs.Dayjs) =>
     current &&
@@ -39,22 +83,22 @@ const useParkingLendForm = () => {
     return merged;
   };
 
-
   const mutation = useMutation({
     mutationFn: createLendOffer,
     onSuccess: (data) => {
-      console.log('Lend offer created:', data);
+      console.log("Lend offer created:", data);
     },
     onError: (error) => {
-      console.error('Error creating lend offer:', error);
+      console.error("Error creating lend offer:", error);
     },
   });
 
-    // Example usage
-  const handleSubmitLendOfferPost = (offerData: components["schemas"]["LendOfferPostForm"]) => {
+  // Example usage
+  const handleSubmitLendOfferPost = (
+    offerData: components["schemas"]["LendOfferPostForm"]
+  ) => {
     mutation.mutate(offerData);
   };
-  
 
   const onSubmit = (data: FormValues) => {
     if (!data.dateRange) return;
@@ -64,7 +108,7 @@ const useParkingLendForm = () => {
     const end = mergeDateAndTime(endDate, data.endTime);
 
     const lendOfferData: components["schemas"]["LendOfferPostForm"] = {
-      spot_id: "58c38b13-387c-462b-bf84-20f9bdf2986a", // Example owner ID, replace with actual
+      spot_id: selectedSpotId ?? "",
       start_date: start.toISOString(),
       end_date: end.toISOString(),
       // Add other required fields as necessary
@@ -72,8 +116,8 @@ const useParkingLendForm = () => {
     //TODO: endpoincik i çağırılacak
     handleSubmitLendOfferPost(lendOfferData);
     console.log({
-      spot_id: selectedSpotRef.current?.get("spotId"),
-      start:start,
+      spot_id: selectedSpotId,
+      start: start,
       end: end,
     });
   };
