@@ -55,15 +55,78 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/parkings/{parking_id}/spots": {
+    "/api/v1/parkings/{parking_id}/lend/available-timeranges": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get all spots for given parking */
-        get: operations["getParkingSpots"];
+        /**
+         * Get available time ranges for lending a parking spot
+         * @description Returns an array of available time ranges during which a parking spot can be lent up to the given date.
+         */
+        get: operations["getAvailableLendTimeRanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parkings/{parking_id}/lend/available-spots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get available parking spot UUIDs for lending in a given time range
+         * @description Returns a list of spot UUIDs that are available to lend for the entire given time range.
+         */
+        get: operations["getAvailableLendSpots"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parkings/{parking_id}/borrow/available-timeranges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get available time ranges for borrowing a parking spot
+         * @description Returns an array of available time ranges during which a parking spot can be borrowed up to the given date.
+         */
+        get: operations["getAvailableBorrowTimeRanges"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parkings/{parking_id}/borrow/available-spots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get available parking spot UUIDs for a given time range
+         * @description Returns a list of spot UUIDs that are available for the entire given time range.
+         */
+        get: operations["getAvailableBorrowSpots"];
         put?: never;
         post?: never;
         delete?: never;
@@ -313,6 +376,18 @@ export interface components {
             /** @description Status of the parking spot (optional) */
             status?: string;
         };
+        TimeRangeDto: {
+            /**
+             * Format: date-time
+             * @example 2025-06-01T08:00:00
+             */
+            start: string;
+            /**
+             * Format: date-time
+             * @example 2025-06-01T12:00:00
+             */
+            end: string;
+        };
         LendOfferListDTO: components["schemas"]["PagedResponse"] & {
             content?: components["schemas"]["LendOfferDTO"][];
         };
@@ -434,9 +509,12 @@ export interface operations {
             };
         };
     };
-    getParkingSpots: {
+    getAvailableLendTimeRanges: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description Date (inclusive) until when the parking spot can be lent. */
+                untilWhen: string;
+            };
             header?: never;
             path: {
                 parking_id: number;
@@ -445,13 +523,92 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Success */
+            /** @description Array of available time ranges */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ParkingSpotDTO"][];
+                    "application/json": components["schemas"]["TimeRangeDto"][];
+                };
+            };
+        };
+    };
+    getAvailableLendSpots: {
+        parameters: {
+            query: {
+                /** @description Start of the time range (with offset) */
+                from: string;
+                /** @description End of the time range (with offset) */
+                until: string;
+            };
+            header?: never;
+            path: {
+                parking_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of available spot UUIDs */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+        };
+    };
+    getAvailableBorrowTimeRanges: {
+        parameters: {
+            query: {
+                /** @description Date (inclusive) until when the parking spot can be borrowed. */
+                untilWhen: string;
+            };
+            header?: never;
+            path: {
+                parking_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Array of available time ranges */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TimeRangeDto"][];
+                };
+            };
+        };
+    };
+    getAvailableBorrowSpots: {
+        parameters: {
+            query: {
+                /** @description Start of the time range (with offset) */
+                from: string;
+                /** @description End of the time range (with offset) */
+                until: string;
+            };
+            header?: never;
+            path: {
+                parking_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description List of available spot UUIDs */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
                 };
             };
         };
