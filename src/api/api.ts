@@ -15,15 +15,8 @@ export const createLendOffer = (
     body: JSON.stringify(body),
   }).then((response) => response.json());
 
-export const getLendOffers = (body: components["schemas"]["LendOfferDTO"]) => {
-  const query = new URLSearchParams(body).toString();
-  return fetch(`/api/v1/lend-offer?${query}`, {
-    method: HttpMethod.GET,
-  });
-};
-
 export const getParking = async (parkingId: number): Promise<ParkingMap> => {
-  const response = await fetch(`/api/v1/parking/${parkingId}`, {
+  const response = await fetch(`/api/v1/parkings/${parkingId}`, {
     method: HttpMethod.GET,
   });
   if (!response.ok) {

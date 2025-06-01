@@ -38,6 +38,114 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/parkings/{parking_id}/lend/{spot_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Borrow a specific parking spot */
+        post: operations["createLendForSpot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lend/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all borrows for the current user (paged) */
+        get: operations["getMyLends"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lend/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a borrow by its ID
+         * @description Deletes the lend resource with the given UUID.
+         */
+        delete: operations["deleteParkingLend"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parkings/{parking_id}/borrow/{spot_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Borrow a specific parking spot */
+        post: operations["createBorrowForSpot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/borrow/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get all borrows for the current user (paged) */
+        get: operations["getMyBorrows"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/borrow/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete a borrow by its ID
+         * @description Deletes the borrow resource with the given UUID.
+         */
+        delete: operations["deleteParkingBorrow"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parkings/{parking_id}": {
         parameters: {
             query?: never;
@@ -135,63 +243,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/borrow": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Borrow a parking spot
-         * @description This is a description
-         */
-        post: operations["createBorrow"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/borrow/mine": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get all borrows for the current user (paged) */
-        get: operations["getMyBorrows"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/borrow/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Delete a borrow by its ID
-         * @description Deletes the borrow resource with the given UUID.
-         */
-        delete: operations["deleteBorrow"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/lend-offer": {
         parameters: {
             query?: never;
@@ -248,6 +299,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        TimeRangeRequest: {
+            /**
+             * Format: date-time
+             * @example 2025-06-01T08:00:00+02:00
+             */
+            fromWhen: string;
+            /**
+             * Format: date-time
+             * @example 2025-06-01T10:00:00+02:00
+             */
+            untilWhen: string;
+        };
         TokenVerificationForm: {
             token: string;
         };
@@ -259,6 +322,10 @@ export interface components {
         BorrowDTO: {
             /** @description Id of borrow */
             id?: string;
+            /** @description Id of the parking */
+            parking_id?: number;
+            /** @description Id of parking spot */
+            spot_id?: string;
             /**
              * Format: date-time
              * @description Start date of borrow
@@ -269,12 +336,6 @@ export interface components {
              * @description End date of borrow
              */
             end_date?: string;
-            /** @description Id of parking spot */
-            spot_id?: string;
-            /** @description Id of user */
-            borrower_id?: string;
-            /** @description Id of user */
-            owner_id?: string;
         };
         BorrowForm: {
             /** Format: uuid */
@@ -298,10 +359,10 @@ export interface components {
              * @description End date of lend offer
              */
             end_date?: string;
+            /** @description Id of the parking */
+            parking_id?: number;
             /** @description Id of parking spot */
             spot_id?: string;
-            /** @description Id of user */
-            owner_id?: string;
         };
         /** @description This is the lend offer put model */
         LendOfferPutForm: {
@@ -480,6 +541,156 @@ export interface operations {
             };
         };
     };
+    createLendForSpot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parking_id: number;
+                spot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TimeRangeRequest"];
+            };
+        };
+        responses: {
+            /** @description Borrow created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LendOfferDTO"];
+                };
+            };
+        };
+    };
+    getMyLends: {
+        parameters: {
+            query?: {
+                /** @description Page number (0-based) */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+                /** @description Sort order (e.g., borrowTime,asc) */
+                sort?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LendOfferListDTO"];
+                };
+            };
+        };
+    };
+    deleteParkingLend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description UUID of the lend to delete */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Borrow deleted successfully, no content returned */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    createBorrowForSpot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                parking_id: number;
+                spot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TimeRangeRequest"];
+            };
+        };
+        responses: {
+            /** @description Borrow created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BorrowDTO"];
+                };
+            };
+        };
+    };
+    getMyBorrows: {
+        parameters: {
+            query?: {
+                /** @description Page number (0-based) */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+                /** @description Sort order (e.g., borrowTime,asc) */
+                sort?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BorrowListDTO"];
+                };
+            };
+        };
+    };
+    deleteParkingBorrow: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description UUID of the borrow to delete */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Borrow deleted successfully, no content returned */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     getParking: {
         parameters: {
             query?: never;
@@ -610,85 +821,6 @@ export interface operations {
                 content: {
                     "application/json": string[];
                 };
-            };
-        };
-    };
-    createBorrow: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["BorrowForm"][];
-            };
-        };
-        responses: {
-            /** @description Created */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BorrowDTO"][];
-                };
-            };
-            /** @description Bad request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    getMyBorrows: {
-        parameters: {
-            query?: {
-                /** @description Page number (0-based) */
-                page?: number;
-                /** @description Page size */
-                size?: number;
-                /** @description Sort order (e.g., borrowTime,asc) */
-                sort?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BorrowListDTO"];
-                };
-            };
-        };
-    };
-    deleteBorrow: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description UUID of the borrow to delete */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Borrow deleted successfully, no content returned */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };
