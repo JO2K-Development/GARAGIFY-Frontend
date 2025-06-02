@@ -24,7 +24,7 @@ export function useParkingViewRender() {
   const { canvas } = useCanvas();
   const { parking } = useParkingViewContext();
   const didRender = useRef(false);
-  const { setSelectedSpotId, selectedSpotId, disabledSpotIds, setAllSpotIds } = useSpot();
+  const { setSelectedSpotId, selectedSpotId, disabledSpotIds } = useSpot();
 
   useEffect(() => {
     if (!canvas || didRender.current) return;
@@ -60,7 +60,6 @@ export function useParkingViewRender() {
         canvas.add(spot);
       });
     });
-    setAllSpotIds(spots.map((s) => s[FabricMeta.SPOT_ID] || ""));
 
     canvas.selectionBorderColor = "#e33327";
     canvas.requestRenderAll();
