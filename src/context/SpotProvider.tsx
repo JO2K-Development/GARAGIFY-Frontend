@@ -6,6 +6,8 @@ interface SelectedSpotContextType {
   setSelectedSpotId: (id: string | null) => void;
   disabledSpotIds: string[];
   setDisabledSpotIds: (ids: string[]) => void;
+  allSpotIds: string[];
+  setAllSpotIds: (ids: string[]) => void;
 }
 
 const SpotContext = createContext<SelectedSpotContextType>({
@@ -13,6 +15,8 @@ const SpotContext = createContext<SelectedSpotContextType>({
   setSelectedSpotId: () => {},
   disabledSpotIds: [],
   setDisabledSpotIds: () => {},
+  allSpotIds: [],
+  setAllSpotIds: () => {},
 });
 
 export const useSpot = () => {
@@ -25,6 +29,7 @@ export const useSpot = () => {
 export const SpotProvider = ({ children }: PropsWithChildren) => {
   const [selectedSpotId, setSelectedSpotId] = useState<string | null>(null);
   const [disabledSpotIds, setDisabledSpotIds] = useState<string[]>([]);
+  const [allSpotIds, setAllSpotIds] = useState<string[]>([]);
 
   return (
     <SpotContext.Provider
@@ -33,6 +38,8 @@ export const SpotProvider = ({ children }: PropsWithChildren) => {
         setSelectedSpotId,
         disabledSpotIds,
         setDisabledSpotIds,
+        allSpotIds,
+        setAllSpotIds,
       }}
     >
       {children}

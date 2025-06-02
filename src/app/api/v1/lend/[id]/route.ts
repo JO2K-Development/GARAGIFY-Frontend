@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import { backendClient } from "@/../api/backendClient";
 import {
+  getSessionToken,
   callBackend,
   getAuthHeaders,
-  getSessionToken,
 } from "@/utils/httpHelpers";
+import { NextRequest, NextResponse } from "next/server";
+import { backendClient } from "../../../../../../api/backendClient";
 import { HttpMethod } from "@/utils/httpMethod";
 
-export async function DELETE(
+export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
@@ -19,12 +19,11 @@ export async function DELETE(
       { status: 400 }
     );
   }
-
   return callBackend({
     method: HttpMethod.DELETE,
-    path: "/api/v1/lend-offer/{lend_offer_id}",
+    path: "/api/v1/lend/{id}",
     backendClient,
     headers: getAuthHeaders(token),
-    params: { path: { lend_offer_id: id } },
+    params: { path: { id } },
   });
 }

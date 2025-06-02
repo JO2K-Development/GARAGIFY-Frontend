@@ -5,6 +5,7 @@ import { createGridPattern } from "../Commons/utils/createGridPattern";
 import { FabricMeta, FabricObjectTypes } from "../Commons/utils/constants";
 import { useCanvas } from "../Commons/context/CanvasContext";
 import { useSpot } from "@/context/SpotProvider";
+import { set } from "react-hook-form";
 
 function setSpotSelectable(spot: fabric.Rect) {
   spot.selectable = false;
@@ -23,7 +24,7 @@ export function useParkingViewRender() {
   const { canvas } = useCanvas();
   const { parking } = useParkingViewContext();
   const didRender = useRef(false);
-  const { setSelectedSpotId, selectedSpotId, disabledSpotIds } = useSpot();
+  const { setSelectedSpotId, selectedSpotId, disabledSpotIds, setAllSpotIds } = useSpot();
 
   useEffect(() => {
     if (!canvas || didRender.current) return;
@@ -44,19 +45,22 @@ export function useParkingViewRender() {
       canvas.add(obs.fabricObject);
     });
 
+    const spots: any[] = []
     parking.spotGroups.forEach((group) => {
       group.spots.forEach((spot) => {
+        spots.push(spot);  
         setSpotSelectable(spot);
         const spotId = (spot as any)[FabricMeta.SPOT_ID];
         if (disabledSpotIds.includes(spotId)) {
           spot.set("fill", "#ddd");
           setNonInteractive(spot);
         } else {
-          spot.set("fill", "#bbb");
+          spot.set("fill", "#49aa19");
         }
         canvas.add(spot);
       });
     });
+    setAllSpotIds(spots.map((s) => s[FabricMeta.SPOT_ID] || ""));
 
     canvas.selectionBorderColor = "#e33327";
     canvas.requestRenderAll();
@@ -89,7 +93,7 @@ export function useParkingViewRender() {
         } else if (spotId === selectedSpotId) {
           spot.set("fill", "#e33327"); // Selected color
         } else {
-          spot.set("fill", "#bbb"); // Default color
+          spot.set("fill", "#49aa19"); // Default color
         }
       });
     });

@@ -1,22 +1,23 @@
 import { NextRequest } from "next/server";
-import { backendClient } from "../../../../../../api/backendClient";
+import { backendClient } from "@/../api/backendClient";
 import {
   getSessionToken,
   callBackend,
   getAuthHeaders,
 } from "@/utils/httpHelpers";
+import { HttpMethod } from "@/utils/httpMethod";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ parkingId: string }> }
 ) {
   const token = await getSessionToken();
-  const { id } = await params;
+  const { parkingId } = await params;
   return callBackend({
-    method: "GET",
+    method: HttpMethod.GET, 
     path: "/api/v1/parkings/{parking_id}",
     backendClient,
     headers: getAuthHeaders(token),
-    params: { path: { parking_id: Number(id) } },
+    params: { path: { parking_id: Number(parkingId) } },
   });
 }
