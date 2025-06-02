@@ -1,11 +1,17 @@
 "use client";
-import { createContext, PropsWithChildren, useContext, useState } from "react";
-
+import { ParkingMap } from "@/components/Parking/Commons/utils/types";
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getParking } from "@/api/api";
+import { hydrateParking } from "@/components/Parking/Commons/serialization/hydrate";
 interface SelectedSpotContextType {
   selectedSpotId: string | null;
   setSelectedSpotId: (id: string | null) => void;
   disabledSpotIds: string[];
   setDisabledSpotIds: (ids: string[]) => void;
+  allSpotIds: string[];
+  parkingUI: ParkingMap | null;
+  isLoading: boolean;
 }
 
 const SpotContext = createContext<SelectedSpotContextType>({
@@ -13,6 +19,9 @@ const SpotContext = createContext<SelectedSpotContextType>({
   setSelectedSpotId: () => {},
   disabledSpotIds: [],
   setDisabledSpotIds: () => {},
+  allSpotIds: [],
+  parkingUI: null,
+  isLoading: false,
 });
 
 export const useSpot = () => {
@@ -26,6 +35,27 @@ export const SpotProvider = ({ children }: PropsWithChildren) => {
   const [selectedSpotId, setSelectedSpotId] = useState<string | null>(null);
   const [disabledSpotIds, setDisabledSpotIds] = useState<string[]>([]);
 
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["parking"],
+    queryFn: () => getParking(1),
+  });
+
+  const [parkingUI, setParkingUI] = useState<ParkingMap | null>(
+    null
+  );
+
+  const parkingSpots = parkingUI ? parkingUI.spotGroups.flatMap((group) =>
+          group.spots.map((spot) => (spot as any).spotId)
+        ) : [];
+  
+
+  useEffect(() => {
+    if (data) {
+      hydrateParking(data as ParkingMap).then(setParkingUI);
+    }
+  }, [data]);
+
   return (
     <SpotContext.Provider
       value={{
@@ -33,6 +63,9 @@ export const SpotProvider = ({ children }: PropsWithChildren) => {
         setSelectedSpotId,
         disabledSpotIds,
         setDisabledSpotIds,
+        allSpotIds: parkingSpots,
+        parkingUI,
+        isLoading,
       }}
     >
       {children}

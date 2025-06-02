@@ -8,28 +8,16 @@ import { ParkingMap } from "../../Commons/utils/types";
 import { useQuery } from "@tanstack/react-query";
 import { getParking } from "@/api/api";
 import LoadingOverlay from "@/components/LoadingOverlay/LoadingOverlay";
+import { useSpot } from "@/context/SpotProvider";
 
 const ParkingView = () => {
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["parking"],
-    queryFn: () => getParking(1),
-  });
+  const { isLoading, parkingUI } = useSpot();
 
-  const [hydratedParking, setHydratedParking] = useState<ParkingMap | null>(
-    null
-  );
-
-  useEffect(() => {
-    if (data) {
-      hydrateParking(data as ParkingMap).then(setHydratedParking);
-    }
-  }, [data]);
-
-  if (isLoading || !hydratedParking) {
+  if (isLoading || !parkingUI) {
     return <LoadingOverlay />;
   }
   return (
-    <ParkingViewProvider parking={hydratedParking}>
+    <ParkingViewProvider parking={parkingUI}>
       <ParkingWrapper>
         <ViewCanvas />
       </ParkingWrapper>

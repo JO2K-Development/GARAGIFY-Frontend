@@ -37,10 +37,11 @@ const ParkingLendForm = () => {
                   ? [dayjs(field.value[0]), dayjs(field.value[1])]
                   : null
               }
-              onChange={(dates) =>
-                field.onChange(
-                  dates ? [dates[0]?.toDate(), dates[1]?.toDate()] : null
-                )
+              onChange={(dates) => {
+                  field.onChange(
+                    dates ? [dates[0]?.toDate(), dates[1]?.toDate()] : null
+                  )
+                }
               }
             />
           )}
