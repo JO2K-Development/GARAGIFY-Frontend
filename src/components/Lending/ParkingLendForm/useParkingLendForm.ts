@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSpot } from "@/context/SpotProvider";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getLendSpots,
   getLendTimeRanges,
@@ -85,7 +85,7 @@ const useParkingLendForm = () => {
     startTime: Date;
     endTime: Date;
   };
-   const { control, handleSubmit, formState, watch } = useForm<FormValues>({
+  const { control, handleSubmit, formState, watch } = useForm<FormValues>({
     defaultValues: {
       dateRange: null,
       startTime: dayjs("12:00", TIME_FORMAT).toDate(),
@@ -96,12 +96,32 @@ const useParkingLendForm = () => {
   const values = watch();
 
   const myDateRange = watch("dateRange");
+  const myStartTime = watch("startTime");
+  const myEndTime = watch("endTime");
 
   const mergeDateAndTime = (date: Date, time: Date): Date => {
     const merged = new Date(date);
     merged.setHours(time.getHours(), time.getMinutes(), 0, 0);
     return merged;
   };
+
+  useEffect(() => {
+    const subscription = watch((values) => {
+      const { startTime, endTime } = values;
+      console.log("Form updated:", startTime, endTime);
+
+      if (!startTime || !endTime) {
+        setDisabledSpotIds([]); // Reset disabled spots if incomplete
+        return;
+      }
+
+      // Do something with startTime and endTime...
+    });
+
+    // Cleanup the subscription when component unmounts
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
 
     // Prepare the query, but do not auto-fetch
   const {

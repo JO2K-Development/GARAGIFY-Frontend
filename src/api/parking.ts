@@ -32,9 +32,6 @@ export const getLendSpots = (parkingId: number, body: TimeRange) => {
   }).toString();
   return fetch(`/api/v1/parkings/${parkingId}/lend/available-spots?${query}`, {
     method: HttpMethod.GET,
-  }).then(res => {
-    // if (!res.ok) throw new Error("Failed to fetch lend spots");
-    return res.json(); // ✅ Return parsed JSON
   });
 };
 
