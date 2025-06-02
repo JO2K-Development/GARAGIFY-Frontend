@@ -19,7 +19,6 @@ const ParkingLendForm = () => {
     onSubmit,
     formState: { errors },
     isDateDisabled,
-    handleDateChange,
   } = useParkingLendForm();
 
   return (
@@ -42,10 +41,6 @@ const ParkingLendForm = () => {
                   field.onChange(
                     dates ? [dates[0]?.toDate(), dates[1]?.toDate()] : null
                   )
-                  console.log("Selected dates:", dates);
-                  if (dates) {
-                    handleDateChange(dates);
-                  }
                 }
               }
             />

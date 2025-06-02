@@ -3,13 +3,14 @@ import { useForm } from "react-hook-form";
 import dayjs from "dayjs";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSpot } from "@/context/SpotProvider";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   getLendSpots,
   getLendTimeRanges,
   lendSpot,
   TimeRange,
 } from "@/api/parking";
+import { time } from "console";
 
 const useParkingLendForm = () => {
   const { selectedSpotId, setDisabledSpotIds, allSpotIds } = useSpot();
@@ -32,7 +33,10 @@ const useParkingLendForm = () => {
     //   dayjs("2025-06-01"),
     // ];
 
-    
+    getLendSpots(1, {
+      from: new Date(Date.now() + 1000 * 60 * 60 * 24 * 50), // 50 days from now
+      until: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60), // 60 days from now
+    })
 
     // TODO można prznieść do twojego contextu żeby view mógł tego użyć
     //np:
@@ -59,47 +63,18 @@ const useParkingLendForm = () => {
     // ]);
   }, []);
   
-  const [timeRange, setTimeRange] = useState<{ from: Date; until: Date } | null>(null);
+  
 
-  // Prepare the query, but do not auto-fetch
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['lendSpots', timeRange?.from, timeRange?.until],
-    queryFn: () => {
-      if (!timeRange) throw new Error("No time range set");
-      return getLendSpots(1, timeRange);
-    },
-    enabled: false, // Don't run automatically
-  });
+  
 
-  // Callback when date changes
-  const handleDateChange = (dates: [dayjs.Dayjs, dayjs.Dayjs] | null) => {
-    if (!dates) return;
 
-    const from = dates[0].toDate();
-    const until = dates[1].toDate();
 
-    setTimeRange({ from, until });
 
-    // Refetch spots manually
-    refetch().then((result) => {
-      if (result.isError || !result.data) {
-        console.error("Error fetching available spots:", result.error);
-        return;
-      }
-      console.log("Available spots:", result.data);
-      const availableSpotIds = result.data;
-      const toDisableSpotIds = allSpotIds.filter(
-        (id) => !availableSpotIds.includes(id)
-      );
-      setDisabledSpotIds(toDisableSpotIds);
-    });
-  };
-
+// const availableSpotIds = result.data;
+//       const toDisableSpotIds = allSpotIds.filter(
+//         (id) => !availableSpotIds.includes(id)
+//       );
+//       setDisabledSpotIds(toDisableSpotIds);
   const isDateDisabled = (current: dayjs.Dayjs) =>
     current &&
     (current < dayjs().startOf("day") ||
@@ -110,7 +85,7 @@ const useParkingLendForm = () => {
     startTime: Date;
     endTime: Date;
   };
-  const { control, handleSubmit, formState } = useForm<FormValues>({
+   const { control, handleSubmit, formState, watch } = useForm<FormValues>({
     defaultValues: {
       dateRange: null,
       startTime: dayjs("12:00", TIME_FORMAT).toDate(),
@@ -118,13 +93,47 @@ const useParkingLendForm = () => {
     },
   });
 
+  const values = watch();
+
+  const myDateRange = watch("dateRange");
+
   const mergeDateAndTime = (date: Date, time: Date): Date => {
     const merged = new Date(date);
     merged.setHours(time.getHours(), time.getMinutes(), 0, 0);
     return merged;
   };
 
-  
+    // Prepare the query, but do not auto-fetch
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['lendSpots'],
+    queryFn: () => {
+      if (!myDateRange) throw new Error("No time range set");
+      console.log("Selected dates:",  myDateRange);
+
+      return getLendSpots(1, {
+        from: mergeDateAndTime(myDateRange[0], values.startTime),
+        until: mergeDateAndTime(myDateRange[1], values.endTime),
+      });
+    },
+    enabled: false, // Don't run automatically
+  });
+
+  useEffect(() => {
+    if (myDateRange) {
+      refetch().then((result) => {
+        const availableSpotIds = result.data;
+        const toDisableSpotIds = allSpotIds.filter(
+          (id) => !availableSpotIds.includes(id)
+        );
+        setDisabledSpotIds(toDisableSpotIds);
+      });
+    }
+  }, [myDateRange]);
 
   const mutationLendSpot = useMutation({
     mutationFn: lendSpot,
@@ -161,7 +170,6 @@ const useParkingLendForm = () => {
     formState,
     isDateDisabled,
     onSubmit,
-    handleDateChange,
   };
 };
 
