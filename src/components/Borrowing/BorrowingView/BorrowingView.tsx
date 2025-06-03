@@ -6,7 +6,7 @@ const BorrowingView = () => {
   return (
     <ElevatedScreenDivider
       left={<ParkingBorrowForm />}
-      right={<ParkingView />}
+      right={<p></p>}
     />
   );
 };

@@ -22,7 +22,10 @@ export const getLendTimeRanges = (
     {
       method: HttpMethod.GET,
     }
-  );
+  ).then(res => {
+    // if (!res.ok) throw new Error("Failed to fetch lend spots");
+    return res.json(); // ✅ Return parsed JSON
+  });
 };
 
 export const getLendSpots = (parkingId: number, body: TimeRange) => {
@@ -63,7 +66,10 @@ export const getBorrowSpots = (parkingId: number, body: TimeRange) => {
     {
       method: HttpMethod.GET,
     }
-  );
+  ).then(res => {
+    // if (!res.ok) throw new Error("Failed to fetch lend spots");
+    return res.json(); // ✅ Return parsed JSON
+  });
 };
 
 export interface CreateBorrowLendProps {

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { use, useEffect, useRef } from "react";
 import { useParkingViewContext } from "./ParkingViewContext";
 import * as fabric from "fabric";
 import { createGridPattern } from "../Commons/utils/createGridPattern";
@@ -45,10 +45,8 @@ export function useParkingViewRender() {
       canvas.add(obs.fabricObject);
     });
 
-    const spots: any[] = []
     parking.spotGroups.forEach((group) => {
       group.spots.forEach((spot) => {
-        spots.push(spot);  
         setSpotSelectable(spot);
         const spotId = (spot as any)[FabricMeta.SPOT_ID];
         if (disabledSpotIds.includes(spotId)) {
@@ -86,8 +84,10 @@ export function useParkingViewRender() {
     if (!canvas || !parking) return;
     parking.spotGroups.forEach((group) => {
       group.spots.forEach((spot) => {
+        setSpotSelectable(spot);
         const spotId = (spot as any)[FabricMeta.SPOT_ID];
         if (disabledSpotIds.includes(spotId)) {
+          setNonInteractive(spot);
           spot.set("fill", "#ddd"); // Keep disabled color
         } else if (spotId === selectedSpotId) {
           spot.set("fill", "#e33327"); // Selected color
@@ -97,5 +97,6 @@ export function useParkingViewRender() {
       });
     });
     canvas.requestRenderAll();
-  }, [selectedSpotId, canvas, parking]);
+  }, [selectedSpotId, canvas, parking, disabledSpotIds]);
+
 }

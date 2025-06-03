@@ -5,13 +5,11 @@ import { LeftOutlined, MinusOutlined, RightOutlined } from "@ant-design/icons";
 import { DatePicker } from "antd";
 
 interface RowDatePickerProps {
-  disabledDate: (currentDate: dayjs.Dayjs) => boolean;
   value?: [Dayjs, Dayjs] | null;
   onChange: (dates: [Dayjs, Dayjs] | null) => void;
 }
 
 const RowDatePicker = ({
-  disabledDate,
   value,
   onChange,
 }: RowDatePickerProps) => {
@@ -26,7 +24,7 @@ const RowDatePicker = ({
     getMonthStyle,
     rightArrowClick,
     leftArrowClick,
-  } = useRowDatePicker({ disabledDate, value, onChange });
+  } = useRowDatePicker({ value, onChange });
 
   return (
     <div className={styles.OuterContainer}>
