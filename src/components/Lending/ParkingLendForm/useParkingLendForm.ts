@@ -13,6 +13,7 @@ import {
   TimeRange,
 } from "@/api/parking";
 import { time } from "console";
+import { useToast } from "@/context/ToastProvider";
 dayjs.extend(isBetween);
 
 const useParkingLendForm = () => {
@@ -41,6 +42,7 @@ const useParkingLendForm = () => {
     refetchAvailableDates().then((result) => {
       console.log("Available dates:", result.data);
       const availableDateRanges = result.data; 
+      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
       const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
       setDisabledDates(disabledDatesTmp);
       console.log("Disabled dates:", disabledDates.length);
@@ -117,21 +119,19 @@ const useParkingLendForm = () => {
 
   }, [myDateRange, pickerKey, startTime, endTime]);
 
+  const toast = useToast();
 
   const mutationLendSpot = useMutation({
     mutationFn: lendSpot,
     onSuccess: (data) => {
       console.log("Lend offer created:", data);
-      refetchAvailableDates().then((result) => {
-      console.log("Available dates:", result.data);
-      const availableDateRanges = result.data; 
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
-      setDisabledDates(disabledDatesTmp);
-      console.log("Disabled dates:", disabledDates.length);
-    });
     },
     onError: (error) => {
       console.error("Error creating lend offer:", error);
+      toast.error({
+        message: 'Error',
+        description: 'There was an error creating your lend offer.',
+      });
     },
   });
 

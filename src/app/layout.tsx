@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import SessionWrapper from "@/components/Auth/SessionWrapper";
 import AuthWrapper from "@/components/Auth/AuthWrapper";
 import QueryProvider from "@/context/QueryProvider";
+import { ToastProvider } from "@/context/ToastProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,9 +24,11 @@ export default function RootLayout({
         <SessionWrapper>
           <AuthWrapper>
             <AntdRegistry>
+              <ToastProvider>
               <QueryProvider>
                 <GarazeTheme>{children}</GarazeTheme>
               </QueryProvider>
+              </ToastProvider>
             </AntdRegistry>
           </AuthWrapper>
         </SessionWrapper>
