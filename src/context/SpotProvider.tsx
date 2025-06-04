@@ -4,7 +4,7 @@ import { createContext, PropsWithChildren, useContext, useEffect, useState } fro
 import { useQuery } from "@tanstack/react-query";
 import { getParking } from "@/api/api";
 import { hydrateParking } from "@/components/Parking/Commons/serialization/hydrate";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 
 interface SelectedSpotContextType {
   selectedSpotId: string | null;

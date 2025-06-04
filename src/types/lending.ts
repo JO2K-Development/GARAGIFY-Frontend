@@ -1,9 +1,8 @@
-export type lending = {
+import User from "./User";
+
+export type Lending = {
   id: string;
-  borrower: {
-    email: string;
-    user_id: string;
-  };
+  borrowers: User[];
   start_date: string;
   end_date: string;
   spot_id: string;

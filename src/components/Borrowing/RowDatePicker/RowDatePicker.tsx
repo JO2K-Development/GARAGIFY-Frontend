@@ -1,5 +1,5 @@
 import useRowDatePicker from "./useRowDatePicker";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import styles from "./RowDatePicker.module.scss";
 import { LeftOutlined, MinusOutlined, RightOutlined } from "@ant-design/icons";
 import { DatePicker } from "antd";

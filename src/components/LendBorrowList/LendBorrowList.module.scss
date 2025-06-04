@@ -38,10 +38,19 @@
 }
 
 .BorrowingItemContent {
+  margin-left: 1rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: start;
   width: 100%;
+}
+
+.BorrowingItemDate {
+  font-size: 1rem;
+}
+
+.BorrowingItemOwner {
+  color: gray;
 }
 
 .ProfilePicture {
@@ -49,4 +58,12 @@
   height: 3rem;
   border-radius: 50%;
   margin-right: 16px;
+}
+
+.DatePart {
+  font-weight: bold;
+}
+
+.TimePart {
+  color: gray;
 }

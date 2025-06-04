@@ -1,4 +1,4 @@
-export type borrowing = {
+export type Borrowing = {
     id: string;
     owner: {
         email: string;
