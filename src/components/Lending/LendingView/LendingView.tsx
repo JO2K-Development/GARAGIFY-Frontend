@@ -1,26 +1,22 @@
 'use client';
 import ElevatedScreenDivider from "@/components/ElevatedScreenDivider/ElevatedScreenDivider";
 import ParkingLendForm from "../ParkingLendForm/ParkingLendForm";
-import ParkingView from "@/components/Parking/View/ParkingView/ParkingView";
-import { Card } from 'antd';
 import { useEffect } from "react";
+import MyLendingsView from "@/components/Lending/MyLendingsView/MyLendingsView";
 
 const LendingView = () => {
 
-useEffect(() => {   
-    document.title = "Lend Parking Spot";   
-    
-  }
-, []);
+  useEffect(() => {
+      document.title = "Lend  a parking Spot";
+
+    }
+    , []);
 
   return (
-<Card style={{ 
-    //   display: 'inline-flex', // Makes width fit content
-    width: '70%',
-      padding: 24,
-    }}>
-    <ParkingLendForm />
-</Card>)
-
+    <ElevatedScreenDivider
+      left={ <ParkingLendForm/> }
+      right={ <MyLendingsView/> }
+    />
+  );
 };
 export default LendingView;

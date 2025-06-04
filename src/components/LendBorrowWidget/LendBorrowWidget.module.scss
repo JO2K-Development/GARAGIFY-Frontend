@@ -1,0 +1,28 @@
+.widget {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  gap: 2rem;
+}
+
+.option {
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.active {
+  color: #2563eb;
+}
+
+.inactive {
+  color: #93c5fd;
+}
+
+.divider {
+  width: 2px;
+  height: 2rem;
+  background-color: #60a5fa;
+}
