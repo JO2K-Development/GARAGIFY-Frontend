@@ -1,10 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useSpot } from "@/context/SpotProvider";
-import { set } from "react-hook-form";
-import { assignUser, getAllUsers, getUsers, UserWithSpots } from "@/api/admin";
-import { remapMap } from "./utils";
-import { showToast } from "@/utils/showToast";
+import { assignUser, getAllUsers } from "@/api/admin";
 import { useToast } from "@/context/ToastProvider";
 type UserData = {
   userId: string;
@@ -41,50 +38,34 @@ export const useSpotAssignment = () => {
     setSelectedUserId(value);
   };
 
-  // const mutationLendSpot = useMutation({
-  //     mutationFn: borrowSpot,
-  //     onSuccess: (data) => {
-  //     console.log("Lend offer created:", data);
-  //     },
-  //     onError: (error) => {
-  //     console.error("Error creating lend offer:", error);
-  //     },
-  // });
-
   const mutationUser = useMutation({
     mutationFn: assignUser,
     onSuccess: (data) => {
-      console.log("user assigned:", data);
       refetchGetUsers();
-        toast.success({
-      message: 'Success!',
-      description: 'Your action was successful.',
-    });
+      toast.success({
+        message: "Success!",
+        description: "Your action was successful.",
+      });
     },
     onError: (error) => {
-      console.error("Error assigning user:", error);
-        toast.error({
-      message: 'Error',
-        description: 'There was an error assigning the user.',
-    });
+      toast.error({
+        message: "Error",
+        description: "There was an error assigning the user.",
+      });
     },
   });
 
   const onUnassign = () => {
-    if (!(selectedSpotId)) return;
+    if (!selectedSpotId) return;
     mutationUser.mutate({
       parkingId: 1, // Replace with actual parking ID
       spotId: selectedSpotId,
-      user_id: undefined, 
+      user_id: undefined,
     });
-    console.log("Unassigning user:", selectedSpotId, selectedUserId);
-  }
+  };
   const toast = useToast();
   const onSubmit = () => {
     if (!(selectedSpotId && selectedUserId)) return;
-
-    console.log("Assigning user:", selectedSpotId, selectedUserId);
-
   };
 
   return {

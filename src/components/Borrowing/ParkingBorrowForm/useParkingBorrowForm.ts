@@ -40,11 +40,9 @@ const useParkingBorrowForm = () => {
 
   useEffect(() => {
     refetchAvailableDates().then((result) => {
-      console.log("Available dates:", result.data);
       const availableDateRanges = result.data;
       const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
       setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
-      console.log("Disabled dates:", disabledDates.length);
     });
   }, [pickerKey]);
 
@@ -115,24 +113,20 @@ const useParkingBorrowForm = () => {
   const mutationLendSpot = useMutation({
     mutationFn: borrowSpot,
     onSuccess: (data) => {
-      console.log("Lend offer created:", data);
       refetchAvailableDates().then((result) => {
-        console.log("Available dates:", result.data);
         const availableDateRanges = result.data;
         const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
         setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
-        console.log("Disabled dates:", disabledDates.length);
       });
       toast.success({
         message: 'Success!',
-        description: 'Your lend offer was successfully created.',
+        description: 'You have successfully borrowed a spot!',
       });
     },
     onError: (error) => {
-      console.error("Error creating lend offer:", error);
       toast.error({
         message: 'Error',
-        description: 'There was an error creating your lend offer.',
+        description: 'There was an error borrowing the spot.',
       });
     },
   });
