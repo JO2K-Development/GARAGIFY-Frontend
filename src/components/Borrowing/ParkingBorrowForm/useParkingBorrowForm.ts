@@ -4,7 +4,12 @@ import dayjs, { Dayjs } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { borrowSpot, getBorrowSpots, getBorrowTimeRanges, TimeRange } from "@/api/parking";
+import {
+  borrowSpot,
+  getBorrowSpots,
+  getBorrowTimeRanges,
+  TimeRange,
+} from "@/api/parking";
 import { useSpot } from "@/context/SpotProvider";
 import { useToast } from "@/context/ToastProvider";
 
@@ -14,8 +19,14 @@ const useParkingBorrowForm = () => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const todayNumber = today.getTime();
-  const { selectedSpotId, setDisabledSpotIds, allSpotIds, disabledDates, setDisabledDates } = useSpot();
-  
+  const {
+    selectedSpotId,
+    setDisabledSpotIds,
+    allSpotIds,
+    disabledDates,
+    setDisabledDates,
+  } = useSpot();
+
   const [pickerKey, setPickerKey] = useState(0);
 
   const { refetch: refetchAvailableDates } = useQuery({
@@ -28,16 +39,12 @@ const useParkingBorrowForm = () => {
   });
 
   useEffect(() => {
-    // to jest endpoint
     refetchAvailableDates().then((result) => {
-      console.log("Available dates:", result.data);
-      const availableDateRanges = result.data; 
+      const availableDateRanges = result.data;
       const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
       setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
-      console.log("Disabled dates:", disabledDates.length);
     });
   }, [pickerKey]);
-
 
   type FormValues = {
     dateRange: [Date, Date] | null;
@@ -47,15 +54,23 @@ const useParkingBorrowForm = () => {
     findNonReparkedSpots: boolean;
   };
 
-  const { control, handleSubmit, formState, watch, reset } = useForm<FormValues>({
-    defaultValues: {
-      dateRange: null,
-      startTime: (() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; })(),
-      endTime: (() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; })(),
-    },
-  });
+  const { control, handleSubmit, formState, watch, reset } =
+    useForm<FormValues>({
+      defaultValues: {
+        dateRange: null,
+        startTime: (() => {
+          const d = new Date();
+          d.setHours(12, 0, 0, 0);
+          return d;
+        })(),
+        endTime: (() => {
+          const d = new Date();
+          d.setHours(12, 0, 0, 0);
+          return d;
+        })(),
+      },
+    });
 
-  const values = watch();
   const myDateRange = watch("dateRange");
   const startTime = watch("startTime");
   const endTime = watch("endTime");
@@ -65,13 +80,10 @@ const useParkingBorrowForm = () => {
     merged.setHours(time.getHours(), time.getMinutes(), 0, 0);
     return merged;
   };
-    const {
-    data,
-    isLoading,
-    error,
+  const {
     refetch: refetchGetBorrow,
   } = useQuery({
-    queryKey: ['borrowSpots'],
+    queryKey: ["borrowSpots"],
     queryFn: () => {
       if (!myDateRange) throw new Error("No time range set");
 
@@ -80,49 +92,41 @@ const useParkingBorrowForm = () => {
         until: mergeDateAndTime(myDateRange[1], endTime),
       });
     },
-    enabled: false, // Don't run automatically
   });
 
   useEffect(() => {
-      const [ startTime, endTime ] = myDateRange ?? [null, null];
-      if (!startTime || !endTime) {
-        // console.log("blokowanie :", myDateRange);
-        setDisabledSpotIds(allSpotIds); // Disable all but the last spot if incomplete
-      } else {
-        refetchGetBorrow().then((result) => {
-          const availableSpotIds = result.data;
-          const toDisableSpotIds = allSpotIds.filter(
-            (id) => !availableSpotIds.includes(id)
-          );
-          setDisabledSpotIds(toDisableSpotIds);
-        });
-      }
-      // console.log(allSpotIds, "allSpotIds");
-
+    const [startTime, endTime] = myDateRange ?? [null, null];
+    if (!startTime || !endTime) {
+      setDisabledSpotIds(allSpotIds); // Disable all but the last spot if incomplete
+    } else {
+      refetchGetBorrow().then((result) => {
+        const availableSpotIds = result.data;
+        const toDisableSpotIds = allSpotIds.filter(
+          (id) => !availableSpotIds.includes(id)
+        );
+        setDisabledSpotIds(toDisableSpotIds);
+      });
+    }
   }, [myDateRange, pickerKey, startTime, endTime]);
     const toast = useToast();
   
   const mutationLendSpot = useMutation({
     mutationFn: borrowSpot,
     onSuccess: (data) => {
-      console.log("Lend offer created:", data);
       refetchAvailableDates().then((result) => {
-        console.log("Available dates:", result.data);
-        const availableDateRanges = result.data; 
+        const availableDateRanges = result.data;
         const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
         setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
-        console.log("Disabled dates:", disabledDates.length);
       });
       toast.success({
         message: 'Success!',
-        description: 'Your lend offer was successfully created.',
+        description: 'You have successfully borrowed a spot!',
       });
     },
     onError: (error) => {
-      console.error("Error creating lend offer:", error);
       toast.error({
         message: 'Error',
-        description: 'There was an error creating your lend offer.',
+        description: 'There was an error borrowing the spot.',
       });
     },
   });
@@ -154,21 +158,17 @@ const useParkingBorrowForm = () => {
     daysFromNow: number
   ): Dayjs[] {
     const unavailableDates: Dayjs[] = [];
-
     for (let i = 0; i < daysFromNow; i++) {
       const currentDate = dayjs().startOf("day").add(i, "day");
-
       const isAvailable = availableRanges.some(({ start, end }) => {
         const startDate = dayjs(start).startOf("day");
         const endDate = dayjs(end).startOf("day");
         return currentDate.isBetween(startDate, endDate, null, "[]");
       });
-
       if (!isAvailable) {
         unavailableDates.push(currentDate);
       }
     }
-
     return unavailableDates;
   }
 
