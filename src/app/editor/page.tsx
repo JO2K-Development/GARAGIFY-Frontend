@@ -1,4 +1,3 @@
-"use client";
 import ParkingEditor from "@/components/Parking/Edit/ParkingEditor/ParkingEditor";
 
 export default function Page() {

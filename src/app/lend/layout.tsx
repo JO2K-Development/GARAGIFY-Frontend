@@ -1,4 +1,3 @@
-"use client";
 import AppShell from "@/components/AppShell/AppShell";
 import { SpotProvider } from "@/context/SpotProvider";
 import { ReactNode } from "react";
