@@ -44,8 +44,8 @@ const useParkingLendForm = () => {
     // to jest endpoint
     refetchAvailableDates().then((result) => {
       console.log("Available dates:", result.data);
-      const availableDateRanges = result.data;
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range);
+      const availableDateRanges = result.data; 
+      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
       setDisabledDates(disabledDatesTmp);
     });
   }, [pickerKey]);
