@@ -119,7 +119,6 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
       }}
     >
       {children}
-      {children}
       <pre
         style={{
           background: "#222",

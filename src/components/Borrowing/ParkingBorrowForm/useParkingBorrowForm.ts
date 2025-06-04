@@ -104,6 +104,13 @@ const useParkingBorrowForm = () => {
     mutationFn: borrowSpot,
     onSuccess: (data) => {
       console.log("Lend offer created:", data);
+      refetchAvailableDates().then((result) => {
+        console.log("Available dates:", result.data);
+        const availableDateRanges = result.data; 
+        const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
+        setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
+        console.log("Disabled dates:", disabledDates.length);
+      });
     },
     onError: (error) => {
       console.error("Error creating lend offer:", error);

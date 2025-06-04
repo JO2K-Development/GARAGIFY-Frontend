@@ -5,7 +5,8 @@
     "navigation": {
         "borrowing": "Borrowing",
         "lending": "Lending",
-        "logout": "Logout"
+        "logout": "Logout",
+        "admin_panel": "Admin Panel"
     },
     "lending": {
         "form": {
@@ -19,6 +20,14 @@
             "findSpecialSpots": "Find special spots",
             "findNonReparkedSpots": "Find non-reparked spots only",
             "submit": "Submit"
+        }
+    },
+    "admin_panel": {
+        "form": {
+            "submit": "Submit",
+            "deleteAllData": "Delete all data",
+            "deleteAllDataConfirmation": "Are you sure you want to delete all data? This action cannot be undone.",
+            "assignToSpot": "Assign to spot"
         }
     }
 }
