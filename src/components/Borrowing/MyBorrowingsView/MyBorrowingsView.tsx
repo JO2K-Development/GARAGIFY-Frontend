@@ -20,12 +20,14 @@ const borrowings = [
 
 const MyBorrowingsView = () => {
   const {
+    content,
     onCancel
   } = useMyBorrowingsView();
+  console.log(content);
   return (
     <div className={ styles.MyBorrowingsView }>
       <LendBorrowWidget active="borrow"/>
-      <LendBorrowList label="Your borrows" content={ borrowings } onCancel={onCancel}/>
+      <LendBorrowList label="Your borrows" content={ content } onCancel={onCancel}/>
     </div>
   );
 }

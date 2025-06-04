@@ -34,8 +34,6 @@ const LendBorrowList = ({
     return 'borrowers' in item;
   };
 
-  console.log(content);
-
   return (
     <div className={ styles.BorrowingList }>
       <div className={ styles.BorrowingListHeader }>

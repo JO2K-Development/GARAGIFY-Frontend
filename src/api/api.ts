@@ -32,7 +32,7 @@ export const getLendings = async () => {
   if (!response.ok) {
     throw new Error("Failed to fetch lend offers");
   }
-  return response.json().content;
+  return response;
 };
 
 export const getBorrowings = async () => {

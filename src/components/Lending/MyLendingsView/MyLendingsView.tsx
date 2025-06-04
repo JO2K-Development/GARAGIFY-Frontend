@@ -23,12 +23,13 @@ const lendings = [
 
 const MyLendingsView = () => {
   const {
+    content,
     onCancel
   } = useMyLendingsView();
   return (
     <div className={ styles.MyLendingsView }>
       <LendBorrowWidget active="lend"/>
-      <LendBorrowList label="Your lendings" content={ lendings } onCancel={ onCancel }/>
+      <LendBorrowList label="Your lendings" content={ content } onCancel={ onCancel }/>
     </div>
   );
 }
