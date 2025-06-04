@@ -43,26 +43,6 @@ export const SpotProvider = ({ children }: PropsWithChildren) => {
   const [disabledSpotIds, setDisabledSpotIds] = useState<string[]>([]);
   const [disabledDates, setDisabledDates] = useState<Dayjs[]>([]);
 
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["parking"],
-    queryFn: () => getParking(1),
-  });
-
-  const [parkingUI, setParkingUI] = useState<ParkingMap | null>(
-    null
-  );
-
-  const parkingSpots = parkingUI ? parkingUI.spotGroups.flatMap((group) =>
-          group.spots.map((spot) => (spot as any).spotId)
-        ) : [];
-  
-
-  useEffect(() => {
-    if (data) {
-      hydrateParking(data as ParkingMap).then(setParkingUI);
-    }
-  }, [data]);
-  
 
 
   const { data, error, isLoading } = useQuery({
