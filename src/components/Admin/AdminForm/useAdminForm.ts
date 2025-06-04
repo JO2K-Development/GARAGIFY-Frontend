@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { borrowSpot, getBorrowSpots, getBorrowTimeRanges, TimeRange } from "@/api/parking";
 import { useSpot } from "@/context/SpotProvider";
+import { assignUser, getUsers } from "@/api/admin";
 
 dayjs.extend(isBetween);
 
@@ -16,7 +17,7 @@ const useAdminForm = () => {
   const { selectedSpotId, setDisabledSpotIds, allSpotIds } = useSpot();
 
   useEffect(() => {
-      setDisabledSpotIds([])
+      setDisabledSpotIds([]);
   }, []);
 
   type FormValues = {
@@ -45,59 +46,7 @@ const useAdminForm = () => {
     merged.setHours(time.getHours(), time.getMinutes(), 0, 0);
     return merged;
   };
-    const {
-    data,
-    isLoading,
-    error,
-    refetch: refetchGetBorrow,
-  } = useQuery({
-    queryKey: ['borrowSpots'],
-    queryFn: () => {
-      if (!myDateRange) throw new Error("No time range set");
 
-      return getBorrowSpots(1, {
-        from: mergeDateAndTime(myDateRange[0], startTime),
-        until: mergeDateAndTime(myDateRange[1], endTime),
-      });
-    },
-    enabled: false, // Don't run automatically
-  });
-
-
-  const mutationLendSpot = useMutation({
-    mutationFn: borrowSpot,
-    onSuccess: (data) => {
-      console.log("Lend offer created:", data);
-    },
-    onError: (error) => {
-      console.error("Error creating lend offer:", error);
-    },
-  });
-
-
-  type AvailableRange = { start: string; end: string };
-  function getUnavailableDates(
-    availableRanges: AvailableRange[],
-    daysFromNow: number
-  ): Dayjs[] {
-    const unavailableDates: Dayjs[] = [];
-
-    for (let i = 0; i < daysFromNow; i++) {
-      const currentDate = dayjs().startOf("day").add(i, "day");
-
-      const isAvailable = availableRanges.some(({ start, end }) => {
-        const startDate = dayjs(start).startOf("day");
-        const endDate = dayjs(end).startOf("day");
-        return currentDate.isBetween(startDate, endDate, null, "[]");
-      });
-
-      if (!isAvailable) {
-        unavailableDates.push(currentDate);
-      }
-    }
-
-    return unavailableDates;
-  }
 
   return {
     control,

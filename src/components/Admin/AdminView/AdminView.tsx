@@ -7,7 +7,7 @@ const AdminView = () => {
   return (
     <ElevatedScreenDivider
       left={<AdminForm />}
-      right={<SpotAssignment userData={{}} />}
+      right={<SpotAssignment />}
     />
   );
 };

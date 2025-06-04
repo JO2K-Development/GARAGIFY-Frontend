@@ -27,6 +27,29 @@ export const getUsers = async ({
   return data;
 };
 
+export type UserWithSpots = components["schemas"]["UserWithSpotsDTO"];
+
+export const getAllUsers = async (parkingId: number, sort?: string) : Promise<UserWithSpots[]> => {
+  const pageSize = 100; // Adjust as needed based on API limits
+  let allUsers: UserWithSpots[] = [];
+  let currentPage = 0;
+  let totalPages = 1;
+
+  while (currentPage < totalPages) {
+    const data = await getUsers({
+      page: currentPage,
+      size: pageSize,
+      sort,
+      parkingId,
+    }); 
+    allUsers = allUsers.concat(data.content);
+    totalPages = data.totalPages;
+    currentPage++;
+  }
+
+  return allUsers;
+};
+
 export const assignUser = ({
   parkingId,
   spotId,
@@ -43,5 +66,5 @@ export const assignUser = ({
         user_id: user_id,
       }),
     }
-  );
+  ).then((response) => response.json());
 };

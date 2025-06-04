@@ -12,16 +12,11 @@ type UserData = {
   email: string;
 };
 
-type SpotAssignmentProps = {
-  userData: Record<string, UserData[]>;
-};
 
-const SpotAssignment: React.FC<SpotAssignmentProps> = ({ userData }) => {
+
+const SpotAssignment = () => {
   const { selectedSpotId } = useSpot();
-  const { usersForSpot, selectedUserId, handleChange, onSubmit } = useSpotAssignment({
-    userData,
-    selectedSpotId,
-  });
+  const { usersForSpot, selectedUserId, handleChange, onSubmit } = useSpotAssignment();
 
   return (
     <div style={{ padding: "1rem", maxWidth: 400 }}>
