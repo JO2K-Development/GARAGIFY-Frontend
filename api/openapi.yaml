@@ -658,7 +658,7 @@ components:
           description: End date of borrow
           type: string
           format: date-time
-        borrower:
+        parking_spot_owner:
           $ref: '#/components/schemas/UserDTO'
 
     BorrowForm:
@@ -727,8 +727,8 @@ components:
         spot_id:
           description: Id of parking spot
           type: string
-        owner:
-          $ref: '#/components/schemas/UserDTO'
+        borrowers:
+          $ref: '#/components/schemas/UserListDTO'
       required:
         - id
         - start_date
@@ -929,6 +929,16 @@ components:
         - user_id
         - email
 
+    UserListDTO:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserDTO'
+      required:
+        - users
+
     UserWithSpotsDTO:
       type: object
       allOf:
@@ -959,3 +969,4 @@ components:
           type: string
           format: uuid
           description: UUID of the user to assign the parking spot to
+          nullable: true

@@ -29,7 +29,10 @@ export const getUsers = async ({
 
 export type UserWithSpots = components["schemas"]["UserWithSpotsDTO"];
 
-export const getAllUsers = async (parkingId: number, sort?: string) : Promise<UserWithSpots[]> => {
+export const getAllUsers = async (
+  parkingId: number,
+  sort?: string
+): Promise<UserWithSpots[]> => {
   const pageSize = 100; // Adjust as needed based on API limits
   let allUsers: UserWithSpots[] = [];
   let currentPage = 0;
@@ -41,7 +44,7 @@ export const getAllUsers = async (parkingId: number, sort?: string) : Promise<Us
       size: pageSize,
       sort,
       parkingId,
-    }); 
+    });
     allUsers = allUsers.concat(data.content);
     totalPages = data.totalPages;
     currentPage++;
@@ -50,7 +53,7 @@ export const getAllUsers = async (parkingId: number, sort?: string) : Promise<Us
   return allUsers;
 };
 
-export const assignUser = ({
+export const assignUser = async ({
   parkingId,
   spotId,
   user_id,
@@ -58,7 +61,7 @@ export const assignUser = ({
   parkingId: number;
   spotId: string;
 }) => {
-  return fetch(
+  const response = await fetch(
     `/api/v1/admin/parkings/${parkingId}/parking-spots/${spotId}/assign`,
     {
       method: HttpMethod.PUT,

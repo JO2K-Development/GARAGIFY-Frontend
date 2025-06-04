@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useSpot } from "@/context/SpotProvider";
-import { assignUser, getAllUsers } from "@/api/admin";
+import { assignUser, getAllUsers, getUsers, UserWithSpots } from "@/api/admin";
 import { useToast } from "@/context/ToastProvider";
 type UserData = {
   userId: string;
@@ -60,7 +60,7 @@ export const useSpotAssignment = () => {
     mutationUser.mutate({
       parkingId: 1, // Replace with actual parking ID
       spotId: selectedSpotId,
-      user_id: undefined,
+      user_id: null,
     });
   };
   const toast = useToast();

@@ -1,3 +1,4 @@
+"use client";
 import ElevatedScreenDivider from "@/components/ElevatedScreenDivider/ElevatedScreenDivider";
 import ParkingBorrowForm from "../ParkingBorrowForm/ParkingBorrowForm";
 import MyBorrowingsView from "../MyBorrowingsView/MyBorrowingsView";

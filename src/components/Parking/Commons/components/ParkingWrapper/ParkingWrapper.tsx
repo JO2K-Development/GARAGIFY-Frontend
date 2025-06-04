@@ -6,7 +6,7 @@ import useCreateCanvas from "../../hooks/useCreateCanvas";
 import { CanvasContext } from "../../context/CanvasContext";
 
 const ParkingWrapper = ({ children }: PropsWithChildren) => {
-  const { canvasRef, canvas } = useCreateCanvas(800, 800);
+  const { canvasRef, canvas } = useCreateCanvas();
   return (
     <div className={styles.container}>
       <CanvasContext.Provider value={{ canvasRef, canvas }}>

@@ -45,9 +45,8 @@ const useParkingLendForm = () => {
     refetchAvailableDates().then((result) => {
       console.log("Available dates:", result.data);
       const availableDateRanges = result.data;
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
+      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range);
       setDisabledDates(disabledDatesTmp);
-      console.log("Disabled dates:", disabledDates.length);
     });
   }, [pickerKey]);
 

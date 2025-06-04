@@ -389,7 +389,7 @@ export interface components {
              * @description End date of borrow
              */
             end_date?: string;
-            borrower?: components["schemas"]["UserDTO"];
+            parking_spot_owner?: components["schemas"]["UserDTO"];
         };
         BorrowForm: {
             /** Format: uuid */
@@ -436,7 +436,7 @@ export interface components {
             parking_id: number;
             /** @description Id of parking spot */
             spot_id: string;
-            owner: components["schemas"]["UserDTO"];
+            borrowers?: components["schemas"]["UserListDTO"];
         };
         /** @description This is the lend offer put model */
         LendOfferPutForm: {
@@ -569,6 +569,9 @@ export interface components {
             user_id: string;
             email: string;
         };
+        UserListDTO: {
+            users: components["schemas"]["UserDTO"][];
+        };
         UserWithSpotsDTO: components["schemas"]["UserDTO"] & {
             spots: components["schemas"]["ParkingSpotDTO"][];
         };
@@ -580,7 +583,7 @@ export interface components {
              * Format: uuid
              * @description UUID of the user to assign the parking spot to
              */
-            user_id?: string;
+            user_id?: string | null;
         };
     };
     responses: never;

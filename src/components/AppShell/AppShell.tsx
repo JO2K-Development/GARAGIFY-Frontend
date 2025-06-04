@@ -1,3 +1,4 @@
+"use client";
 import React, { PropsWithChildren } from "react";
 import { Layout } from "antd";
 import Navbar from "../Navbar/Navbar";
