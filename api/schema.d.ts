@@ -47,7 +47,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Borrow a specific parking spot */
+        /** Lend a specific parking spot */
         post: operations["createLendForSpot"];
         delete?: never;
         options?: never;
@@ -62,7 +62,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get all borrows for the current user (paged) */
+        /** Get all lends for the current user (paged) */
         get: operations["getMyLends"];
         put?: never;
         post?: never;
@@ -83,7 +83,7 @@ export interface paths {
         put?: never;
         post?: never;
         /**
-         * Delete a borrow by its ID
+         * Delete a lends by its ID
          * @description Deletes the lend resource with the given UUID.
          */
         delete: operations["deleteParkingLend"];
@@ -243,6 +243,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/parkings/{parking_id}/parking-spots/{spot_id}/assign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Assign a parking spot to a user */
+        put: operations["assignParkingSpot"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/parkings/{parking_id}/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get a paginated list of users assigned to parking spots */
+        get: operations["getAllUsersWithSpots"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/lend-offer": {
         parameters: {
             query?: never;
@@ -337,6 +371,26 @@ export interface components {
              */
             end_date?: string;
         };
+        /** @description This is the borrow model */
+        BorrowInfoDTO: {
+            /** @description Id of borrow */
+            id?: string;
+            /** @description Id of the parking */
+            parking_id?: number;
+            /** @description Id of parking spot */
+            spot_id?: string;
+            /**
+             * Format: date-time
+             * @description Start date of borrow
+             */
+            start_date?: string;
+            /**
+             * Format: date-time
+             * @description End date of borrow
+             */
+            end_date?: string;
+            borrower?: components["schemas"]["UserDTO"];
+        };
         BorrowForm: {
             /** Format: uuid */
             spotId: string;
@@ -348,21 +402,41 @@ export interface components {
         /** @description This is the lend offer model */
         LendOfferDTO: {
             /** @description Id of lend offer */
-            id?: string;
+            id: string;
             /**
              * Format: date-time
              * @description Start date of lend offer
              */
-            start_date?: string;
+            start_date: string;
             /**
              * Format: date-time
              * @description End date of lend offer
              */
-            end_date?: string;
+            end_date: string;
             /** @description Id of the parking */
-            parking_id?: number;
+            parking_id: number;
             /** @description Id of parking spot */
-            spot_id?: string;
+            spot_id: string;
+        };
+        /** @description This is the lend offer model */
+        LendOfferInfoDTO: {
+            /** @description Id of lend offer */
+            id: string;
+            /**
+             * Format: date-time
+             * @description Start date of lend offer
+             */
+            start_date: string;
+            /**
+             * Format: date-time
+             * @description End date of lend offer
+             */
+            end_date: string;
+            /** @description Id of the parking */
+            parking_id: number;
+            /** @description Id of parking spot */
+            spot_id: string;
+            owner: components["schemas"]["UserDTO"];
         };
         /** @description This is the lend offer put model */
         LendOfferPutForm: {
@@ -452,8 +526,14 @@ export interface components {
         LendOfferListDTO: components["schemas"]["PagedResponse"] & {
             content?: components["schemas"]["LendOfferDTO"][];
         };
+        LendOfferInfoListDTO: components["schemas"]["PagedResponse"] & {
+            content?: components["schemas"]["LendOfferInfoDTO"][];
+        };
         BorrowListDTO: components["schemas"]["PagedResponse"] & {
             content?: components["schemas"]["BorrowDTO"][];
+        };
+        BorrowInfoListDTO: components["schemas"]["PagedResponse"] & {
+            content?: components["schemas"]["BorrowInfoDTO"][];
         };
         /** @description Generic paginated response wrapper */
         PagedResponse: {
@@ -483,6 +563,24 @@ export interface components {
              * @example 10
              */
             size: number;
+        };
+        UserDTO: {
+            /** Format: uuid */
+            user_id: string;
+            email: string;
+        };
+        UserWithSpotsDTO: components["schemas"]["UserDTO"] & {
+            spots: components["schemas"]["ParkingSpotDTO"][];
+        };
+        UserWithSpotsListDTO: components["schemas"]["PagedResponse"] & {
+            content?: components["schemas"]["UserWithSpotsDTO"][];
+        };
+        AssignParkingSpotFormDTO: {
+            /**
+             * Format: uuid
+             * @description UUID of the user to assign the parking spot to
+             */
+            user_id?: string;
         };
     };
     responses: never;
@@ -590,7 +688,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LendOfferListDTO"];
+                    "application/json": components["schemas"]["LendOfferInfoListDTO"];
                 };
             };
         };
@@ -665,7 +763,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BorrowListDTO"];
+                    "application/json": components["schemas"]["BorrowInfoListDTO"];
                 };
             };
         };
@@ -820,6 +918,66 @@ export interface operations {
                 };
                 content: {
                     "application/json": string[];
+                };
+            };
+        };
+    };
+    assignParkingSpot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Id of the parking */
+                parking_id: number;
+                /** @description UUID of the parking spot to assign */
+                spot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssignParkingSpotFormDTO"];
+            };
+        };
+        responses: {
+            /** @description Parking spot assigned successfully */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example Parking spot assigned successfully */
+                        message?: string;
+                    };
+                };
+            };
+        };
+    };
+    getAllUsersWithSpots: {
+        parameters: {
+            query?: {
+                /** @description Page number (0-based) */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Id of the parking */
+                parking_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Paginated list of users with assigned parking spots */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserWithSpotsListDTO"];
                 };
             };
         };
