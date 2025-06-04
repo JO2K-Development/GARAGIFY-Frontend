@@ -1,12 +1,12 @@
 import ElevatedScreenDivider from "@/components/ElevatedScreenDivider/ElevatedScreenDivider";
 import ParkingBorrowForm from "../ParkingBorrowForm/ParkingBorrowForm";
-import ParkingView from "@/components/Parking/View/ParkingView/ParkingView";
+import MyBorrowingsView from "../MyBorrowingsView/MyBorrowingsView";
 
 const BorrowingView = () => {
   return (
     <ElevatedScreenDivider
-      left={<ParkingBorrowForm />}
-      right={<p></p>}
+      left={ <ParkingBorrowForm/> }
+      right={ <MyBorrowingsView/> }
     />
   );
 };
