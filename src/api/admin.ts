@@ -66,5 +66,8 @@ export const assignUser = ({
         user_id: user_id,
       }),
     }
-  ).then((response) => response.json());
+  ).then((response) => 
+    {if (!response.ok) {
+      throw new Error(`Error: ${response.status} ${response.statusText}`);
+    } return response.json()});
 };

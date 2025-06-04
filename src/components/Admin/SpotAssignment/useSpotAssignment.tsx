@@ -66,6 +66,11 @@ export const useSpotAssignment = () => {
   const toast = useToast();
   const onSubmit = () => {
     if (!(selectedSpotId && selectedUserId)) return;
+    mutationUser.mutate({
+      parkingId: 1, // Replace with actual parking ID
+      spotId: selectedSpotId,
+      user_id: selectedUserId,
+    });
   };
 
   return {
