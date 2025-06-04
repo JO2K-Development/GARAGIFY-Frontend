@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { backendClient } from "../../../../../../api/backendClient";
 import { HttpMethod } from "@/utils/httpMethod";
 
-export async function GET(
+export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {

@@ -1,14 +1,39 @@
-import { useQuery } from "@tanstack/react-query";
-import { getBorrowings } from "@/api/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getBorrowings } from "@/api/api"
+import { deleteBorrow } from "@/api/parking";
 
 const useMyBorrowingsView = () => {
-  const { data, error, isLoading } = useQuery({
+
+  const fetchBorrowings = async () => {
+    const response = await getBorrowings();
+    const content = (await response.json()).content;
+    return content.map((borrowing: any) => ({
+      id: borrowing.id,
+      start_date: borrowing.start_date,
+      end_date: borrowing.end_date,
+      parking_id: borrowing.parking_id,
+      spot_id: borrowing.spot_id,
+      owner: borrowing.parking_spot_owner,
+    }))
+  }
+
+  const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["borrowing"],
-    queryFn: () => getBorrowings(),
+    queryFn: () => fetchBorrowings(),
+  });
+
+  const mutationDeleteBorrowing = useMutation({
+    mutationFn: deleteBorrow,
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Error deleting borrowing:", error);
+    },
   });
 
   const onCancel = (borrowing_id: string) => {
-    console.log(borrowing_id);
+    mutationDeleteBorrowing.mutate(borrowing_id);
   }
 
   return {
