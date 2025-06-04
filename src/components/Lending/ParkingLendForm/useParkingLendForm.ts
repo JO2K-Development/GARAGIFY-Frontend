@@ -43,6 +43,7 @@ const useParkingLendForm = () => {
       console.log("Available dates:", result.data);
       const availableDateRanges = result.data; 
       const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
+      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
       setDisabledDates(disabledDatesTmp);
       console.log("Disabled dates:", disabledDates.length);
     });
@@ -124,17 +125,6 @@ const useParkingLendForm = () => {
     mutationFn: lendSpot,
     onSuccess: (data) => {
       console.log("Lend offer created:", data);
-      refetchAvailableDates().then((result) => {
-      console.log("Available dates:", result.data);
-      const availableDateRanges = result.data; 
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
-      setDisabledDates(disabledDatesTmp);
-      console.log("Disabled dates:", disabledDates.length);
-      toast.success({
-        message: 'Success!',
-        description: 'Your lend offer was successfully created.',
-      });
-    });
     },
     onError: (error) => {
       console.error("Error creating lend offer:", error);
