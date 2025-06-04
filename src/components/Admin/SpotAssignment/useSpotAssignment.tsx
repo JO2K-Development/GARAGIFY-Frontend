@@ -1,6 +1,5 @@
-// hooks/useSpotAssignment.ts
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSpot } from "@/context/SpotProvider";
 import { set } from "react-hook-form";
 import { assignUser, getAllUsers, getUsers, UserWithSpots } from "@/api/admin";
@@ -20,38 +19,37 @@ type UseSpotAssignmentProps = {
 export const useSpotAssignment = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const { selectedSpotId } = useSpot();
-  const {
-    data: users,
-    isLoading,
-    error,
-    refetch: refetchGetUsers,
-  } = useQuery({
+  const { data: users, refetch: refetchGetUsers } = useQuery({
     queryKey: ["getUsers", selectedSpotId],
     queryFn: () => {
       return getAllUsers(1);
     },
-    // enabled: false, // Don't run automatically
   });
-  console.log("users", users);
-  //
-    const currentOwner= users?.find((user) =>
-        user.spots.some((spot) => spot.spot_uuid === selectedSpotId)
-    );
+  const currentOwner = users?.find((user) =>
+    user.spots.some((spot) => spot.spot_uuid === selectedSpotId)
+  );
 
-      useEffect(() => {
+  useEffect(() => {
     if (currentOwner) {
-        setSelectedUserId(currentOwner.user_id);
-    } 
-    else {
-        setSelectedUserId(null);
+      setSelectedUserId(currentOwner.user_id);
+    } else {
+      setSelectedUserId(null);
     }
-    }, [currentOwner]);
+  }, [currentOwner]);
 
   const handleChange = (value: string) => {
     setSelectedUserId(value);
   };
 
-  
+  // const mutationLendSpot = useMutation({
+  //     mutationFn: borrowSpot,
+  //     onSuccess: (data) => {
+  //     console.log("Lend offer created:", data);
+  //     },
+  //     onError: (error) => {
+  //     console.error("Error creating lend offer:", error);
+  //     },
+  // });
 
   const mutationUser = useMutation({
     mutationFn: assignUser,
@@ -91,7 +89,7 @@ export const useSpotAssignment = () => {
 
   return {
     owner: currentOwner,
-    users : users || [],
+    users: users || [],
     selectedUserId,
     setSelectedUserId,
     handleChange,
