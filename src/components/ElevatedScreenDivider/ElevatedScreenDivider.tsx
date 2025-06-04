@@ -14,7 +14,7 @@ const ElevatedScreenDivider = ({ left, right }: ElevatedScreenDividerProps) => {
         <Card className={styles.card}>{left}</Card>
       </Col>
       <Col span={12}>
-        <Card className={styles.card}>{right}</Card>
+        <div className={styles.height}>{right}</div>
       </Col>
     </Row>
   );
