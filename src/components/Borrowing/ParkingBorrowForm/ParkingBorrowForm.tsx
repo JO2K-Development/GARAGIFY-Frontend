@@ -5,6 +5,7 @@ import labels from "@/labels.json";
 import dayjs from "dayjs";
 import useParkingBorrowForm, { TIME_FORMAT } from "./useParkingBorrowForm";
 import RowDatePicker from "@/components/Borrowing/RowDatePicker/RowDatePicker";
+import ParkingView from "@/components/Parking/View/ParkingView/ParkingView";
 const {
   borrowing: {
     form: { dateRangeRequired, findSpecialSpots, findNonReparkedSpots, submit },
@@ -15,8 +16,8 @@ const ParkingBorrowForm = () => {
     control,
     handleSubmit,
     onSubmit,
+    pickerKey,
     formState: { errors },
-    isDateDisabled,
   } = useParkingBorrowForm();
 
   return (
@@ -28,8 +29,8 @@ const ParkingBorrowForm = () => {
           rules={{ required: dateRangeRequired }}
           render={({ field }) => (
             <RowDatePicker
+              key={pickerKey}
               {...field}
-              disabledDate={isDateDisabled}
               value={
                 field.value
                   ? [dayjs(field.value[0]), dayjs(field.value[1])]
@@ -95,7 +96,9 @@ const ParkingBorrowForm = () => {
               />
             )}
           />
+          
         </Flex>
+        <ParkingView/>
         <Button type="primary" htmlType="submit">
           {submit}
         </Button>

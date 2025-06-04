@@ -1,18 +1,20 @@
 import dayjs, { Dayjs } from "dayjs";
 import { useLayoutEffect, useState, useEffect, useRef } from "react";
 import styles from "@/components/Borrowing/RowDatePicker/RowDatePicker.module.scss";
+import { useSpot } from "@/context/SpotProvider";
 
 interface useRowDatePickerProps {
-  disabledDate: (currentDate: dayjs.Dayjs) => boolean;
   value?: [Dayjs, Dayjs] | null;
   onChange: (dates: [Dayjs, Dayjs] | null) => void;
 }
 
 const useRowDatePicker = ({
-  disabledDate,
   value,
   onChange,
 }: useRowDatePickerProps) => {
+
+
+  const { disabledDates } = useSpot();
   const [dateList, setDateList] = useState<Dayjs[]>([
     dayjs(),
     dayjs().add(1, "day"),
@@ -39,8 +41,10 @@ const useRowDatePicker = ({
   useEffect(() => {
     calculateDaysToShow();
     window.addEventListener("resize", calculateDaysToShow);
+    setStartDay(null);
+    setEndDay(null);
     return () => window.removeEventListener("resize", calculateDaysToShow);
-  }, []);
+  }, [disabledDates]);
 
   const dateOnClick = (date: Dayjs) => {
     if (disabledDate(date)) {
@@ -122,13 +126,17 @@ const useRowDatePicker = ({
   useEffect(() => {
     if (startDay && endDay) {
       onChange?.([startDay, endDay]);
+    } else {
+      onChange?.(null);
     }
   }, [startDay, endDay]);
 
   useLayoutEffect(() => {
     const newDateList = generateDateList(dayOffset);
     setDateList(newDateList);
-  }, [daysToShow, dayOffset]);
+    setStartDay(null);
+    setEndDay(null);
+  }, [daysToShow, dayOffset, disabledDates]);
 
   const rightArrowClick = () => {
     setDayOffset(dayOffset + Math.floor(daysToShow / 3));
@@ -137,6 +145,11 @@ const useRowDatePicker = ({
   const leftArrowClick = () => {
     setDayOffset(dayOffset - Math.floor(daysToShow / 3));
   };
+
+  const disabledDate = (current: dayjs.Dayjs) =>
+      current &&
+      (current < dayjs().startOf("day") ||
+        disabledDates.some((date) => current.isSame(date, "day")));
 
   return {
     dateList,

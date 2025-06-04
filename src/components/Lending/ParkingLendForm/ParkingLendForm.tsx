@@ -17,10 +17,11 @@ const ParkingLendForm = () => {
     control,
     handleSubmit,
     onSubmit,
+    pickerKey,
     formState: { errors },
-    isDateDisabled,
   } = useParkingLendForm();
 
+  
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Flex vertical gap="large" align="center">
@@ -30,8 +31,8 @@ const ParkingLendForm = () => {
           rules={{ required: dateRangeRequired }}
           render={({ field }) => (
             <RowDatePicker
+              key={pickerKey}
               {...field}
-              disabledDate={isDateDisabled}
               value={
                 field.value
                   ? [dayjs(field.value[0]), dayjs(field.value[1])]

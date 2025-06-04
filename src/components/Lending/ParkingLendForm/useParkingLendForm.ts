@@ -1,6 +1,8 @@
 export const TIME_FORMAT = "HH:mm";
-import { useForm } from "react-hook-form";
-import dayjs from "dayjs";
+import { set, useForm } from "react-hook-form";
+import dayjs, { Dayjs } from "dayjs";
+import isBetween from 'dayjs/plugin/isBetween';
+
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useSpot } from "@/context/SpotProvider";
 import { useEffect, useState } from "react";
@@ -11,93 +13,61 @@ import {
   TimeRange,
 } from "@/api/parking";
 import { time } from "console";
+dayjs.extend(isBetween);
 
 const useParkingLendForm = () => {
-  const { selectedSpotId, setDisabledSpotIds, allSpotIds } = useSpot();
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const todayNumber = today.getTime();
+  const { selectedSpotId, setDisabledSpotIds, allSpotIds, disabledDates, setDisabledDates } = useSpot();
+  const [pickerKey, setPickerKey] = useState(0);
 
-  const disabledDates = [
-    dayjs("2025-05-12"),
-    dayjs("2025-05-20"),
-    dayjs("2025-06-01"),
-  ];
+
+  const {
+    refetch: refetchAvailableDates,
+  } = useQuery({
+    queryKey: ['lendDates'],
+    queryFn: () => {
+      return getLendTimeRanges(1, {
+        untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * 50), // 50 days from now
+      });
+    },
+    enabled: false, // Don't run automatically
+  });
 
   useEffect(() => {
     // to jest endpoint
-    getLendTimeRanges(1, {
-      untilWhen: new Date(Date.now() + 1000 * 60 * 60 * 24 * 50), // 50 days from now
+    refetchAvailableDates().then((result) => {
+      console.log("Available dates:", result.data);
+      const availableDateRanges = result.data; 
+      const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
+      setDisabledDates(disabledDatesTmp);
+      console.log("Disabled dates:", disabledDates.length);
     });
-    // TODO przemapować żeby wygladało jak, endpoint zwraca kiedy można pożyczyć, a musimy wiedzieć kiedy nie można (konkretne dni, nie przedziały)
-    //   const disabledDates = [
-    //   dayjs("2025-05-12"),
-    //   dayjs("2025-05-20"),
-    //   dayjs("2025-06-01"),
-    // ];
-
-    getLendSpots(1, {
-      from: new Date(Date.now() + 1000 * 60 * 60 * 24 * 50), // 50 days from now
-      until: new Date(Date.now() + 1000 * 60 * 60 * 24 * 60), // 60 days from now
-    })
-
-    // TODO można prznieść do twojego contextu żeby view mógł tego użyć
-    //np:
-    // setDisabledSpotIds([
-    //   // "82d3d324-6e40-4e46-b3b3-3acd0dd0c359",
-    //   // "71be7732-7630-4166-b29a-29ca97a02be0",
-    //   "7147ef24-0257-4a07-8a47-67220b1a53ef",
-    //   "0e0af45a-badb-475f-9910-2a26fa33155b",
-    //   "01dbeea6-2c6f-4fd9-abd7-b3d268b1db54",
-    //   "9f23340e-ce6a-4831-b2b4-a669ca66ee99",
-    //   "770e3cd4-1c9b-44fb-825d-bcff9f4113f7",
-    //   "7454eef6-d1c7-4bb2-8a84-a5a5ad083e65",
-    //   "70ebeb06-7310-4922-b65a-3c55c75079cf",
-    //   "9eaf95f6-15bc-4905-a000-e87577b4e79d",
-    //   "0472d305-1178-4d23-9260-ff1f0c765ee5",
-    //   "4bec3f40-a34b-45be-ba87-a9210062a398",
-    //   "97466e4c-cca6-474e-b0d6-f60be9390ade",
-    //   "7f9c5227-adf5-44a9-aabb-bbdcfcfdd48b",
-    //   "968ce770-6567-4e1e-b844-fcfec99d0e00",
-    //   "118a913d-5779-4128-bafb-ca018e07977b",
-    //   "28d43baf-9be9-4b7c-9b86-b1fab5adae26",
-    //   "8919f27c-6228-4ac4-9fbf-83c467a9f482",
-    //   "1bcab04a-8e27-432f-ad7c-c1c156c7fd5f",
-    // ]);
-  }, []);
+  }, [pickerKey]);
   
-  
-
-  
-
-
-
-
-// const availableSpotIds = result.data;
-//       const toDisableSpotIds = allSpotIds.filter(
-//         (id) => !availableSpotIds.includes(id)
-//       );
-//       setDisabledSpotIds(toDisableSpotIds);
-  const isDateDisabled = (current: dayjs.Dayjs) =>
-    current &&
-    (current < dayjs().startOf("day") ||
-      disabledDates.some((date) => current.isSame(date, "day")));
+ 
 
   type FormValues = {
     dateRange: [Date, Date] | null;
-    startTime: Date;
-    endTime: Date;
+    startTime: Date ;
+    endTime: Date ;
   };
-  const { control, handleSubmit, formState, watch } = useForm<FormValues>({
+  const { control, handleSubmit, formState, watch, reset } = useForm<FormValues>({
+
     defaultValues: {
       dateRange: null,
-      startTime: dayjs("12:00", TIME_FORMAT).toDate(),
-      endTime: dayjs("13:00", TIME_FORMAT).toDate(),
+      startTime: (() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; })(),
+      endTime: (() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; })(),
     },
   });
 
   const values = watch();
 
   const myDateRange = watch("dateRange");
-  const myStartTime = watch("startTime");
-  const myEndTime = watch("endTime");
+  const startTime = watch("startTime");
+  const endTime = watch("endTime");
+
 
   const mergeDateAndTime = (date: Date, time: Date): Date => {
     const merged = new Date(date);
@@ -105,22 +75,6 @@ const useParkingLendForm = () => {
     return merged;
   };
 
-  useEffect(() => {
-    const subscription = watch((values) => {
-      const { startTime, endTime } = values;
-      console.log("Form updated:", startTime, endTime);
-
-      if (!startTime || !endTime) {
-        setDisabledSpotIds([]); // Reset disabled spots if incomplete
-        return;
-      }
-
-      // Do something with startTime and endTime...
-    });
-
-    // Cleanup the subscription when component unmounts
-    return () => subscription.unsubscribe();
-  }, [watch]);
 
 
     // Prepare the query, but do not auto-fetch
@@ -128,32 +82,40 @@ const useParkingLendForm = () => {
     data,
     isLoading,
     error,
-    refetch,
+    refetch: refetchGetLend,
+
   } = useQuery({
     queryKey: ['lendSpots'],
     queryFn: () => {
       if (!myDateRange) throw new Error("No time range set");
-      console.log("Selected dates:",  myDateRange);
 
       return getLendSpots(1, {
-        from: mergeDateAndTime(myDateRange[0], values.startTime),
-        until: mergeDateAndTime(myDateRange[1], values.endTime),
+        from: mergeDateAndTime(myDateRange[0], startTime),
+        until: mergeDateAndTime(myDateRange[1], endTime),
+
       });
     },
     enabled: false, // Don't run automatically
   });
 
   useEffect(() => {
-    if (myDateRange) {
-      refetch().then((result) => {
-        const availableSpotIds = result.data;
-        const toDisableSpotIds = allSpotIds.filter(
-          (id) => !availableSpotIds.includes(id)
-        );
-        setDisabledSpotIds(toDisableSpotIds);
-      });
-    }
-  }, [myDateRange]);
+      const [ startTime, endTime ] = myDateRange ?? [null, null];
+      if (!startTime || !endTime) {
+        // console.log("blokowanie :", myDateRange);
+        setDisabledSpotIds(allSpotIds); // Disable all but the last spot if incomplete
+      } else {
+        refetchGetLend().then((result) => {
+          const availableSpotIds = result.data;
+          const toDisableSpotIds = allSpotIds.filter(
+            (id) => !availableSpotIds.includes(id)
+          );
+          setDisabledSpotIds(toDisableSpotIds);
+        });
+      }
+      // console.log(allSpotIds, "allSpotIds");
+
+  }, [myDateRange, pickerKey, startTime, endTime]);
+
 
   const mutationLendSpot = useMutation({
     mutationFn: lendSpot,
@@ -175,20 +137,46 @@ const useParkingLendForm = () => {
 
   const onSubmit = (data: FormValues) => {
     if (!data.dateRange) return;
-
+    
     const [startDate, endDate] = data.dateRange;
+    setPickerKey(k => k + 1);
 
     handleSubmitLendOfferPost({
       from: mergeDateAndTime(startDate, data.startTime),
       until: mergeDateAndTime(endDate, data.endTime),
     });
+    reset();
   };
+
+  type AvailableRange = { start: string; end: string };
+  function getUnavailableDates(
+      availableRanges: AvailableRange[],
+      daysFromNow: number
+    ): Dayjs[] {
+      const unavailableDates: Dayjs[] = [];
+  
+      for (let i = 0; i < daysFromNow; i++) {
+        const currentDate = dayjs().startOf("day").add(i, "day");
+  
+        const isAvailable = availableRanges.some(({ start, end }) => {
+          const startDate = dayjs(start).startOf("day");
+          const endDate = dayjs(end).startOf("day");
+          return currentDate.isBetween(startDate, endDate, null, "[]");
+        });
+  
+        if (!isAvailable) {
+          unavailableDates.push(currentDate);
+        }
+      }
+  
+      return unavailableDates;
+    }
 
   return {
     control,
     handleSubmit,
     formState,
-    isDateDisabled,
+    pickerKey,
     onSubmit,
   };
 };

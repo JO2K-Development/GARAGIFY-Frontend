@@ -1,5 +1,6 @@
 "use client";
 import AppShell from "@/components/AppShell/AppShell";
+import { SpotProvider } from "@/context/SpotProvider";
 import { ReactNode } from "react";
 
 export default function Layout({
@@ -7,5 +8,7 @@ export default function Layout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  return <AppShell>{children}</AppShell>;
+  return <AppShell>
+    <SpotProvider>{children}</SpotProvider>
+    </AppShell>;
 }
