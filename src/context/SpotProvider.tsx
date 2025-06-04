@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getParking } from "@/api/api";
 import { hydrateParking } from "@/components/Parking/Commons/serialization/hydrate";
 import dayjs, { Dayjs } from "dayjs";
+
 interface SelectedSpotContextType {
   selectedSpotId: string | null;
   setSelectedSpotId: (id: string | null) => void;
@@ -15,6 +16,7 @@ interface SelectedSpotContextType {
   isLoading: boolean;
   disabledDates: Dayjs[];
   setDisabledDates: (dates: Dayjs[]) => void;
+
 }
 
 const SpotContext = createContext<SelectedSpotContextType>({
@@ -61,6 +63,27 @@ export const SpotProvider = ({ children }: PropsWithChildren) => {
     }
   }, [data]);
   
+
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["parking"],
+    queryFn: () => getParking(1),
+  });
+
+  const [parkingUI, setParkingUI] = useState<ParkingMap | null>(
+    null
+  );
+
+  const parkingSpots = parkingUI ? parkingUI.spotGroups.flatMap((group) =>
+          group.spots.map((spot) => (spot as any).spotId)
+        ) : [];
+  
+
+  useEffect(() => {
+    if (data) {
+      hydrateParking(data as ParkingMap).then(setParkingUI);
+    }
+  }, [data]);
 
   return (
     <SpotContext.Provider

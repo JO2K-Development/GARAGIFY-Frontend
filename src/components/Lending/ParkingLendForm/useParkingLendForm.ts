@@ -22,6 +22,7 @@ const useParkingLendForm = () => {
   const { selectedSpotId, setDisabledSpotIds, allSpotIds, disabledDates, setDisabledDates } = useSpot();
   const [pickerKey, setPickerKey] = useState(0);
 
+
   const {
     refetch: refetchAvailableDates,
   } = useQuery({
@@ -45,7 +46,7 @@ const useParkingLendForm = () => {
     });
   }, [pickerKey]);
   
-  
+ 
 
   type FormValues = {
     dateRange: [Date, Date] | null;
@@ -53,6 +54,7 @@ const useParkingLendForm = () => {
     endTime: Date ;
   };
   const { control, handleSubmit, formState, watch, reset } = useForm<FormValues>({
+
     defaultValues: {
       dateRange: null,
       startTime: (() => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; })(),
@@ -66,11 +68,13 @@ const useParkingLendForm = () => {
   const startTime = watch("startTime");
   const endTime = watch("endTime");
 
+
   const mergeDateAndTime = (date: Date, time: Date): Date => {
     const merged = new Date(date);
     merged.setHours(time.getHours(), time.getMinutes(), 0, 0);
     return merged;
   };
+
 
 
     // Prepare the query, but do not auto-fetch
@@ -79,6 +83,7 @@ const useParkingLendForm = () => {
     isLoading,
     error,
     refetch: refetchGetLend,
+
   } = useQuery({
     queryKey: ['lendSpots'],
     queryFn: () => {
@@ -87,6 +92,7 @@ const useParkingLendForm = () => {
       return getLendSpots(1, {
         from: mergeDateAndTime(myDateRange[0], startTime),
         until: mergeDateAndTime(myDateRange[1], endTime),
+
       });
     },
     enabled: false, // Don't run automatically
@@ -109,6 +115,7 @@ const useParkingLendForm = () => {
       // console.log(allSpotIds, "allSpotIds");
 
   }, [myDateRange, pickerKey, startTime, endTime]);
+
 
   const mutationLendSpot = useMutation({
     mutationFn: lendSpot,
