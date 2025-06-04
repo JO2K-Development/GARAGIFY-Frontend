@@ -2,6 +2,7 @@ import React from "react";
 import { Select, Button, Typography, Space } from "antd";
 import { useSpot } from "@/context/SpotProvider";
 import { useSpotAssignment } from "./useSpotAssignment";
+import { on } from "events";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -12,9 +13,10 @@ const SpotAssignment = () => {
     owner,
     users,
     selectedUserId,
+    setSelectedUserId,
     handleChange,
     onSubmit,
-    // onUnassign, // make sure this is defined in useSpotAssignment
+    onUnassign, 
   } = useSpotAssignment();
 
   return (
@@ -47,7 +49,7 @@ const SpotAssignment = () => {
         </Button>
         <Button
           danger
-        //   onClick={onUnassign}
+          onClick={onUnassign}
           disabled={!selectedUserId || !selectedSpotId}
           style={{ flex: 1 }}
         >

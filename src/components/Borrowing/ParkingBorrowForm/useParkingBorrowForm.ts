@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { borrowSpot, getBorrowSpots, getBorrowTimeRanges, TimeRange } from "@/api/parking";
 import { useSpot } from "@/context/SpotProvider";
+import { useToast } from "@/context/ToastProvider";
 
 dayjs.extend(isBetween);
 
@@ -99,7 +100,8 @@ const useParkingBorrowForm = () => {
       // console.log(allSpotIds, "allSpotIds");
 
   }, [myDateRange, pickerKey, startTime, endTime]);
-
+    const toast = useToast();
+  
   const mutationLendSpot = useMutation({
     mutationFn: borrowSpot,
     onSuccess: (data) => {
@@ -111,9 +113,17 @@ const useParkingBorrowForm = () => {
         setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
         console.log("Disabled dates:", disabledDates.length);
       });
+      toast.success({
+        message: 'Success!',
+        description: 'Your lend offer was successfully created.',
+      });
     },
     onError: (error) => {
       console.error("Error creating lend offer:", error);
+      toast.error({
+        message: 'Error',
+        description: 'There was an error creating your lend offer.',
+      });
     },
   });
 

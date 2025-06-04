@@ -13,6 +13,7 @@ import {
   TimeRange,
 } from "@/api/parking";
 import { time } from "console";
+import { useToast } from "@/context/ToastProvider";
 dayjs.extend(isBetween);
 
 const useParkingLendForm = () => {
@@ -117,6 +118,7 @@ const useParkingLendForm = () => {
 
   }, [myDateRange, pickerKey, startTime, endTime]);
 
+  const toast = useToast();
 
   const mutationLendSpot = useMutation({
     mutationFn: lendSpot,
@@ -128,10 +130,18 @@ const useParkingLendForm = () => {
       const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
       setDisabledDates(disabledDatesTmp);
       console.log("Disabled dates:", disabledDates.length);
+      toast.success({
+        message: 'Success!',
+        description: 'Your lend offer was successfully created.',
+      });
     });
     },
     onError: (error) => {
       console.error("Error creating lend offer:", error);
+      toast.error({
+        message: 'Error',
+        description: 'There was an error creating your lend offer.',
+      });
     },
   });
 

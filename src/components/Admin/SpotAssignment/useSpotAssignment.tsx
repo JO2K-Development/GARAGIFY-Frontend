@@ -5,6 +5,8 @@ import { useSpot } from "@/context/SpotProvider";
 import { set } from "react-hook-form";
 import { assignUser, getAllUsers, getUsers, UserWithSpots } from "@/api/admin";
 import { remapMap } from "./utils";
+import { showToast } from "@/utils/showToast";
+import { useToast } from "@/context/ToastProvider";
 type UserData = {
   userId: string;
   email: string;
@@ -46,50 +48,54 @@ export const useSpotAssignment = () => {
     }, [currentOwner]);
 
   const handleChange = (value: string) => {
-
     setSelectedUserId(value);
   };
 
-  // const mutationLendSpot = useMutation({
-  //     mutationFn: borrowSpot,
-  //     onSuccess: (data) => {
-  //     console.log("Lend offer created:", data);
-  //     },
-  //     onError: (error) => {
-  //     console.error("Error creating lend offer:", error);
-  //     },
-  // });
+  
 
   const mutationUser = useMutation({
     mutationFn: assignUser,
     onSuccess: (data) => {
-      console.log("Lend offer created:", data);
+      console.log("user assigned:", data);
       refetchGetUsers();
+        toast.success({
+      message: 'Success!',
+      description: 'Your action was successful.',
+    });
     },
     onError: (error) => {
-      console.error("Error creating lend offer:", error);
+      console.error("Error assigning user:", error);
+        toast.error({
+      message: 'Error',
+        description: 'There was an error assigning the user.',
+    });
     },
   });
 
-  const onSubmit = () => {
-    if (!(selectedSpotId && selectedUserId)) return;
+  const onUnassign = () => {
+    if (!(selectedSpotId)) return;
     mutationUser.mutate({
       parkingId: 1, // Replace with actual parking ID
       spotId: selectedSpotId,
-      user_id: selectedUserId,
+      user_id: undefined, 
     });
-    
-    // handleSubmitBorrowPost({
-    //     from: mergeDateAndTime(startDate, data.startTime),
-    //     until: mergeDateAndTime(endDate, data.endTime),
-    // });
+    console.log("Unassigning user:", selectedSpotId, selectedUserId);
+  }
+  const toast = useToast();
+  const onSubmit = () => {
+    if (!(selectedSpotId && selectedUserId)) return;
+
+    console.log("Assigning user:", selectedSpotId, selectedUserId);
+
   };
 
   return {
     owner: currentOwner,
     users : users || [],
     selectedUserId,
+    setSelectedUserId,
     handleChange,
     onSubmit,
+    onUnassign,
   };
 };
