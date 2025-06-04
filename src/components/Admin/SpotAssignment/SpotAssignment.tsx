@@ -1,22 +1,21 @@
-// components/SpotAssignment.tsx
 import React from "react";
-import { Select, Button, Typography } from "antd";
+import { Select, Button, Typography, Space } from "antd";
 import { useSpot } from "@/context/SpotProvider";
 import { useSpotAssignment } from "./useSpotAssignment";
 
 const { Title } = Typography;
 const { Option } = Select;
 
-type UserData = {
-  userId: string;
-  email: string;
-};
-
-
-
 const SpotAssignment = () => {
   const { selectedSpotId } = useSpot();
-  const { usersForSpot, selectedUserId, handleChange, onSubmit } = useSpotAssignment();
+  const {
+    owner,
+    users,
+    selectedUserId,
+    handleChange,
+    onSubmit,
+    // onUnassign, // make sure this is defined in useSpotAssignment
+  } = useSpotAssignment();
 
   return (
     <div style={{ padding: "1rem", maxWidth: 400 }}>
@@ -30,21 +29,31 @@ const SpotAssignment = () => {
         disabled={!selectedSpotId}
         allowClear
       >
-        {usersForSpot.map(user => (
-          <Option key={user.userId} value={user.userId}>
+        {users.map(user => (
+          <Option key={user.user_id} value={user.user_id}>
             {user.email}
           </Option>
         ))}
       </Select>
 
-      <Button
-        type="primary"
-        onClick={onSubmit}
-        disabled={!selectedUserId || !selectedSpotId}
-        block
-      >
-        Submit
-      </Button>
+      <Space direction="horizontal" style={{ width: "100%", justifyContent: "space-between" }}>
+        <Button
+          type="primary"
+          onClick={onSubmit}
+          disabled={!selectedUserId || !selectedSpotId || owner?.user_id === selectedUserId}
+          style={{ flex: 1 }}
+        >
+          Assign
+        </Button>
+        <Button
+          danger
+        //   onClick={onUnassign}
+          disabled={!selectedUserId || !selectedSpotId}
+          style={{ flex: 1 }}
+        >
+          Unassign
+        </Button>
+      </Space>
     </div>
   );
 };

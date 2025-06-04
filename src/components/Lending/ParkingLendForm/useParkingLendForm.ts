@@ -122,6 +122,13 @@ const useParkingLendForm = () => {
     mutationFn: lendSpot,
     onSuccess: (data) => {
       console.log("Lend offer created:", data);
+      refetchAvailableDates().then((result) => {
+      console.log("Available dates:", result.data);
+      const availableDateRanges = result.data; 
+      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
+      setDisabledDates(disabledDatesTmp);
+      console.log("Disabled dates:", disabledDates.length);
+    });
     },
     onError: (error) => {
       console.error("Error creating lend offer:", error);
@@ -140,7 +147,6 @@ const useParkingLendForm = () => {
     if (!data.dateRange) return;
     
     const [startDate, endDate] = data.dateRange;
-    setPickerKey(k => k + 1);
 
     handleSubmitLendOfferPost({
       from: mergeDateAndTime(startDate, data.startTime),
