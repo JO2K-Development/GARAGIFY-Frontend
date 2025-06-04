@@ -13,19 +13,13 @@ const {
 const ParkingBorrowForm = () => {
   const {
     handleSubmit,
-    onSubmit,
     formState: { errors },
   } = useAdminForm();
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
       <Flex vertical gap="large" align="center">
         <ParkingView/>
-        <Button type="primary" htmlType="submit">
-          {submit}
-        </Button>
       </Flex>
-    </form>
   );
 };
 

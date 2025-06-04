@@ -13,30 +13,11 @@ const useAdminForm = () => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const todayNumber = today.getTime();
-  const { selectedSpotId, setDisabledSpotIds, allSpotIds, disabledDates, setDisabledDates } = useSpot();
-  
-  const [pickerKey, setPickerKey] = useState(0);
-
-  const { refetch: refetchAvailableDates } = useQuery({
-    queryKey: ["borrowAvailableDates"],
-    queryFn: () =>
-      getBorrowTimeRanges(1, {
-        untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * 50),
-      }),
-    enabled: false,
-  });
+  const { selectedSpotId, setDisabledSpotIds, allSpotIds } = useSpot();
 
   useEffect(() => {
-    // to jest endpoint
-    refetchAvailableDates().then((result) => {
-      console.log("Available dates:", result.data);
-      const availableDateRanges = result.data; 
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
-      setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
-      console.log("Disabled dates:", disabledDates.length);
-    });
-  }, [pickerKey]);
-
+      setDisabledSpotIds([])
+  }, []);
 
   type FormValues = {
     dateRange: [Date, Date] | null;
@@ -82,23 +63,6 @@ const useAdminForm = () => {
     enabled: false, // Don't run automatically
   });
 
-  useEffect(() => {
-      const [ startTime, endTime ] = myDateRange ?? [null, null];
-      if (!startTime || !endTime) {
-        // console.log("blokowanie :", myDateRange);
-        setDisabledSpotIds(allSpotIds); // Disable all but the last spot if incomplete
-      } else {
-        refetchGetBorrow().then((result) => {
-          const availableSpotIds = result.data;
-          const toDisableSpotIds = allSpotIds.filter(
-            (id) => !availableSpotIds.includes(id)
-          );
-          setDisabledSpotIds(toDisableSpotIds);
-        });
-      }
-      // console.log(allSpotIds, "allSpotIds");
-
-  }, [myDateRange, pickerKey, startTime, endTime]);
 
   const mutationLendSpot = useMutation({
     mutationFn: borrowSpot,
@@ -110,26 +74,6 @@ const useAdminForm = () => {
     },
   });
 
-  const handleSubmitBorrowPost = (body: TimeRange) => {
-    mutationLendSpot.mutate({
-      parkingId: 1, // Replace with actual parking ID
-      spotId: selectedSpotId ?? "",
-      body,
-    });
-  };
-
-  const onSubmit = (data: FormValues) => {
-    if (!data.dateRange) return;
-
-    const [startDate, endDate] = data.dateRange;
-    setPickerKey((k) => k + 1);
-
-    handleSubmitBorrowPost({
-      from: mergeDateAndTime(startDate, data.startTime),
-      until: mergeDateAndTime(endDate, data.endTime),
-    });
-    reset();
-  };
 
   type AvailableRange = { start: string; end: string };
   function getUnavailableDates(
@@ -159,8 +103,6 @@ const useAdminForm = () => {
     control,
     handleSubmit,
     formState,
-    onSubmit,
-    pickerKey,
   };
 };
 

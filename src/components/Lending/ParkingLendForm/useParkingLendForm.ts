@@ -22,6 +22,7 @@ const useParkingLendForm = () => {
   const { selectedSpotId, setDisabledSpotIds, allSpotIds, disabledDates, setDisabledDates } = useSpot();
   const [pickerKey, setPickerKey] = useState(0);
 
+  const range = 250;
 
   const {
     refetch: refetchAvailableDates,
@@ -29,7 +30,7 @@ const useParkingLendForm = () => {
     queryKey: ['lendDates'],
     queryFn: () => {
       return getLendTimeRanges(1, {
-        untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * 50), // 50 days from now
+        untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * range), // 50 days from now
       });
     },
     enabled: false, // Don't run automatically
@@ -40,7 +41,7 @@ const useParkingLendForm = () => {
     refetchAvailableDates().then((result) => {
       console.log("Available dates:", result.data);
       const availableDateRanges = result.data; 
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
+      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
       setDisabledDates(disabledDatesTmp);
       console.log("Disabled dates:", disabledDates.length);
     });
