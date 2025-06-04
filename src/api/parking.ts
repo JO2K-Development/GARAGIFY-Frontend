@@ -24,7 +24,7 @@ export const getLendTimeRanges = (
     }
   ).then(res => {
     // if (!res.ok) throw new Error("Failed to fetch lend spots");
-    return res.json(); // ✅ Return parsed JSON
+    return res.json();
   });
 };
 
@@ -37,7 +37,7 @@ export const getLendSpots = (parkingId: number, body: TimeRange) => {
     method: HttpMethod.GET,
   }).then(res => {
     // if (!res.ok) throw new Error("Failed to fetch lend spots");
-    return res.json(); // ✅ Return parsed JSON
+    return res.json();
   });
 };
 
@@ -53,7 +53,10 @@ export const getBorrowTimeRanges = (
     {
       method: HttpMethod.GET,
     }
-  );
+  ).then(res => {
+    // if (!res.ok) throw new Error("Failed to fetch lend spots");
+    return res.json(); 
+  });
 };
 
 export const getBorrowSpots = (parkingId: number, body: TimeRange) => {
@@ -68,7 +71,7 @@ export const getBorrowSpots = (parkingId: number, body: TimeRange) => {
     }
   ).then(res => {
     // if (!res.ok) throw new Error("Failed to fetch lend spots");
-    return res.json(); // ✅ Return parsed JSON
+    return res.json(); 
   });
 };
 

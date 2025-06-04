@@ -40,7 +40,7 @@ const useParkingLendForm = () => {
       console.log("Available dates:", result.data);
       const availableDateRanges = result.data; 
       const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
-      setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
+      setDisabledDates(disabledDatesTmp);
       console.log("Disabled dates:", disabledDates.length);
     });
   }, [pickerKey]);
@@ -63,7 +63,8 @@ const useParkingLendForm = () => {
   const values = watch();
 
   const myDateRange = watch("dateRange");
-
+  const startTime = watch("startTime");
+  const endTime = watch("endTime");
 
   const mergeDateAndTime = (date: Date, time: Date): Date => {
     const merged = new Date(date);
@@ -84,8 +85,8 @@ const useParkingLendForm = () => {
       if (!myDateRange) throw new Error("No time range set");
 
       return getLendSpots(1, {
-        from: mergeDateAndTime(myDateRange[0], values.startTime),
-        until: mergeDateAndTime(myDateRange[1], values.endTime),
+        from: mergeDateAndTime(myDateRange[0], startTime),
+        until: mergeDateAndTime(myDateRange[1], endTime),
       });
     },
     enabled: false, // Don't run automatically
@@ -94,7 +95,7 @@ const useParkingLendForm = () => {
   useEffect(() => {
       const [ startTime, endTime ] = myDateRange ?? [null, null];
       if (!startTime || !endTime) {
-        console.log("blokowanie :", myDateRange);
+        // console.log("blokowanie :", myDateRange);
         setDisabledSpotIds(allSpotIds); // Disable all but the last spot if incomplete
       } else {
         refetchGetLend().then((result) => {
@@ -105,9 +106,9 @@ const useParkingLendForm = () => {
           setDisabledSpotIds(toDisableSpotIds);
         });
       }
-      console.log(allSpotIds, "allSpotIds");
+      // console.log(allSpotIds, "allSpotIds");
 
-  }, [myDateRange, pickerKey]);
+  }, [myDateRange, pickerKey, startTime, endTime]);
 
   const mutationLendSpot = useMutation({
     mutationFn: lendSpot,
@@ -142,27 +143,28 @@ const useParkingLendForm = () => {
 
   type AvailableRange = { start: string; end: string };
   function getUnavailableDates(
-  availableRanges: AvailableRange[],
-  daysFromNow: number
-): Dayjs[] {
-  const unavailableDates: Dayjs[] = [];
-
-  for (let i = 0; i < daysFromNow; i++) {
-    const currentDate = dayjs().startOf('day').add(i, 'day');
-
-    const isAvailable = availableRanges.some(({ start, end }) => {
-      const startDate = dayjs(start).startOf('day');
-      const endDate = dayjs(end).startOf('day');
-      return currentDate.isBetween(startDate, endDate, null, '[]'); // inclusive
-    });
-
-    if (!isAvailable) {
-      unavailableDates.push(currentDate);
+      availableRanges: AvailableRange[],
+      daysFromNow: number
+    ): Dayjs[] {
+      const unavailableDates: Dayjs[] = [];
+  
+      for (let i = 0; i < daysFromNow; i++) {
+        const currentDate = dayjs().startOf("day").add(i, "day");
+  
+        const isAvailable = availableRanges.some(({ start, end }) => {
+          const startDate = dayjs(start).startOf("day");
+          const endDate = dayjs(end).startOf("day");
+          return currentDate.isBetween(startDate, endDate, null, "[]");
+        });
+  
+        if (!isAvailable) {
+          unavailableDates.push(currentDate);
+        }
+      }
+  
+      return unavailableDates;
     }
-  }
 
-  return unavailableDates;
-}
   return {
     control,
     handleSubmit,

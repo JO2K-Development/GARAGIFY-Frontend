@@ -4,7 +4,7 @@ import dayjs, { Dayjs } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { borrowSpot, getBorrowSpots, getLendTimeRanges, TimeRange } from "@/api/parking";
+import { borrowSpot, getBorrowSpots, getBorrowTimeRanges, TimeRange } from "@/api/parking";
 import { useSpot } from "@/context/SpotProvider";
 
 dayjs.extend(isBetween);
@@ -20,7 +20,7 @@ const useParkingBorrowForm = () => {
   const { refetch: refetchAvailableDates } = useQuery({
     queryKey: ["borrowAvailableDates"],
     queryFn: () =>
-      getLendTimeRanges(1, {
+      getBorrowTimeRanges(1, {
         untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * 50),
       }),
     enabled: false,
@@ -56,6 +56,8 @@ const useParkingBorrowForm = () => {
 
   const values = watch();
   const myDateRange = watch("dateRange");
+  const startTime = watch("startTime");
+  const endTime = watch("endTime");
 
   const mergeDateAndTime = (date: Date, time: Date): Date => {
     const merged = new Date(date);
@@ -73,8 +75,8 @@ const useParkingBorrowForm = () => {
       if (!myDateRange) throw new Error("No time range set");
 
       return getBorrowSpots(1, {
-        from: mergeDateAndTime(myDateRange[0], values.startTime),
-        until: mergeDateAndTime(myDateRange[1], values.endTime),
+        from: mergeDateAndTime(myDateRange[0], startTime),
+        until: mergeDateAndTime(myDateRange[1], endTime),
       });
     },
     enabled: false, // Don't run automatically
@@ -83,7 +85,7 @@ const useParkingBorrowForm = () => {
   useEffect(() => {
       const [ startTime, endTime ] = myDateRange ?? [null, null];
       if (!startTime || !endTime) {
-        console.log("blokowanie :", myDateRange);
+        // console.log("blokowanie :", myDateRange);
         setDisabledSpotIds(allSpotIds); // Disable all but the last spot if incomplete
       } else {
         refetchGetBorrow().then((result) => {
@@ -94,9 +96,9 @@ const useParkingBorrowForm = () => {
           setDisabledSpotIds(toDisableSpotIds);
         });
       }
-      console.log(allSpotIds, "allSpotIds");
+      // console.log(allSpotIds, "allSpotIds");
 
-  }, [myDateRange, pickerKey]);
+  }, [myDateRange, pickerKey, startTime, endTime]);
 
   const mutationLendSpot = useMutation({
     mutationFn: borrowSpot,
