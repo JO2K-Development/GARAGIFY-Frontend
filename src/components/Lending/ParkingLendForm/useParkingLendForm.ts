@@ -23,8 +23,7 @@ const useParkingLendForm = () => {
     selectedSpotId,
     setDisabledSpotIds,
     allSpotIds,
-    disabledDates,
-    setDisabledDates,
+    setEnabledDates,
   } = useSpot();
   const [pickerKey, setPickerKey] = useState(0);
   const queryClient = useQueryClient();
@@ -53,8 +52,8 @@ const useParkingLendForm = () => {
   useEffect(() => {
     // This will run whenever availableDateRanges changes
     if (availableDateRanges) {
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range);
-      setDisabledDates(disabledDatesTmp);
+      const enabledDatesTmp = getAvailableDates(availableDateRanges, range);
+      setEnabledDates(enabledDatesTmp);
     }
   }, [availableDateRanges, pickerKey]);
 
@@ -172,11 +171,11 @@ const useParkingLendForm = () => {
   };
 
   type AvailableRange = { start: string; end: string };
-  function getUnavailableDates(
+  function getAvailableDates(
     availableRanges: AvailableRange[],
     daysFromNow: number
   ): Dayjs[] {
-    const unavailableDates: Dayjs[] = [];
+    const availableDates: Dayjs[] = [];
 
     for (let i = 0; i < daysFromNow; i++) {
       const currentDate = dayjs().startOf("day").add(i, "day");
@@ -187,12 +186,12 @@ const useParkingLendForm = () => {
         return currentDate.isBetween(startDate, endDate, null, "[]");
       });
 
-      if (!isAvailable) {
-        unavailableDates.push(currentDate);
+      if (isAvailable) {
+        availableDates.push(currentDate);
       }
     }
 
-    return unavailableDates;
+    return availableDates;
   }
 
   return {

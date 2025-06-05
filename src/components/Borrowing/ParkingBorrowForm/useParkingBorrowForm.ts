@@ -23,8 +23,7 @@ const useParkingBorrowForm = () => {
     selectedSpotId,
     setDisabledSpotIds,
     allSpotIds,
-    disabledDates,
-    setDisabledDates,
+    setEnabledDates,
   } = useSpot();
 
   const [pickerKey, setPickerKey] = useState(0);
@@ -51,8 +50,8 @@ const useParkingBorrowForm = () => {
   useEffect(() => {
     // This will run whenever availableDateRanges changes
     if (availableDateRanges) {
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50);
-      setDisabledDates(disabledDatesTmp);
+      const enabledDatesTmp = getAvailableDates(availableDateRanges, 50);
+      setEnabledDates(enabledDatesTmp);
     }
   }, [availableDateRanges, pickerKey]);
 
@@ -173,11 +172,11 @@ const useParkingBorrowForm = () => {
   };
 
   type AvailableRange = { start: string; end: string };
-  function getUnavailableDates(
+  function getAvailableDates(
     availableRanges: AvailableRange[],
     daysFromNow: number
   ): Dayjs[] {
-    const unavailableDates: Dayjs[] = [];
+    const availableDates: Dayjs[] = [];
     for (let i = 0; i < daysFromNow; i++) {
       const currentDate = dayjs().startOf("day").add(i, "day");
       const isAvailable = availableRanges.some(({ start, end }) => {
@@ -185,11 +184,11 @@ const useParkingBorrowForm = () => {
         const endDate = dayjs(end).startOf("day");
         return currentDate.isBetween(startDate, endDate, null, "[]");
       });
-      if (!isAvailable) {
-        unavailableDates.push(currentDate);
+      if (isAvailable) {
+        availableDates.push(currentDate);
       }
     }
-    return unavailableDates;
+    return availableDates;
   }
 
   return {

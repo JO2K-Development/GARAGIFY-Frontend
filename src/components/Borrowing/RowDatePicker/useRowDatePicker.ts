@@ -14,7 +14,7 @@ const useRowDatePicker = ({
 }: useRowDatePickerProps) => {
 
 
-  const { disabledDates } = useSpot();
+  const { enabledDates } = useSpot();
   const [dateList, setDateList] = useState<Dayjs[]>([
     dayjs(),
     dayjs().add(1, "day"),
@@ -44,10 +44,10 @@ const useRowDatePicker = ({
     setStartDay(null);
     setEndDay(null);
     return () => window.removeEventListener("resize", calculateDaysToShow);
-  }, [disabledDates]);
+  }, [enabledDates]);
 
   const dateOnClick = (date: Dayjs) => {
-    if (disabledDate(date)) {
+    if (!enabledDate(date)) {
       return;
     }
 
@@ -66,7 +66,7 @@ const useRowDatePicker = ({
       let currentDate = startDay.clone();
       while (currentDate.isBefore(date, "day")) {
         currentDate = currentDate.add(1, "day");
-        if (disabledDate(currentDate)) {
+        if (!enabledDate(currentDate)) {
           setStartDay(date);
           return;
         }
@@ -77,7 +77,7 @@ const useRowDatePicker = ({
   };
 
   const getNumberStyle = (day: Dayjs) => {
-    if (disabledDate(day) || day.isBefore(dayjs(), "day")) {
+    if (!enabledDate(day)) {
       return styles.DisabledDay;
     }
 
@@ -136,7 +136,7 @@ const useRowDatePicker = ({
     setDateList(newDateList);
     setStartDay(null);
     setEndDay(null);
-  }, [daysToShow, dayOffset, disabledDates]);
+  }, [daysToShow, dayOffset, enabledDates]);
 
   const rightArrowClick = () => {
     setDayOffset(dayOffset + Math.floor(daysToShow / 3));
@@ -146,10 +146,10 @@ const useRowDatePicker = ({
     setDayOffset(dayOffset - Math.floor(daysToShow / 3));
   };
 
-  const disabledDate = (current: dayjs.Dayjs) =>
+  const enabledDate = (current: dayjs.Dayjs) =>
       current &&
-      (current < dayjs().startOf("day") ||
-        disabledDates.some((date) => current.isSame(date, "day")));
+      (current >= dayjs().startOf("day") &&
+        enabledDates.some((date) => current.isSame(date, "day")));
 
   return {
     dateList,
