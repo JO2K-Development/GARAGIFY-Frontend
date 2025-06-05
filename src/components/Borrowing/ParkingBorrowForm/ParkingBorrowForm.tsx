@@ -56,32 +56,6 @@ const ParkingBorrowForm = () => {
           <p style={{ color: "red" }}>{errors.dateRange.message}</p>
         )}
         <Flex align="center" gap="large">
-          <Flex vertical gap="middle">
-            <Controller
-              name="findSpecialSpots"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                >
-                  {findSpecialSpots}
-                </Checkbox>
-              )}
-            />
-            <Controller
-              name="findNonReparkedSpots"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                >
-                  {findNonReparkedSpots}
-                </Checkbox>
-              )}
-            />
-          </Flex>
           <Controller
             name="startTime"
             control={control}
