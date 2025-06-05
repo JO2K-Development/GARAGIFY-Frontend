@@ -20,6 +20,7 @@ const useParkingLendForm = () => {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const todayNumber = today.getTime();
   const {
+    setSelectedSpotId,
     selectedSpotId,
     setDisabledSpotIds,
     allSpotIds,
@@ -136,8 +137,15 @@ const useParkingLendForm = () => {
       toast.success({
         message: "You have successfully created a lend offer!",
       });
+      setSelectedSpotId(null);
+      refetchAvailableDates().then((result) => {
+        const availableDateRanges = result.data;
+        const enabledDatesTmp = getAvailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
+        setEnabledDates(enabledDatesTmp);
+      });
+      setPickerKey((prev) => prev + 1); // Increment key to reset the date picker
+      reset(); // Reset the form after successful submission
       // Refresh data after successful mutation
-      refetchAvailableDates();
       if (myDateRange) {
         refetchGetLend();
       }
@@ -200,6 +208,7 @@ const useParkingLendForm = () => {
     formState,
     pickerKey,
     onSubmit,
+    selectedSpotId
   };
 };
 

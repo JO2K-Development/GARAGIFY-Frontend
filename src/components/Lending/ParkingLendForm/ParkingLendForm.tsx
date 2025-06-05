@@ -19,6 +19,7 @@ const ParkingLendForm = () => {
     onSubmit,
     pickerKey,
     formState: { errors },
+    selectedSpotId,
   } = useParkingLendForm();
 
   
@@ -78,7 +79,7 @@ const ParkingLendForm = () => {
           />
         </Flex>
         <ParkingView/>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" disabled={!selectedSpotId}>
           {submit}
         </Button>
       </Flex>
