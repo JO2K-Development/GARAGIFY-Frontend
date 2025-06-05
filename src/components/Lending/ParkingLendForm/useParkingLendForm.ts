@@ -137,14 +137,11 @@ const useParkingLendForm = () => {
       toast.success({
         message: "You have successfully created a lend offer!",
       });
-      setSelectedSpotId(null);
       refetchAvailableDates().then((result) => {
         const availableDateRanges = result.data;
         const enabledDatesTmp = getAvailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
         setEnabledDates(enabledDatesTmp);
       });
-      setPickerKey((prev) => prev + 1); // Increment key to reset the date picker
-      reset(); // Reset the form after successful submission
       // Refresh data after successful mutation
       if (myDateRange) {
         refetchGetLend();
@@ -175,6 +172,9 @@ const useParkingLendForm = () => {
       from: mergeDateAndTime(startDate, data.startTime),
       until: mergeDateAndTime(endDate, data.endTime),
     });
+    setSelectedSpotId(null);
+    setPickerKey((prev) => prev + 1); // Increment key to reset the date picker
+ 
     reset();
   };
 
@@ -208,7 +208,8 @@ const useParkingLendForm = () => {
     formState,
     pickerKey,
     onSubmit,
-    selectedSpotId
+    selectedSpotId,
+    setSelectedSpotId
   };
 };
 

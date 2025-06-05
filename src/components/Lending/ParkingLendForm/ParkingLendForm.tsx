@@ -20,6 +20,7 @@ const ParkingLendForm = () => {
     pickerKey,
     formState: { errors },
     selectedSpotId,
+    setSelectedSpotId
   } = useParkingLendForm();
 
   
@@ -43,6 +44,10 @@ const ParkingLendForm = () => {
                   field.onChange(
                     dates ? [dates[0]?.toDate(), dates[1]?.toDate()] : null
                   )
+                  if (!dates || (dates && dates[1] === null)) {
+                    console.log("Resetting selected spot ID");
+                    setSelectedSpotId(null);
+                  }
                 }
               }
             />
