@@ -12,9 +12,11 @@ import { EditContextType } from "./type";
 import toSerializableParking from "../../Commons/serialization/toSerializableParking";
 import { serializeMeta } from "../../Commons/serialization/metaHelpers";
 
-if (!(fabric.Object.prototype as Record<string, any>)._metaPatchApplied) { // eslint-disable-line
+if (!(fabric.Object.prototype as Record<string, any>)._metaPatchApplied) {
+  // eslint-disable-line
   const originalToObject = fabric.Object.prototype.toObject;
-  fabric.Object.prototype.toObject = function (...args: any[]) { // eslint-disable-line
+  fabric.Object.prototype.toObject = function (...args: any[]) {
+    // eslint-disable-line
     const obj = originalToObject.apply(this, args as any); // eslint-disable-line
     Object.assign(obj, serializeMeta(this));
     return obj;
@@ -118,38 +120,49 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
         removeSpotGroup,
       }}
     >
-      {children}
-      <pre
+      <div
         style={{
-          background: "#222",
-          color: "#0f0",
-          padding: 12,
-          margin: 12,
-          borderRadius: 8,
-          fontSize: 12,
-          maxHeight: 300,
-          overflow: "auto",
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
-        {JSON.stringify(toSerializableParking(parking), null, 2)}
-      </pre>
+        {children}
+        <pre
+          style={{
+            width: "100%",
+            background: "#222",
+            color: "#0f0",
+            padding: 12,
+            margin: 12,
+            borderRadius: 8,
+            fontSize: 12,
+            maxHeight: 300,
+            overflow: "auto",
+          }}
+        >
+          {JSON.stringify(toSerializableParking(parking), null, 2)}
+        </pre>
 
-      <pre
-        style={{
-          background: "#222",
-          color: "#0f0",
-          padding: 12,
-          margin: 12,
-          borderRadius: 8,
-          fontSize: 12,
-          maxHeight: 300,
-          overflow: "auto",
-        }}
-      >
-        {parking.spotGroups.flatMap((group) =>
-          group.spots.map((spot) => `${(spot as any).spotId!}\n`) // eslint-disable-line
-        )}
-      </pre>
+        <pre
+          style={{
+            width: "100%",
+            background: "#222",
+            color: "#0f0",
+            padding: 12,
+            margin: 12,
+            borderRadius: 8,
+            fontSize: 12,
+            maxHeight: 300,
+            overflow: "auto",
+          }}
+        >
+          {parking.spotGroups.flatMap(
+            (group) => group.spots.map((spot) => `${(spot as any).spotId!}\n`) // eslint-disable-line
+          )}
+        </pre>
+      </div>
     </EditContext.Provider>
   );
 };
