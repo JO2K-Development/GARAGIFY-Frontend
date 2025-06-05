@@ -55,7 +55,7 @@ export function useParkingViewRender() {
           spot.set("fill", "#ddd");
           setNonInteractive(spot);
         } else {
-          spot.set("fill", "#49aa19");
+          spot.set("fill", "#85a5ff");
         }
         canvas.add(spot);
       });
@@ -92,9 +92,9 @@ export function useParkingViewRender() {
           setNonInteractive(spot);
           spot.set("fill", "#ddd"); // Keep disabled color
         } else if (spotId === selectedSpotId) {
-          spot.set("fill", "#e33327"); // Selected color
+          spot.set("fill", "#1d39c4"); // Selected color
         } else {
-          spot.set("fill", "#49aa19"); // Default color
+          spot.set("fill", "#85a5ff"); // Default color
         }
       });
     });
