@@ -1,10 +1,11 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getBorrowings } from "@/api/api"
 import { deleteBorrow } from "@/api/parking";
 import { useToast } from "@/context/ToastProvider";
 
 const useMyBorrowingsView = () => {
 
+  const queryClient = useQueryClient();
   const toast = useToast();
 
   const fetchBorrowings = async () => {
@@ -28,6 +29,8 @@ const useMyBorrowingsView = () => {
   const mutationDeleteBorrowing = useMutation({
     mutationFn: deleteBorrow,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["borrowAvailableDates"], refetchType: "all"});
+      queryClient.invalidateQueries({ queryKey: ["borrowSpots"], refetchType: "all"});
       refetch();
       toast.success({
         message: "Cancelled borrowing successfully.",
