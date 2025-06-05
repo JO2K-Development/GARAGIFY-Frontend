@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import dayjs, { Dayjs } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSpot } from "@/context/SpotProvider";
 import { useEffect, useState } from "react";
 import {
@@ -27,28 +27,36 @@ const useParkingLendForm = () => {
     setDisabledDates,
   } = useSpot();
   const [pickerKey, setPickerKey] = useState(0);
+  const queryClient = useQueryClient();
 
   const range = 250;
 
-  const { refetch: refetchAvailableDates } = useQuery({
+  // Use the data directly from useQuery instead of refetch promise
+  const {
+    data: availableDateRanges,
+    refetch: refetchAvailableDates
+  } = useQuery({
     queryKey: ["lendDates"],
     queryFn: () => {
       return getLendTimeRanges(1, {
-        untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * range), // 50 days from now
+        untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * range),
       });
     },
-    enabled: false, // Don't run automatically
+    enabled: true, // Disable initial fetch
   });
 
   useEffect(() => {
-    // to jest endpoint
-    refetchAvailableDates().then((result) => {
-      console.log("Available dates:", result.data);
-      const availableDateRanges = result.data; 
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
+    // Trigger the initial fetch when component mounts
+    refetchAvailableDates();
+  }, []);
+
+  useEffect(() => {
+    // This will run whenever availableDateRanges changes
+    if (availableDateRanges) {
+      const disabledDatesTmp = getUnavailableDates(availableDateRanges, range);
       setDisabledDates(disabledDatesTmp);
-    });
-  }, [pickerKey]);
+    }
+  }, [availableDateRanges, pickerKey]);
 
   type FormValues = {
     dateRange: [Date, Date] | null;
@@ -72,8 +80,6 @@ const useParkingLendForm = () => {
       },
     });
 
-  const values = watch();
-
   const myDateRange = watch("dateRange");
   const startTime = watch("startTime");
   const endTime = watch("endTime");
@@ -86,7 +92,7 @@ const useParkingLendForm = () => {
 
   // Prepare the query, but do not auto-fetch
   const {
-    data,
+    data: availableSpots,
     isLoading,
     error,
     refetch: refetchGetLend,
@@ -100,33 +106,42 @@ const useParkingLendForm = () => {
         until: mergeDateAndTime(myDateRange[1], endTime),
       });
     },
-    enabled: false, // Don't run automatically
+    enabled: true, // Disable initial fetch
   });
 
   useEffect(() => {
-    const [startTime, endTime] = myDateRange ?? [null, null];
-    if (!startTime || !endTime) {
-      // console.log("blokowanie :", myDateRange);
-      setDisabledSpotIds(allSpotIds); // Disable all but the last spot if incomplete
-    } else {
-      refetchGetLend().then((result) => {
-        const availableSpotIds = result.data;
-        const toDisableSpotIds = allSpotIds.filter(
-          (id) => !availableSpotIds.includes(id)
-        );
-        setDisabledSpotIds(toDisableSpotIds);
-      });
+    // Trigger fetch when date range changes
+    if (myDateRange) {
+      refetchGetLend();
     }
   }, [myDateRange, pickerKey, startTime, endTime]);
+
+  useEffect(() => {
+    // This will run whenever availableSpots changes
+    if (!myDateRange) {
+      setDisabledSpotIds(allSpotIds);
+    } else if (availableSpots) {
+      const toDisableSpotIds = allSpotIds.filter(
+        (id) => !availableSpots.includes(id)
+      );
+      setDisabledSpotIds(toDisableSpotIds);
+    }
+  }, [availableSpots, myDateRange]);
 
   const toast = useToast();
 
   const mutationLendSpot = useMutation({
     mutationFn: lendSpot,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lending"], refetchType: "all"});
       toast.success({
         message: "You have successfully created a lend offer!",
       });
+      // Refresh data after successful mutation
+      refetchAvailableDates();
+      if (myDateRange) {
+        refetchGetLend();
+      }
     },
     onError: (error) => {
       toast.error({
