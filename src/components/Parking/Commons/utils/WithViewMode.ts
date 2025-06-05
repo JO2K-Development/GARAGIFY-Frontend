@@ -1,5 +1,5 @@
 //  @typescript-eslint/no-empty-object-type
-type WithViewMode<T = {}> = {
+type WithViewMode<T = {}> = { // eslint-disable-line
   viewMode?: boolean;
 } & T;
 

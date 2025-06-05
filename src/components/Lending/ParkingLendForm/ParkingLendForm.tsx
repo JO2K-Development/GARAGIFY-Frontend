@@ -1,5 +1,5 @@
 "use client";
-import { Button, Checkbox, Flex, TimePicker } from "antd";
+import { Button, Flex, TimePicker } from "antd";
 import { Controller } from "react-hook-form";
 import labels from "@/labels.json";
 import dayjs from "dayjs";

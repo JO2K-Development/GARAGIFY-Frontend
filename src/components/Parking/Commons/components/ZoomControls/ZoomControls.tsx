@@ -3,7 +3,6 @@ import { Button, Space, Tooltip } from "antd";
 import { ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
 import useCanvasZoom from "./useZoomControls";
 import styles from "./ZoomControls.module.scss";
-import WithCanvas from "../../utils/WithCanvas";
 
 const ZoomControls = () => {
   const { onZoomIn, onZoomOut } = useCanvasZoom();

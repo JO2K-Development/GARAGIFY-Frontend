@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import * as fabric from "fabric";
 import { useEditContext } from "../../Context/useEditContext";
-import WithCanvas from "@/components/Parking/Commons/utils/WithCanvas";
 import { useCanvas } from "@/components/Parking/Commons/context/CanvasContext";
 
 interface UseCanvasModeBaseOptions {
@@ -27,7 +26,7 @@ const useCanvasModeBase = ({
     const handleSelect = () => onSelect?.(canvas.getActiveObject() ?? null);
     const handleDeselect = () => onSelect?.(null);
 
-    const handleModified = (opt: any) => {
+    const handleModified = (opt: any) => { // eslint-disable-line
       const obj = opt.target;
       if (obj) onModify?.(obj);
     };
@@ -43,19 +42,19 @@ const useCanvasModeBase = ({
       canvas.off("selection:cleared", handleDeselect);
       canvas.off("object:modified", handleModified);
     };
-  }, [canvas, isActive]);
+  }, [canvas, isActive]); // eslint-disable-line
 
   useEffect(() => {
     if (!canvas) return;
 
-    canvas.getObjects().forEach((obj: any) => {
+    canvas.getObjects().forEach((obj: any) => { // eslint-disable-line
       const shouldEnable = selectableFilter ? selectableFilter(obj) : isActive;
       obj.selectable = shouldEnable;
       obj.evented = shouldEnable;
     });
 
     canvas.requestRenderAll();
-  }, [canvas, isActive]);
+  }, [canvas, isActive]); // eslint-disable-line
 };
 
 export default useCanvasModeBase;

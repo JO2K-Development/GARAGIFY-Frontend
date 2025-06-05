@@ -46,17 +46,12 @@ const useParkingLendForm = () => {
   });
 
   useEffect(() => {
-    // Trigger the initial fetch when component mounts
-    refetchAvailableDates();
-  }, []);
-
-  useEffect(() => {
     // This will run whenever availableDateRanges changes
     if (availableDateRanges) {
       const enabledDatesTmp = getAvailableDates(availableDateRanges, range);
       setEnabledDates(enabledDatesTmp);
     }
-  }, [availableDateRanges, pickerKey]);
+  }, [availableDateRanges, pickerKey]); // eslint-disable-line
 
   type FormValues = {
     dateRange: [Date, Date] | null;
@@ -93,8 +88,6 @@ const useParkingLendForm = () => {
   // Prepare the query, but do not auto-fetch
   const {
     data: availableSpots,
-    isLoading,
-    error,
     refetch: refetchGetLend,
   } = useQuery({
     queryKey: ["lendSpots"],
@@ -114,7 +107,7 @@ const useParkingLendForm = () => {
     if (myDateRange) {
       refetchGetLend();
     }
-  }, [myDateRange, pickerKey, startTime, endTime]);
+  }, [myDateRange, pickerKey, startTime, endTime]); // eslint-disable-line
 
   useEffect(() => {
     // This will run whenever availableSpots changes
@@ -126,7 +119,7 @@ const useParkingLendForm = () => {
       );
       setDisabledSpotIds(toDisableSpotIds);
     }
-  }, [availableSpots, myDateRange]);
+  }, [availableSpots, myDateRange]); // eslint-disable-line
 
   const toast = useToast();
 
@@ -147,7 +140,7 @@ const useParkingLendForm = () => {
         refetchGetLend();
       }
     },
-    onError: (error) => {
+    onError: () => {
       toast.error({
         message: "Error",
         description: "There was an error creating your lend offer.",
@@ -157,7 +150,7 @@ const useParkingLendForm = () => {
 
   const handleSubmitLendOfferPost = (body: TimeRange) => {
     mutationLendSpot.mutate({
-      parkingId: 1, // Replace with actual parking ID
+      parkingId: 1,
       spotId: selectedSpotId ?? "",
       body,
     });

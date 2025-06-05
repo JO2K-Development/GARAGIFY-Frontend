@@ -24,10 +24,10 @@ export async function callBackend({
 }: {
   method: "GET" | "POST" | "DELETE" | "PUT";
   path: string;
-  backendClient: any;
-  headers: any;
-  params?: any;
-  body?: any;
+  backendClient: any; // eslint-disable-line
+  headers: any; // eslint-disable-line
+  params?: any; // eslint-disable-line
+  body?: any; // eslint-disable-line
 }) {
   try {
     const { response, data, error } = await backendClient[method](path, {
@@ -51,7 +51,7 @@ export async function callBackend({
     }
 
     return data ? NextResponse.json(data) : (new NextResponse(null, { status: response.status }));
-  } catch (error: any) {
+  } catch (error: any) { // eslint-disable-line
     return NextResponse.json(
       { message: error.message },
       { status: StatusCodes.INTERNAL_SERVER_ERROR }

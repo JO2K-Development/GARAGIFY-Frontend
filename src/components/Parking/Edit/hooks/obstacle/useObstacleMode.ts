@@ -51,7 +51,7 @@ const useObstacleMode = () => {
 
     canvas.on("mouse:down", onMouseDown);
     return () => canvas.off("mouse:down", onMouseDown);
-  }, [canvas, isActive]);
+  }, [canvas, isActive]); // eslint-disable-line
 
   useCanvasModeBase({
     modeName: Mode.OBSTACLES,

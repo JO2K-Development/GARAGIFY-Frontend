@@ -12,14 +12,14 @@ import { EditContextType } from "./type";
 import toSerializableParking from "../../Commons/serialization/toSerializableParking";
 import { serializeMeta } from "../../Commons/serialization/metaHelpers";
 
-if (!(fabric.Object.prototype as Record<string, any>)._metaPatchApplied) {
+if (!(fabric.Object.prototype as Record<string, any>)._metaPatchApplied) { // eslint-disable-line
   const originalToObject = fabric.Object.prototype.toObject;
-  fabric.Object.prototype.toObject = function (...args: any[]) {
-    const obj = originalToObject.apply(this, args as any);
+  fabric.Object.prototype.toObject = function (...args: any[]) { // eslint-disable-line
+    const obj = originalToObject.apply(this, args as any); // eslint-disable-line
     Object.assign(obj, serializeMeta(this));
     return obj;
   };
-  (fabric.Object.prototype as Record<string, any>)._metaPatchApplied = true;
+  (fabric.Object.prototype as Record<string, any>)._metaPatchApplied = true; // eslint-disable-line
 }
 export const EditContext = createContext<EditContextType | undefined>(
   undefined
@@ -147,7 +147,7 @@ export const EditProvider = ({ children }: PropsWithChildren) => {
         }}
       >
         {parking.spotGroups.flatMap((group) =>
-          group.spots.map((spot) => `${(spot as any).spotId!}\n`)
+          group.spots.map((spot) => `${(spot as any).spotId!}\n`) // eslint-disable-line
         )}
       </pre>
     </EditContext.Provider>

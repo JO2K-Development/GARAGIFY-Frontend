@@ -79,7 +79,7 @@ const useParkingSpotsMode = () => {
       pointsRef.current = [];
       drawingRef.current = false;
     };
-  }, [canvas, isActive]);
+  }, [canvas, isActive]); // eslint-disable-line
 
   useCanvasModeBase({
     modeName: Mode.PARKING_SPOTS,

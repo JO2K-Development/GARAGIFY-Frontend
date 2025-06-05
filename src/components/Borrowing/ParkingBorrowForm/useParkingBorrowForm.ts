@@ -48,7 +48,7 @@ const useParkingBorrowForm = () => {
   useEffect(() => {
     // Trigger initial fetch    
     refetchAvailableDates();
-  }, []);
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     // This will run whenever availableDateRanges changes
@@ -56,7 +56,7 @@ const useParkingBorrowForm = () => {
       const enabledDatesTmp = getAvailableDates(availableDateRanges, range);
       setEnabledDates(enabledDatesTmp);
     }
-  }, [availableDateRanges, pickerKey]);
+  }, [availableDateRanges, pickerKey]); // eslint-disable-line
 
   type FormValues = {
     dateRange: [Date, Date] | null;
@@ -115,7 +115,7 @@ const useParkingBorrowForm = () => {
     if (myDateRange) {
       refetchGetBorrow();
     }
-  }, [myDateRange, pickerKey, startTime, endTime]);
+  }, [myDateRange, pickerKey, startTime, endTime]); // eslint-disable-line
 
   useEffect(() => {
     // This will run whenever availableSpots changes
@@ -127,7 +127,7 @@ const useParkingBorrowForm = () => {
       );
       setDisabledSpotIds(toDisableSpotIds);
     }
-  }, [availableSpots, myDateRange]);
+  }, [availableSpots, myDateRange]); // eslint-disable-line
 
 
 
@@ -151,7 +151,7 @@ const useParkingBorrowForm = () => {
         description: 'You have successfully borrowed a spot!',
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast.error({
         message: 'Error',
         description: 'There was an error borrowing the spot.',

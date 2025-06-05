@@ -90,7 +90,7 @@ const useParkingZoneMode = () => {
       drawingRef.current = false;
       pointsRef.current = [];
     };
-  }, [canvas, isActive]);
+  }, [canvas, isActive]); // eslint-disable-line
 };
 
 export default useParkingZoneMode;

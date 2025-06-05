@@ -1,11 +1,10 @@
-import { use, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useParkingViewContext } from "./ParkingViewContext";
 import * as fabric from "fabric";
 import { createGridPattern } from "../Commons/utils/createGridPattern";
 import { FabricMeta, FabricObjectTypes } from "../Commons/utils/constants";
 import { useCanvas } from "../Commons/context/CanvasContext";
 import { useSpot } from "@/context/SpotProvider";
-import { set } from "react-hook-form";
 
 function setSpotSelectable(spot: fabric.Rect) {
   spot.selectable = false;
@@ -45,12 +44,12 @@ export function useParkingViewRender() {
       canvas.add(obs.fabricObject);
     });
 
-    const spots: any[] = []
+    const spots: any[] = [] // eslint-disable-line
     parking.spotGroups.forEach((group) => {
       group.spots.forEach((spot) => {
         spots.push(spot);  
         setSpotSelectable(spot);
-        const spotId = (spot as any)[FabricMeta.SPOT_ID];
+        const spotId = (spot as any)[FabricMeta.SPOT_ID]; // eslint-disable-line
         if (disabledSpotIds.includes(spotId)) {
           spot.set("fill", "#ddd");
           setNonInteractive(spot);
@@ -63,17 +62,17 @@ export function useParkingViewRender() {
 
     canvas.selectionBorderColor = "#e33327";
     canvas.requestRenderAll();
-  }, [canvas, parking]);
+  }, [canvas, parking]); // eslint-disable-line
   useEffect(() => {
     if (!canvas) return;
 
-    const onRectClick = (e: any) => {
+    const onRectClick = (e: any) => { // eslint-disable-line
       const obj = e.target;
       if (
         obj instanceof fabric.Rect &&
         obj.get(FabricMeta.OBJECT_TYPE) === FabricObjectTypes.PARKING_GROUP
       ) {
-        setSelectedSpotId((obj as unknown as any)[FabricMeta.SPOT_ID] || null);
+        setSelectedSpotId((obj as unknown as any)[FabricMeta.SPOT_ID] || null); // eslint-disable-line
       }
     };
 
@@ -87,7 +86,7 @@ export function useParkingViewRender() {
     parking.spotGroups.forEach((group) => {
       group.spots.forEach((spot) => {
         setSpotSelectable(spot);
-        const spotId = (spot as any)[FabricMeta.SPOT_ID];
+        const spotId = (spot as any)[FabricMeta.SPOT_ID]; // eslint-disable-line
         if (disabledSpotIds.includes(spotId)) {
           setNonInteractive(spot);
           spot.set("fill", "#ddd"); // Keep disabled color

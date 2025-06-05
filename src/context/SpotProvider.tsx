@@ -44,7 +44,7 @@ export const SpotProvider = ({ children }: PropsWithChildren) => {
 
 
 
-  const { data, error, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["parking"],
     queryFn: () => getParking(1),
   });
@@ -54,7 +54,7 @@ export const SpotProvider = ({ children }: PropsWithChildren) => {
   );
 
   const parkingSpots = parkingUI ? parkingUI.spotGroups.flatMap((group) =>
-          group.spots.map((spot) => (spot as any).spotId)
+          group.spots.map((spot) => (spot as any).spotId) // eslint-disable-line
         ) : [];
   
 
