@@ -122,7 +122,7 @@ export const deleteBorrow = (id: string) =>
   }).then((response) => 
     {if (!response.ok) {
       throw new Error(`Error: ${response.status} ${response.statusText}`);
-    } return response.json()});
+    } return "Cancelled borrowing successfully."});
 
 export const deleteLend = (id: string) =>
   fetch(`/api/v1/lend/${id}`, {
@@ -130,7 +130,7 @@ export const deleteLend = (id: string) =>
   }).then((response) => 
     {if (!response.ok) {
       throw new Error(`Error: ${response.status} ${response.statusText}`);
-    } return response.json()});
+    } return "Cancelled lending successfully."});
 
 export interface Paging {
   page: number;

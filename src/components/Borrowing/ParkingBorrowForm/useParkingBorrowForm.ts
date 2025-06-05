@@ -2,7 +2,7 @@ export const TIME_FORMAT = "HH:mm";
 import { useForm } from "react-hook-form";
 import dayjs, { Dayjs } from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
   borrowSpot,
@@ -23,28 +23,37 @@ const useParkingBorrowForm = () => {
     selectedSpotId,
     setDisabledSpotIds,
     allSpotIds,
-    disabledDates,
-    setDisabledDates,
+    setEnabledDates,
   } = useSpot();
 
   const [pickerKey, setPickerKey] = useState(0);
+  const queryClient = useQueryClient();
 
-  const { refetch: refetchAvailableDates } = useQuery({
+  // Use data directly from useQuery instead of refetch promise
+  const {
+    data: availableDateRanges,
+    refetch: refetchAvailableDates
+  } = useQuery({
     queryKey: ["borrowAvailableDates"],
     queryFn: () =>
       getBorrowTimeRanges(1, {
         untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * 50),
       }),
-    enabled: false,
+    enabled: true,
   });
 
   useEffect(() => {
-    refetchAvailableDates().then((result) => {
-      const availableDateRanges = result.data;
-      const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
-      setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
-    });
-  }, [pickerKey]);
+    // Trigger initial fetch
+    refetchAvailableDates();
+  }, []);
+
+  useEffect(() => {
+    // This will run whenever availableDateRanges changes
+    if (availableDateRanges) {
+      const enabledDatesTmp = getAvailableDates(availableDateRanges, 50);
+      setEnabledDates(enabledDatesTmp);
+    }
+  }, [availableDateRanges, pickerKey]);
 
   type FormValues = {
     dateRange: [Date, Date] | null;
@@ -80,10 +89,13 @@ const useParkingBorrowForm = () => {
     merged.setHours(time.getHours(), time.getMinutes(), 0, 0);
     return merged;
   };
+
+  // Use data directly from useQuery
   const {
+    data: availableSpots,
     refetch: refetchGetBorrow,
   } = useQuery({
-    queryKey: ["borrowSpots"],
+    queryKey: ["borrowSpots", myDateRange, startTime, endTime],
     queryFn: () => {
       if (!myDateRange) throw new Error("No time range set");
 
@@ -92,32 +104,39 @@ const useParkingBorrowForm = () => {
         until: mergeDateAndTime(myDateRange[1], endTime),
       });
     },
+    enabled: true,
   });
 
   useEffect(() => {
-    const [startTime, endTime] = myDateRange ?? [null, null];
-    if (!startTime || !endTime) {
-      setDisabledSpotIds(allSpotIds); // Disable all but the last spot if incomplete
-    } else {
-      refetchGetBorrow().then((result) => {
-        const availableSpotIds = result.data;
-        const toDisableSpotIds = allSpotIds.filter(
-          (id) => !availableSpotIds.includes(id)
-        );
-        setDisabledSpotIds(toDisableSpotIds);
-      });
+    // Trigger fetch when date range changes
+    if (myDateRange) {
+      refetchGetBorrow();
     }
   }, [myDateRange, pickerKey, startTime, endTime]);
-    const toast = useToast();
-  
-  const mutationLendSpot = useMutation({
+
+  useEffect(() => {
+    // This will run whenever availableSpots changes
+    if (!myDateRange) {
+      setDisabledSpotIds(allSpotIds);
+    } else if (availableSpots) {
+      const toDisableSpotIds = allSpotIds.filter(
+        (id) => !availableSpots.includes(id)
+      );
+      setDisabledSpotIds(toDisableSpotIds);
+    }
+  }, [availableSpots, myDateRange]);
+
+  const toast = useToast();
+
+  const mutationBorrowSpot = useMutation({
     mutationFn: borrowSpot,
-    onSuccess: (data) => {
-      refetchAvailableDates().then((result) => {
-        const availableDateRanges = result.data;
-        const disabledDatesTmp = getUnavailableDates(availableDateRanges, 50); // Get unavailable dates for the next 50 days
-        setDisabledDates(disabledDatesTmp); // Example of a hardcoded disabled date
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["borrowing"], refetchType: "all"});
+      // Refresh both queries after successful mutation
+      refetchAvailableDates();
+      if (myDateRange) {
+        refetchGetBorrow();
+      }
       toast.success({
         message: 'Success!',
         description: 'You have successfully borrowed a spot!',
@@ -132,8 +151,8 @@ const useParkingBorrowForm = () => {
   });
 
   const handleSubmitBorrowPost = (body: TimeRange) => {
-    mutationLendSpot.mutate({
-      parkingId: 1, // Replace with actual parking ID
+    mutationBorrowSpot.mutate({
+      parkingId: 1,
       spotId: selectedSpotId ?? "",
       body,
     });
@@ -153,11 +172,11 @@ const useParkingBorrowForm = () => {
   };
 
   type AvailableRange = { start: string; end: string };
-  function getUnavailableDates(
+  function getAvailableDates(
     availableRanges: AvailableRange[],
     daysFromNow: number
   ): Dayjs[] {
-    const unavailableDates: Dayjs[] = [];
+    const availableDates: Dayjs[] = [];
     for (let i = 0; i < daysFromNow; i++) {
       const currentDate = dayjs().startOf("day").add(i, "day");
       const isAvailable = availableRanges.some(({ start, end }) => {
@@ -165,11 +184,11 @@ const useParkingBorrowForm = () => {
         const endDate = dayjs(end).startOf("day");
         return currentDate.isBetween(startDate, endDate, null, "[]");
       });
-      if (!isAvailable) {
-        unavailableDates.push(currentDate);
+      if (isAvailable) {
+        availableDates.push(currentDate);
       }
     }
-    return unavailableDates;
+    return availableDates;
   }
 
   return {
