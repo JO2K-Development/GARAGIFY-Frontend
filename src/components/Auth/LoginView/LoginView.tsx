@@ -1,34 +1,45 @@
-// components/LoginView.tsx
-"use client";
-
-import { Button, Typography } from "antd";
+// pages/login.tsx or components/Login.tsx
+import { Button, Card, Layout, Typography } from 'antd';
+import Image from 'next/image';
+import styles from './LoginView.module.scss';
 import { signIn } from "next-auth/react";
-import Image from "next/image";
-import styles from "./LoginView.module.scss";
-import labels from "@/labels.json";
-const { Text } = Typography;
-const {
-  login: { loginButton },
-} = labels;
-const LoginView = () => {
-  return (
-    <div className={styles.container}>
-      <Button
-        className={styles.googleButton}
-        onClick={() => signIn("google")}
-        icon={
-          <Image
-            src="/images/google.webp"
-            alt="Google logo"
-            width={18}
-            height={18}
-          />
-        }
-      >
-        <Text className={styles.buttonText}>{loginButton}</Text>
-      </Button>
-    </div>
-  );
-};
 
-export default LoginView;
+const { Content } = Layout;
+const { Title } = Typography;
+
+export default function Login() {
+
+  return (
+    <Layout className={styles.layout}>
+      <Content className={styles.content}>
+        <Card className={styles.card}>
+          <Image
+            src="/images/garagify.webp"
+            alt="Garagify Logo"
+            width={800}
+            height={200}
+            className={styles.logo}
+          />
+          <Title level={3}>Welcome to Garagify</Title>
+          <Button
+            type="default"
+            icon={
+              <Image
+                src="/images/google.webp"
+                alt="Google"
+                width={20}
+                height={20}
+                className={styles.googleIcon}
+              />
+            }
+            onClick={() => signIn("google")}
+            block
+            className={styles.googleButton}
+          >
+            <div>Sign in with Google</div>
+          </Button>
+        </Card>
+      </Content>
+    </Layout>
+  );
+}

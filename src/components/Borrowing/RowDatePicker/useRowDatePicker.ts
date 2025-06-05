@@ -134,8 +134,6 @@ const useRowDatePicker = ({
   useLayoutEffect(() => {
     const newDateList = generateDateList(dayOffset);
     setDateList(newDateList);
-    setStartDay(null);
-    setEndDay(null);
   }, [daysToShow, dayOffset, enabledDates]);
 
   const rightArrowClick = () => {

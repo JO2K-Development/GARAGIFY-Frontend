@@ -8,7 +8,6 @@ const MyBorrowingsView = () => {
     content,
     onCancel
   } = useMyBorrowingsView();
-  console.log(content);
   return (
     <div className={ styles.MyBorrowingsView }>
       <LendBorrowWidget active="borrow"/>
