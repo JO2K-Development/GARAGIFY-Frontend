@@ -1,8 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getLendings } from "@/api/api";
 import { deleteLend } from "@/api/parking";
+import { useToast } from "@/context/ToastProvider";
 
 const useMyLendingsView = () => {
+
+  const toast = useToast();
 
   const fetchLendings = async () => {
     const response = await getLendings();
@@ -28,9 +31,15 @@ const useMyLendingsView = () => {
     mutationFn: deleteLend,
     onSuccess: () => {
       refetch();
+      toast.success({
+        message: "Cancelled lending successfully.",
+      });
     },
     onError: (error) => {
       console.error("Error deleting borrowing:", error);
+      toast.error({
+        message: "Failed to cancel lending.",
+      });
     },
   });
 

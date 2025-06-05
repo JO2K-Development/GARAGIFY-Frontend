@@ -45,7 +45,12 @@ export async function callBackend({
     if (!response.ok) {
       return NextResponse.json(error, { status: response.status });
     }
-    return NextResponse.json(data);
+
+    if (response.status === 204) {
+      return new NextResponse(null, { status: 204 });
+    }
+
+    return data ? NextResponse.json(data) : (new NextResponse(null, { status: response.status }));
   } catch (error: any) {
     return NextResponse.json(
       { message: error.message },

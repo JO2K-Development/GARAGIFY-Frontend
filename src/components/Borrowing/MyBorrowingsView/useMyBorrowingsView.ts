@@ -1,8 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getBorrowings } from "@/api/api"
 import { deleteBorrow } from "@/api/parking";
+import { useToast } from "@/context/ToastProvider";
 
 const useMyBorrowingsView = () => {
+
+  const toast = useToast();
 
   const fetchBorrowings = async () => {
     const response = await getBorrowings();
@@ -26,9 +29,15 @@ const useMyBorrowingsView = () => {
     mutationFn: deleteBorrow,
     onSuccess: () => {
       refetch();
+      toast.success({
+        message: "Cancelled borrowing successfully.",
+      });
     },
     onError: (error) => {
       console.error("Error deleting borrowing:", error);
+      toast.error({
+        message: "Failed to cancel borrowing.",
+      });
     },
   });
 
