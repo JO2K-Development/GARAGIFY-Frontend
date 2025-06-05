@@ -22,12 +22,15 @@ const useParkingBorrowForm = () => {
   const {
     selectedSpotId,
     setDisabledSpotIds,
+    disabledSpotIds,
     allSpotIds,
     setEnabledDates,
+    setSelectedSpotId,
   } = useSpot();
 
   const [pickerKey, setPickerKey] = useState(0);
   const queryClient = useQueryClient();
+  const range = 250;
 
   // Use data directly from useQuery instead of refetch promise
   const {
@@ -37,20 +40,20 @@ const useParkingBorrowForm = () => {
     queryKey: ["borrowAvailableDates"],
     queryFn: () =>
       getBorrowTimeRanges(1, {
-        untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * 50),
+        untilWhen: new Date(todayNumber + 1000 * 60 * 60 * 24 * range),
       }),
     enabled: true,
   });
 
   useEffect(() => {
-    // Trigger initial fetch
+    // Trigger initial fetch    
     refetchAvailableDates();
   }, []);
 
   useEffect(() => {
     // This will run whenever availableDateRanges changes
     if (availableDateRanges) {
-      const enabledDatesTmp = getAvailableDates(availableDateRanges, 50);
+      const enabledDatesTmp = getAvailableDates(availableDateRanges, range);
       setEnabledDates(enabledDatesTmp);
     }
   }, [availableDateRanges, pickerKey]);
@@ -126,6 +129,8 @@ const useParkingBorrowForm = () => {
     }
   }, [availableSpots, myDateRange]);
 
+
+
   const toast = useToast();
 
   const mutationBorrowSpot = useMutation({
@@ -133,7 +138,11 @@ const useParkingBorrowForm = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["borrowing"], refetchType: "all"});
       // Refresh both queries after successful mutation
-      refetchAvailableDates();
+      refetchAvailableDates().then((result) => {
+        const availableDateRanges = result.data;
+        const enabledDatesTmp = getAvailableDates(availableDateRanges, range); // Get unavailable dates for the next 50 days
+        setEnabledDates(enabledDatesTmp);
+      });
       if (myDateRange) {
         refetchGetBorrow();
       }
@@ -162,12 +171,14 @@ const useParkingBorrowForm = () => {
     if (!data.dateRange) return;
 
     const [startDate, endDate] = data.dateRange;
-    setPickerKey((k) => k + 1);
 
     handleSubmitBorrowPost({
       from: mergeDateAndTime(startDate, data.startTime),
       until: mergeDateAndTime(endDate, data.endTime),
     });
+    setSelectedSpotId(null);
+    setPickerKey((prev) => prev + 1); // Increment key to reset the date picker
+ 
     reset();
   };
 
@@ -197,6 +208,9 @@ const useParkingBorrowForm = () => {
     formState,
     onSubmit,
     pickerKey,
+    selectedSpotId,
+    setSelectedSpotId,
+    disabledSpotIds,
   };
 };
 

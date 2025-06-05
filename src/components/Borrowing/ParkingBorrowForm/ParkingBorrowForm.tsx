@@ -18,6 +18,9 @@ const ParkingBorrowForm = () => {
     onSubmit,
     pickerKey,
     formState: { errors },
+    selectedSpotId,
+    setSelectedSpotId,
+    disabledSpotIds,
   } = useParkingBorrowForm();
 
   return (
@@ -36,10 +39,15 @@ const ParkingBorrowForm = () => {
                   ? [dayjs(field.value[0]), dayjs(field.value[1])]
                   : null
               }
-              onChange={(dates) =>
+              onChange={(dates) => {
                 field.onChange(
                   dates ? [dates[0]?.toDate(), dates[1]?.toDate()] : null
                 )
+                if (!dates || (dates && dates[1] === null)) {
+                    console.log("Resetting selected spot ID");
+                    setSelectedSpotId(null);
+                  }
+              }
               }
             />
           )}
@@ -99,7 +107,7 @@ const ParkingBorrowForm = () => {
           
         </Flex>
         <ParkingView/>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" disabled={!selectedSpotId}>
           {submit}
         </Button>
       </Flex>
