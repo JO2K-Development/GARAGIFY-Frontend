@@ -1,6 +1,6 @@
 // @typescript-eslint/no-empty-object-type
 import * as fabric from "fabric";
-type WithCanvas<T = {}> = {
+type WithCanvas<T = {}> = { // eslint-disable-line
   canvas?: fabric.Canvas;
 } & T;
 

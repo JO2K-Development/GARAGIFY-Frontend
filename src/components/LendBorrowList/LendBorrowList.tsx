@@ -2,8 +2,8 @@ import styles from "./LendBorrowList.module.scss";
 import Image from "next/image";
 import { Button } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
-import Lending from "@/types/lending";
-import Borrowing from "@/types/borrowing";
+import { Lending } from "@/types/lending";
+import { Borrowing } from "@/types/borrowing";
 
 interface LendBorrowListProps {
   label: string;
@@ -72,7 +72,9 @@ const LendBorrowList = ({
                   { isLending(item) ? (
                     item.borrowers && item.borrowers.length > 0 && (
                       <span className={ styles.BorrowingItemOwner }>
-                        borrowed by: { item.borrowers.map((b: any) => b.email).join(', ') }
+                        borrowed by: { item.borrowers.map(
+                          (b: any) => // eslint-disable-line
+                            b.email).join(', ') }
                       </span>
                     )
                   ) : (

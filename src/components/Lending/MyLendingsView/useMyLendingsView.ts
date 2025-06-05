@@ -11,13 +11,13 @@ const useMyLendingsView = () => {
   const fetchLendings = async () => {
     const response = await getLendings();
     const content = (await response.json()).content;
-    return content.map((lending: any) => ({
+    return content.map((lending: any) => ({ // eslint-disable-line
       id: lending.id,
       start_date: lending.start_date,
       end_date: lending.end_date,
       parking_id: lending.parking_id,
       spot_id: lending.spot_id,
-      borrowers: lending.borrowers.users.map((borrower: any) => ({
+      borrowers: lending.borrowers.users.map((borrower: any) => ({ // eslint-disable-line
         email: borrower.email,
         user_id: borrower.user_id
       }))

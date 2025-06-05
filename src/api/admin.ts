@@ -61,7 +61,7 @@ export const assignUser = async ({
   parkingId: number;
   spotId: string;
 }) => {
-  const response = await fetch(
+  await fetch(
     `/api/v1/admin/parkings/${parkingId}/parking-spots/${spotId}/assign`,
     {
       method: HttpMethod.PUT,
@@ -69,8 +69,8 @@ export const assignUser = async ({
         user_id: user_id,
       }),
     }
-  ).then((response) => 
-    {if (!response.ok) {
-      throw new Error(`Error: ${response.status} ${response.statusText}`);
-    } return response.json()});
+  ).then((response) =>
+  {if (!response.ok) {
+    throw new Error(`Error: ${response.status} ${response.statusText}`);
+  } return response.json()});
 };

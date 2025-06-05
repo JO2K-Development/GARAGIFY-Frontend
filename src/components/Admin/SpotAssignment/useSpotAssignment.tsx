@@ -1,17 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useSpot } from "@/context/SpotProvider";
-import { assignUser, getAllUsers, getUsers, UserWithSpots } from "@/api/admin";
+import { assignUser, getAllUsers } from "@/api/admin";
 import { useToast } from "@/context/ToastProvider";
-type UserData = {
-  userId: string;
-  email: string;
-};
-
-type UseSpotAssignmentProps = {
-  userData: Record<string, UserData[]>;
-  selectedSpotId: string | null;
-};
 
 export const useSpotAssignment = () => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -40,14 +31,14 @@ export const useSpotAssignment = () => {
 
   const mutationUser = useMutation({
     mutationFn: assignUser,
-    onSuccess: (data) => {
+    onSuccess: () => {
       refetchGetUsers();
       toast.success({
         message: "Success!",
         description: "Your action was successful.",
       });
     },
-    onError: (error) => {
+    onError: () => {
       toast.error({
         message: "Error",
         description: "There was an error assigning the user.",
@@ -58,7 +49,7 @@ export const useSpotAssignment = () => {
   const onUnassign = () => {
     if (!selectedSpotId) return;
     mutationUser.mutate({
-      parkingId: 1, // Replace with actual parking ID
+      parkingId: 1, // Replace it with actual parking ID
       spotId: selectedSpotId,
       user_id: null,
     });
@@ -67,7 +58,7 @@ export const useSpotAssignment = () => {
   const onSubmit = () => {
     if (!(selectedSpotId && selectedUserId)) return;
     mutationUser.mutate({
-      parkingId: 1, // Replace with actual parking ID
+      parkingId: 1, // Replace it with actual parking ID
       spotId: selectedSpotId,
       user_id: selectedUserId,
     });

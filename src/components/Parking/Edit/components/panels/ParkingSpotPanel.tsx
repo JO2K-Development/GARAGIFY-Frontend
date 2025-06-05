@@ -25,9 +25,9 @@ const ParkingSpotPanel = () => {
 
   useEffect(() => {
     const groupId =
-      (selectedObject as any)?.get?.("groupId") ??
-      ((selectedObject as any)?.get?.("type") === "activeSelection"
-        ? (selectedObject as any)?._objects?.[0]?.get?.("groupId")
+      (selectedObject as any)?.get?.("groupId") ?? // eslint-disable-line
+      ((selectedObject as any)?.get?.("type") === "activeSelection" // eslint-disable-line
+        ? (selectedObject as any)?._objects?.[0]?.get?.("groupId") // eslint-disable-line
         : null);
 
     setGroupId(typeof groupId === "string" ? groupId : null);

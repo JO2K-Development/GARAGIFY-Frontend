@@ -129,12 +129,12 @@ const useRowDatePicker = ({
     } else {
       onChange?.(null);
     }
-  }, [startDay, endDay]);
+  }, [startDay, endDay]); // eslint-disable-line
 
   useLayoutEffect(() => {
     const newDateList = generateDateList(dayOffset);
     setDateList(newDateList);
-  }, [daysToShow, dayOffset, enabledDates]);
+  }, [daysToShow, dayOffset, enabledDates]); // eslint-disable-line
 
   const rightArrowClick = () => {
     setDayOffset(dayOffset + Math.floor(daysToShow / 3));

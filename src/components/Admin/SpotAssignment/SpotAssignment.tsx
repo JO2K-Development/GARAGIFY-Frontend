@@ -2,7 +2,6 @@ import React from "react";
 import { Select, Button, Typography, Space } from "antd";
 import { useSpot } from "@/context/SpotProvider";
 import { useSpotAssignment } from "./useSpotAssignment";
-import { on } from "events";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -13,7 +12,6 @@ const SpotAssignment = () => {
     owner,
     users,
     selectedUserId,
-    setSelectedUserId,
     handleChange,
     onSubmit,
     onUnassign, 

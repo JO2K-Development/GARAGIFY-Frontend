@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import * as fabric from "fabric";
 import { useCanvas } from "../../context/CanvasContext";
 

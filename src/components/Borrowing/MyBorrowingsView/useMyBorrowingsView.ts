@@ -11,7 +11,7 @@ const useMyBorrowingsView = () => {
   const fetchBorrowings = async () => {
     const response = await getBorrowings();
     const content = (await response.json()).content;
-    return content.map((borrowing: any) => ({
+    return content.map((borrowing: any) => ({ // eslint-disable-line
       id: borrowing.id,
       start_date: borrowing.start_date,
       end_date: borrowing.end_date,
