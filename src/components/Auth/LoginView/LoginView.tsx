@@ -2,14 +2,12 @@
 import { Button, Card, Layout, Typography } from 'antd';
 import Image from 'next/image';
 import styles from './LoginView.module.scss';
+import { signIn } from "next-auth/react";
 
 const { Content } = Layout;
 const { Title } = Typography;
 
 export default function Login() {
-  const handleGoogleLogin = () => {
-    console.log('Redirecting to Google login...');
-  };
 
   return (
     <Layout className={styles.layout}>
@@ -34,7 +32,7 @@ export default function Login() {
                 className={styles.googleIcon}
               />
             }
-            onClick={handleGoogleLogin}
+            onClick={() => signIn("google")}
             block
             className={styles.googleButton}
           >
