@@ -4,7 +4,7 @@ import styles from "./Navbar.module.scss";
 import labels from "@/labels.json";
 import { signOut } from "next-auth/react";
 const {
-  navigation: { borrowing, lending, admin_panel, logout },
+  navigation: { borrowing, lending, admin_panel, logout, editor_panel },
 } = labels;
 const Navbar = () => {
   return (
@@ -24,6 +24,10 @@ const Navbar = () => {
           {
             key: admin_panel,
             label: <Link href="/admin">{admin_panel}</Link>,
+          },
+          {
+            key: editor_panel,
+            label: <Link href="/editor">{editor_panel}</Link>,
           },
           {
             key: logout,

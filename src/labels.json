@@ -6,7 +6,8 @@
         "borrowing": "Borrowing",
         "lending": "Lending",
         "logout": "Logout",
-        "admin_panel": "Admin Panel"
+        "admin_panel": "Admin Panel",
+        "editor_panel": "Parking Panel"
     },
     "lending": {
         "form": {
